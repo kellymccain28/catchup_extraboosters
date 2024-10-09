@@ -1,0 +1,923 @@
+---
+title: "Cohort diagnostics"
+format: html
+editor: visual
+---
+
+Pull in data
+
+```{r}
+cohorts_byage <- readRDS("R:/Kelly/catchupR21-lite2/archive/6_make_cohorts/20240707-111757-a182874a/cohorts_byage.rds")
+cohorts <- readRDS("R:/Kelly/catchupR21-lite2/archive/6_make_cohorts/20240707-111757-a182874a/cohorts.rds")
+cohorts_ageatvax <- readRDS("R:/Kelly/catchupR21-lite2/archive/6_make_cohorts/20240707-111757-a182874a/cohorts_ageatvax.rds")
+cohorts_ageatvaxandage <- readRDS("R:/Kelly/catchupR21-lite2/archive/6_make_cohorts/20240707-111757-a182874a/cohorts_ageatvaxandage.rds")
+cohorts_rawdraws2 <- readRDS("R:/Kelly/catchupR21-lite2/archive/6_make_cohorts/20240714-165510-95d42754/cohorts_rawdraws2.rds")
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+test_seas <- cohorts_rawdraws2 %>% filter(seasonality == 'seasonal',pfpr == 0.25, PEVstrategy == 'catch-up',PEVage == '6m-4y', EPIextra == '-', drawID %in% c(40, 986, 835))
+
+test_per <- cohorts_rawdraws2 %>% filter(seasonality == 'perennial',pfpr == 0.25, PEVstrategy == 'catch-up', EPIextra == '-', drawID %in% c(40, 986, 835))
+
+
+test_per <- cohorts_rawdraws2 %>% filter(seasonality == 'perennial',pfpr == 0.25, (PEVage == '6m-14y' | PEVstrategy == 'AB' | strategy == 'none6m14y'), EPIextra == '-', drawID %in% c(40))
+```
+
+#### first testing combination of age groups and age at vaccination and t into 1 year timesteps
+```{r}
+# test <- test_per %>%
+#   mutate(ageatvax_lower = as.numeric(stringr::str_split_fixed(ageatvax, "-", 2)[, 1]),
+#          ageatvax_lower_group = ifelse(age_lower != '0.5', floor(ageatvax_lower), ageatvax_lower),
+#          ageatvax_upper = stringr::str_split_fixed(ageatvax, "-", 2)[, 2]) %>%
+#   ungroup() %>% 
+#   group_by(ageatvax_lower_group, PEVage) %>%
+#   mutate(ageatvax = paste0(first(ageatvax_lower), '-', last(ageatvax_upper)),
+#          ageatvax = factor(ageatvax, levels = c('0.5-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13',
+#                                                 '13-14','14-15'))) %>%
+#   
+#   mutate(age_lower_group = ifelse(age_lower != '0.5', floor(age_lower), age_lower)) %>%
+#   group_by(age_lower_group) %>%
+#   mutate(age_grp = paste0(first(age_lower), '-', last(age_upper)),
+#          age_grp = factor(age_grp, levels = c('0.5-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13',
+#                                               '13-14','14-15','15-16','16-17','17-18','18-19','19-20','20-21','21-22','22-23','23-24',
+#                                               '24-25','25-26','26-27','27-28','28-29','29-30','30-31','31-32','32-33','33-34','34-35',
+#                                               '35-36','36-37','37-38','38-39','39-40','40-41','41-42','42-43','43-44','44-45','45-46'))) %>%
+#   # Add back in age lower and age upper 
+#   mutate(age_lower = str_split_fixed(age_grp, "-", 2)[, 1],
+#          age_upper = str_split_fixed(age_grp, "-", 2)[, 2]) %>%
+#   group_by(ageatvax, age_grp, age_lower, age_upper, t,
+#            ID, drawID, strategy, 
+#            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+#            EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+#            labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+#   mutate_at(vars(cases, sevcases, deaths,
+#                  totaldoses, n,
+#                  contains('averted')),
+#             sum, na.rm = TRUE) %>%
+#   select(t, cases, cases_averted, n)
+#   
+  
+```
+
+
+```{r}
+# by ageatvax
+ggplot(test_per) + 
+  geom_point(aes(x = age_grp, y = cases, group = ageatvax, color = ageatvax)) + 
+  facet_wrap(~strategy)
+ggplot(test_per %>% filter(ageatvax %in% c('0.5-1','1-1.5','1.5-2'), strategy == 'CU 6m-14y')) + 
+  geom_point(aes(x = age_grp, y = cases, group = t, color = t)) + 
+  facet_wrap(~ageatvax)
+ggplot(test_per %>% filter(ageatvax %in% c('0.5-1','1-1.5','1.5-2'), strategy == 'CU 6m-14y')) + 
+  geom_point(aes(x = age_grp, y = n, group = t, color = t)) + 
+  facet_wrap(~ageatvax)
+
+sml <- test_per %>% filter(strategy == 'CU 6m-14y') %>%#ageatvax %in% c('0.5-1','1-1.5','1.5-2'), 
+  # group by 1 year timesteps
+  mutate(t = ceiling(t/2)) %>%
+  mutate(totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
+  ungroup() %>%
+  # mutate(age_lower_group = ifelse(age_lower != '0.5', floor(age_lower), age_lower)) %>%
+  # group_by(age_lower_group) %>%
+  # mutate(age_grp = paste0(first(age_lower), '-', last(age_upper)),
+  #        age_grp = factor(age_grp, levels = c('0.5-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13',
+  #                                             '13-14','14-15','15-16','16-17','17-18','18-19','19-20','20-21','21-22','22-23','23-24',
+  #                                             '24-25','25-26','26-27','27-28','28-29','29-30','30-31','31-32','32-33','33-34','34-35',
+  #                                             '35-36','36-37','37-38','38-39','39-40','40-41','41-42','42-43','43-44','44-45','45-46'))) %>%
+  mutate(ageatvax_lower = as.numeric(stringr::str_split_fixed(ageatvax, "-", 2)[, 1]),
+         ageatvax_lower_group = ifelse(age_lower != '0.5', floor(ageatvax_lower), ageatvax_lower),
+         ageatvax_upper = stringr::str_split_fixed(ageatvax, "-", 2)[, 2]) %>%
+  ungroup() %>%
+  group_by(ageatvax_lower_group, PEVage) %>%
+  mutate(ageatvax = paste0(first(ageatvax_lower), '-', last(ageatvax_upper)),
+         ageatvax = factor(ageatvax, levels = c('0.5-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13',
+                                                '13-14','14-15'))) %>%
+  ungroup() %>%
+  select(t, ID, drawID, strategy, age_grp, ageatvax, #age_lower_group, #ageatvax_lower_group, age_lower, age_upper, 
+            # ageatvax_lower,ageatvax_upper,
+         int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+         EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+         labels, label_int, strategytype, EPIextra_labels, scen_labels,
+         cases, sevcases, deaths, n, totaldoses,
+         cases_averted, deaths_averted, severe_averted) %>%
+  # first group by t and add up cases but take mean of n 
+  group_by(ID, drawID, strategy, ageatvax, age_grp, t,
+           # age_lower, age_upper, 
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  mutate_at(vars(cases, sevcases, deaths,
+                 totaldoses, 
+                 contains('averted')),
+            sum, na.rm = TRUE) %>%
+  mutate(n = mean(n))  %>% distinct() %>%
+  # Because have now combined 2 half-year age groups into new 1 year age groups, need to get sum of everything over these 2 age groups
+  # First summarize by age group/scenario (not t)
+  mutate(t = 'overall') %>%
+  group_by(ID, drawID, strategy, ageatvax, age_grp, 
+           # age_lower, age_upper, 
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  # sum of all variables per new 1 year age group and 1 year age at vaccination
+  mutate_at(vars(cases, sevcases, deaths,
+                 totaldoses, n,
+                 contains('averted')),
+            sum, na.rm = TRUE) %>%
+  # mutate(n = mean(n)) %>%
+  distinct() %>%
+  # Add back in age lower and age upper 
+  mutate(age_lower = str_split_fixed(age_grp, "-", 2)[, 1],
+         age_upper = str_split_fixed(age_grp, "-", 2)[, 2]) %>%
+  rowwise() %>%
+  # Calculate cases averted per population and per doses
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         severe_averted_perpop = severe_averted / n * 1000) %>%
+  # Get cases per population
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000) 
+
+
+
+ggplot(test_per%>% filter(strategy == 'CU 6m-14y', ageatvax == '2-2.5')) + 
+  geom_point(aes(x = age_grp, y = n, group = t, color = t)) + 
+  facet_wrap(~strategy)
+
+ggplot(test_per%>% filter(strategy == 'CU 6m-14y', ageatvax == '2-2.5')) + 
+  geom_point(aes(x = age_grp, y = cases, group = t, color = t)) + 
+  facet_wrap(~strategy)
+ggplot(test_per%>% filter(strategy == 'CU 6m-14y') ) + 
+  geom_point(aes(x = age_grp, y = n, group = t, color = t)) + 
+  facet_wrap(~strategy)
+
+ggplot(cohorts_ageatvaxandage %>% filter(ageatvax == '2-3', strategy == 'CU 6m-4y') )+ 
+  geom_point(aes(x = age_grp, y = n, group = ageatvax, color = ageatvax)) + 
+  facet_wrap(~strategy)
+ggplot(sml %>% filter(ageatvax == '2-3') )+ 
+  geom_point(aes(x = age_grp, y = n, group = ageatvax, color = ageatvax)) + 
+  facet_wrap(~strategy)
+ggplot(sml %>% filter(ageatvax == '2-3') )+ 
+  geom_point(aes(x = age_grp, y = cases, group = ageatvax, color = ageatvax)) + 
+  facet_wrap(~strategy)
+ggplot(cohorts_byage_draws  %>% filter(drawID == 40, pfpr == 0.25, seasonality == 'perennial'))+ 
+  geom_point(aes(x = age_grp, y = n)) +
+  facet_wrap(~strategy)
+
+# compare
+ggplot(sml %>% filter(ageatvax == '2-2.5') )+ 
+  geom_line(aes(x = age_grp, y = cases_averted_perpop, group = ageatvax, color = ageatvax)) + 
+  facet_wrap(~strategy)
+ggplot(test_per%>% filter(strategy == 'CU 6m-14y', ageatvax == '2-2.5')) + 
+  geom_point(aes(x = age_grp, y = cases_averted/n*1000, group = t, color = t)) + 
+  facet_wrap(~strategy)
+# table(test_per$strategy, test_per$age_grp)
+
+lim <- test_per[which(test_per$ageatvax == '1.5-2'),]
+ggplot(lim) + 
+  geom_point(aes(x = age_grp, y = cases_averted, group = ageatvax, color = ageatvax)) + 
+  facet_wrap(~strategy)
+```
+```{r}
+# aget at vaccination test 
+limtest <- test_per %>%
+  rowwise() %>%
+  mutate(totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
+  mutate(ageatvax_lower = as.numeric(stringr::str_split_fixed(ageatvax, "-", 2)[, 1]),
+         ageatvax_lower_group = ifelse(age_lower != '0.5', floor(ageatvax_lower), ageatvax_lower),
+         ageatvax_upper = stringr::str_split_fixed(ageatvax, "-", 2)[, 2]) %>%
+  ungroup() %>% 
+  group_by(ageatvax_lower_group, PEVage) %>%
+  mutate(ageatvax = paste0(first(ageatvax_lower), '-', last(ageatvax_upper)),
+         ageatvax = factor(ageatvax, levels = c('0.5-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13',
+                                                '13-14','14-15'))) %>%
+  # Select only relevant variables
+  select(ID, drawID, strategy, ageatvax,
+         int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+         EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+         labels, label_int, strategytype, EPIextra_labels, scen_labels,
+         cases, sevcases, deaths, n, totaldoses,
+         cases_averted, deaths_averted, severe_averted) %>%
+  # Group by ageatvax (and straetgy) only to get total over whole cohort life course  
+  group_by(ID, drawID, ageatvax, strategy,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  mutate_at(vars(cases, sevcases, deaths,
+                 totaldoses, contains('averted')),
+            sum, na.rm = TRUE) %>%
+  mutate(n = mean(n)) %>%
+  ungroup() %>%
+  mutate(t = 'overall') %>%
+  distinct() %>%
+  rowwise() %>%
+  # Calculate cases averted per population and per doses
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         # cases_averted_perdose= cases_averted / totaldoses * 1000,
+         severe_averted_perpop = severe_averted / n * 1000,
+         # severe_averted_perdose = severe_averted / totaldoses * 1000
+         ) %>%
+  # Get cases per 1000 people
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000)
+ 
+```
+
+```{r}
+# copmare ageatvax and ageatvaxandage
+# 6m-14y, ageatvax == '2-3'
+cohorts_ageatvaxandage_draws <- readRDS("R:/Kelly/catchupR21-lite2/archive/6_make_cohorts/20240724-174349-f70e8079/cohorts_ageatvaxandage_draws.rds")
+sml2 <- cohorts_ageatvaxandage_draws %>% 
+  filter(PEVage == '6m-14y', seasonality == 'perennial',pfpr == 0.25, EPIextra == '-', drawID %in% c(40),
+         ageatvax == '2-3')
+sum(sml2$cases_averted) / mean(sml2$n) * 1000 #893
+mean(sml2$n) # 4344 versus 1122 dans la df ageatvax
+sum(sml2$cases_averted) # pareil que ageatvax df 3880
+
+limtest[which(limtest$ageatvax == '2-3'),]$cases_averted_perpop # 3457
+limtest[which(limtest$ageatvax == '2-3'),]$n # 1122
+limtest[which(limtest$ageatvax == '2-3'),]$cases_averted #3880
+
+t <- sml %>%
+  filter(PEVage == '6m-14y', seasonality == 'perennial',pfpr == 0.25, EPIextra == '-', drawID %in% c(40),
+         ageatvax == '2-3')
+sum(t$cases_averted) / mean(t$n) * 1000 #2341
+mean(t$n) # 1657
+sum(t$cases_averted) # 3880
+```
+
+
+
+
+
+
+
+#### old tests
+```{r}
+# Cohorts by age
+test_byage_draws <- test_per %>% # First summarize by age group/scenario and time
+  group_by(t, ID, drawID, strategy, age_grp, age_lower, age_upper, 
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  # sum of outcomes over simulation for each age group
+  summarize_at(vars(cases, sevcases, deaths,
+                     totaldoses,
+                    contains('averted'), n),
+               sum, na.rm = TRUE) %>%
+  # mutate(t = 'overall') %>%
+  rowwise() %>%
+  # Calculate outcomes averted per pop and per dose
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         severe_averted_perpop = severe_averted / n * 1000) %>%
+  # Get cases per population
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000)
+
+saveRDS(cohorts_byage_draws, "cohorts_byage_draws.rds")
+
+# All cohorts by age, collapsed by scenario
+cohorts_byage <- test_byage_draws %>%
+  collapse_by_scenario_cohorts(by = 'age') #%>%
+  # mutate(age_lower = str_split_fixed(age_grp, "-", 2)[, 1],
+  #        age_upper = str_split_fixed(age_grp, "-", 2)[, 2]) 
+saveRDS(cohorts_byage, "cohorts_byage.rds")
+##########################################################
+
+```
+
+First, want to test the number of vaccines compared to the number of people to sense check. Will do this for each of the cohort datasets
+
+```{r}
+#| echo: false
+ggplot(test_byage_draws %>% 
+         filter(#seasonality == 'seasonal', 
+                pfpr == 0.25) %>%
+         filter(PEVstrategy == 'catch-up', 
+                labels == '6m-4y',drawID ==40, 
+                as.numeric(age_lower) < 10)) + 
+  geom_point(aes(x = age_lower, y = n))+#group = t, color = t)) + 
+  facet_wrap(~t)
+# The 1 year age groups aren't good because 0.5-4 years for example doens't cover it all, so there are uneven numbers of population in each age group over time 
+
+ggplot(test_byage_draws %>% 
+         filter(#seasonality == 'perennial', 
+           pfpr == 0.25) %>%
+         filter(PEVstrategy == 'catch-up', 
+                labels == '6m-4y',drawID ==40, 
+                as.numeric(age_lower) < 10)) + 
+  geom_point(aes(x = age_lower, y = cases))+#group = t, color = t)) + 
+  facet_wrap(~t)
+
+t <- cohorts_byage %>% 
+  filter(seasonality == 'seasonal', pfpr == 0.25) %>%
+         filter(PEVstrategy == 'catch-up', 
+                labels == '6m-4y',
+                as.numeric(age_lower) == 2.5)
+# cases go up and down because it is seasonal 
+```
+
+```{r}
+# test cohorts by age and age at vaccination 
+test_ageatvaxandage <- test_per %>%
+  rowwise() %>%
+  # mutate(totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
+  ungroup() %>%
+  select(-t) %>%
+  # add_labels() %>%
+  # First summarize by age group/scenario (not t)
+  group_by(ID, drawID, strategy, ageatvax, age_grp, #age_lower_group,
+           age_lower, age_upper,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  select(-cases_averted_clin) %>%
+  # sum of all variables per age group and age at vaccination
+  summarize_at(vars(cases, sevcases, deaths,
+                 totaldoses, 
+                 contains('averted'), n),
+            sum, na.rm = TRUE) %>%
+  distinct() %>%
+  mutate(t = 'overall') %>%
+  rowwise() %>%
+  # Calcualte cases averted per population and per doses
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         cases_averted_perdose= cases_averted / totaldoses * 1000,
+         severe_averted_perpop = severe_averted / n * 1000,
+         severe_averted_perdose = severe_averted / totaldoses * 1000) %>%
+  # Get cases per population
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000) 
+```
+
+```{r}
+ggplot(cohorts_ageatvaxandage %>% 
+         filter(seasonality == 'perennial', pfpr == 0.25) %>%
+         filter(PEVstrategy == 'catch-up', 
+                labels == '6m-4y',
+                # ageatvax == '2-2.5',
+                as.numeric(age_lower) < 10)) + 
+  geom_point(aes(x = age_lower, y = n, group = labels, color = labels)) + 
+  facet_wrap(~ageatvax)
+
+# unsure why the n is so low for the lower age group -- this is only the case when the age at vaccination starts with whole number (i.e. 1-1.5, 2-2.5) -- maybe beacuse the yearlong age groups don't include the lower age group (i.e. 1-1.5 age at vaccination would include the 0.5-1.5 age group but the people 0.5-1 wouldn't have been vaccinated at age 1-1.5 because they aren't that age yet); whereas the 1.5-2 age at vaccination would include the 1.5-2 year age group 
+
+# If we try the test dataset which is grouped by age at vaccination and age in 6 month increments: 
+ggplot(test_ageatvaxandage %>% 
+         filter(seasonality == 'perennial', pfpr == 0.25) %>%
+         filter(PEVstrategy == 'catch-up', 
+                labels == '6m-4y', drawID == 40,
+                # ageatvax == '2-2.5',
+                as.numeric(age_lower) < 10)) + 
+  geom_point(aes(x = age_lower, y = n, group = labels, color = labels)) + 
+  facet_wrap(~ageatvax)
+
+ggplot(test_ageatvaxandage %>% 
+         filter(seasonality == 'perennial', pfpr == 0.25) %>%
+         filter(PEVstrategy == 'catch-up', 
+                labels == '6m-4y', drawID == 40,
+                # ageatvax == '2-2.5',
+                as.numeric(age_lower) < 10)) + 
+  geom_point(aes(x = age_lower, y = cases, group = labels, color = labels)) + 
+  facet_wrap(~ageatvax)
+
+ggplot(test_ageatvaxandage %>% 
+         filter(seasonality == 'perennial', pfpr == 0.25) %>%
+         filter(PEVstrategy == 'catch-up', 
+                labels == '6m-4y', drawID == 40,
+                # ageatvax == '2-2.5',
+                as.numeric(age_lower) < 10)) + 
+  geom_point(aes(x = age_lower, y = cases_averted, group = labels, color = labels)) + 
+  facet_wrap(~ageatvax)
+```
+
+```{r}
+cohorts %>%
+  filter(PEVage == '6m-4y',
+         pfpr == 0.25, 
+         seasonality== 'seasonal') %>% 
+  select(n, totaldoses) %>%
+  View()
+
+# n is way too large 
+
+cohorts %>%
+  filter(PEVage == '-',
+         PEVstrategy == 'AB',
+         pfpr == 0.25, 
+         seasonality== 'seasonal') %>% 
+  select(n, totaldoses) %>%
+  View()
+# n is still way too large 
+# this is because i was summing n over time and age group whereas I should have taken the mean over time for each age group and then summed them 
+```
+
+```{r}
+# Trying to create the cohort for 6m-4y
+ageyrto50_6m4y_ex <- readRDS("R:/Kelly/catchupR21-lite2/draft/6_make_cohorts/20240709-095918-45b4b07a/ageyrto50_6m4y_ex.rds")
+
+ex_6m4y <- ageyrto50_6m4y_ex %>%
+                       filter(drawID == 986, 
+                              !(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10),
+                              age_lower < 5,
+                              t < 10,
+                              pfpr == 0.25, 
+                              seasonality == 'perennial')
+
+
+
+                              
+ggplot(ex_6m4y) + 
+  geom_point(aes(x = age_lower, y = n, 
+                 color = PEVstrategy, group = PEVstrategy)) + 
+  facet_wrap(~t)
+
+ggplot(ex_6m4y) + 
+  geom_point(aes(x = age_lower, y = cases, 
+                 color = PEVstrategy, group = PEVstrategy)) + 
+  facet_wrap(~t)
+
+# When it is seasonal, the 6 month timesteps don't work very well because of the seasonality. Perennial settings work much better 
+
+co_6m4y <- get_cohort(df = ex_6m4y,
+                     time1 = 1, # CU campaigns will only be vaccinated at time = 1
+                     minage = 0.5,
+                     maxage = 5) %>%
+  mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 6m-4y'))%>%
+  outcomes_averted() %>%
+  filter(PEVstrategy != 'none')
+
+ggplot(co_6m4y) + 
+  geom_point(aes(x = age_lower, y = n, 
+                 color = PEVstrategy, group = PEVstrategy)) + 
+  facet_wrap(~t)
+
+ggplot(co_6m4y) + 
+  geom_point(aes(x = age_lower, y = cases, 
+                 color = PEVstrategy, group = PEVstrategy)) + 
+  facet_wrap(~t)
+```
+
+```{r}
+CU6m4y <- get_cohort(ex_6m4y,
+                     time1 = 1, # CU campaigns will only be vaccinated at time = 1
+                     minage = 0.5,
+                     maxage = 4) %>%
+  mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 6m-4y')) %>%
+  # outcomes_averted() %>%
+  filter(PEVstrategy != 'none')
+  
+
+```
+
+```{r}
+# Do overall summarization 
+# Test summary overall
+allcohorts_draws <- test_per %>%
+  get_epi() %>%
+  get_mass() %>%
+  # Get sum of n in each cohort over all ages in cohort 
+  group_by(t, ID, drawID, strategy, 
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  summarize_at(vars(cases, sevcases, deaths,
+                   epiprimary, epibooster, mass,n,
+                   contains('averted')), 
+              sum, na.rm = TRUE) %>% ungroup() %>%
+  # now, get overall values by grouping by strategy only
+  group_by(ID, drawID, strategy,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  mutate_at(vars(cases, sevcases, deaths,
+                    epiprimary, epibooster, mass,
+                    contains('averted')),
+               sum, na.rm = TRUE) %>%
+  # get mean population over all time periods, grouped by strategy
+  mutate(n = weighted.mean(n, n)) %>%
+  rowwise() %>%
+  mutate(t = 'overall',
+         totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         cases_averted_perdose= cases_averted / totaldoses * 1000,
+         severe_averted_perpop = severe_averted / n * 1000,
+         severe_averted_perdose = severe_averted / totaldoses * 1000) %>%
+  # Get cases per population
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000) %>%
+  distinct(ID, drawID, strategy,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels,
+           cases, sevcases, deaths,cases_averted_perpop, cases_averted_perdose,cases_per1000pop,
+                    epiprimary, epibooster, mass, n, 
+           cases_averted, deaths_averted, severe_averted)
+
+allcohorts_draws %>% select(age_grp, n, initial_n, epiprimary, epibooster, mass, starts_with('n_pev')) %>% View()
+```
+
+```{r}
+# looking at pop:  first bit from above
+# the population declines over time with deaths, so that is why the average is low -- can check the % vacc with initial n - maybe could add new variable for that 
+
+allcohorts_draws <- test_per %>%
+  get_epi() %>%
+  get_mass() %>%
+  # Get sum of n in each cohort over all ages in cohort 
+  group_by(t, ID, drawID, strategy, 
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  mutate(n = sum(n)) %>% ungroup()
+```
+
+```{r}
+co <- co_6m4y %>%
+  get_epi() %>%
+  get_mass() %>%
+  # Get sum of n in each cohort over all ages in cohort 
+  group_by(t, ID, drawID, strategy, 
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality) %>%
+  mutate(n = sum(n)) %>% ungroup() %>%
+  # now, get overall values by grouping by strategy only
+  group_by(ID, drawID, strategy,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality) %>%
+  mutate_at(vars(cases, sevcases, deaths,
+                    epiprimary, epibooster, mass,
+                    contains('averted')),
+               sum, na.rm = TRUE) %>%
+  # get mean population over all time periods, grouped by strategy
+  mutate(n = mean(n)) %>%
+  rowwise() %>%
+  mutate(t = 'overall',
+         totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         cases_averted_perdose= cases_averted / totaldoses * 1000,
+         severe_averted_perpop = severe_averted / n * 1000,
+         severe_averted_perdose = severe_averted / totaldoses * 1000) %>%
+  # Get cases per population
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000) %>%
+  distinct(ID, drawID, strategy,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           cases, sevcases, deaths,
+                    epiprimary, epibooster, mass, totaldoses, n,# initial_n,
+           cases_averted, deaths_averted, severe_averted)
+```
+
+#########################################################################
+
+
+```{r}
+all <- test_per %>%
+  filter(drawID == 986) %>%
+  # Get sum of n in each cohort over all ages in cohort (i.e. 6m-2y would have multiple age groups that we want to sum up)
+  group_by(t, ID, drawID, strategy, 
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  summarize_at(vars(cases, sevcases, deaths,
+                 epiprimary, epibooster, mass,n,
+                 contains('averted')), 
+            sum, na.rm = TRUE) %>% ungroup() %>%
+  # get overall values by grouping by strategy only
+  group_by(ID, drawID, strategy,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  mutate_at(vars(cases, sevcases, deaths,
+                 epiprimary, epibooster, mass,
+                 contains('averted')),
+            sum, na.rm = TRUE) %>%
+  # get mean population over all time periods, grouped by strategy
+  mutate(n = mean(n)) %>%
+  rowwise() %>%
+  mutate(t = 'overall',
+         totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         cases_averted_perdose= cases_averted / totaldoses * 1000,
+         severe_averted_perpop = severe_averted / n * 1000,
+         severe_averted_perdose = severe_averted / totaldoses * 1000) %>%
+  # Get cases per population
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000) %>%
+  distinct()
+```
+
+```{r}
+byage <- test_per %>%
+  filter(drawID == 986) %>%# First summarize by age group/scenario and time
+  select(t, ID, drawID, strategy, age_grp, age_lower, age_upper,
+         int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+         EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+         labels, label_int, strategytype, EPIextra_labels, scen_labels,
+         cases, sevcases, deaths, n,
+         cases_averted, deaths_averted, severe_averted) %>%
+  # First summarize by age group/scenario and time
+  group_by(t, ID, drawID, strategy, age_grp, age_lower, age_upper,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  # sum of outcomes over simulation for each age group
+  mutate_at(vars(cases, sevcases, deaths,
+                    contains('averted'), n),
+               sum, na.rm = TRUE) %>%
+  # mutate(t = 'overall') %>%
+  rowwise() %>%
+  # Calculate outcomes averted per pop and per dose
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         severe_averted_perpop = severe_averted / n * 1000) %>%
+  # Get cases per population
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000)
+```
+
+```{r}
+byageatvax <- test_per %>%
+  rowwise() %>%
+  mutate(totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
+  mutate(ageatvax_lower = as.numeric(stringr::str_split_fixed(ageatvax, "-", 2)[, 1]),
+         ageatvax_lower_group = ceiling(ageatvax_lower),
+         ageatvax_upper = stringr::str_split_fixed(ageatvax, "-", 2)[, 2]) %>%
+  ungroup() %>% 
+  group_by(ageatvax_lower_group, PEVage) %>%
+  mutate(ageatvax = paste0(first(ageatvax_lower), '-', last(ageatvax_upper)),
+         ageatvax = factor(ageatvax, levels = c('0.5-1','0.5-1.5', '1.5-2.5', '2.5-3.5','2.5-3',
+                                                '3.5-4.5', '4.5-5.5', '4.5-5','5-5.5',
+                                                '5.5-6.5', '6.5-7.5', '7.5-8.5','8.5-9.5','9.5-10.5','9.5-10',
+                                                '10.5-11.5', '11.5-12.5', '12.5-13.5', '13.5-14.5', '14.5-15'))) %>%
+  select(ID, drawID, strategy, ageatvax, age_grp,
+         int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+         EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+         labels, label_int, strategytype, EPIextra_labels, scen_labels,
+         cases, sevcases, deaths, n, totaldoses,
+         cases_averted, deaths_averted, severe_averted) %>%
+  # First, group by ageatvax to get total over whole cohort life course  
+  group_by(ID, drawID, ageatvax, strategy,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  mutate_at(vars(cases, sevcases, deaths,
+                 totaldoses, contains('averted')),
+            sum, na.rm = TRUE) %>%
+  mutate(n = mean(n)) %>%
+  ungroup() %>%
+  mutate(t = 'overall') %>%
+  distinct() %>%
+  rowwise() %>%
+  # Calculate cases averted per population and per doses
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         cases_averted_perdose= cases_averted / totaldoses * 1000,
+         severe_averted_perpop = severe_averted / n * 1000,
+         severe_averted_perdose = severe_averted / totaldoses * 1000) %>%
+  # Get cases per 1000 people
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000)
+```
+
+```{r}
+# age at vax without making inoto 1 year groups 
+byageatvax <- test_per %>%
+  rowwise() %>%
+  mutate(totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
+  mutate(ageatvax_lower = as.numeric(stringr::str_split_fixed(ageatvax, "-", 2)[, 1]),
+         ageatvax_lower_group = ceiling(ageatvax_lower),
+         ageatvax_upper = stringr::str_split_fixed(ageatvax, "-", 2)[, 2]) %>%
+  # ungroup() %>% 
+  # group_by(ageatvax_lower_group, PEVage) %>%
+  # mutate(ageatvax = paste0(first(ageatvax_lower), '-', last(ageatvax_upper)),
+  #        ageatvax = factor(ageatvax, levels = c('0.5-1','0.5-1.5', '1.5-2.5', '2.5-3.5','2.5-3',
+  #                                               '3.5-4.5', '4.5-5.5', '4.5-5','5-5.5',
+  #                                               '5.5-6.5', '6.5-7.5', '7.5-8.5','8.5-9.5','9.5-10.5','9.5-10',
+  #                                               '10.5-11.5', '11.5-12.5', '12.5-13.5', '13.5-14.5', '14.5-15'))) %>%
+  select(ID, drawID, strategy, ageatvax,
+         int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+         EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+         labels, label_int, strategytype, EPIextra_labels, scen_labels,
+         cases, sevcases, deaths, n, totaldoses,
+         cases_averted, deaths_averted, severe_averted) %>%
+  # First, group by ageatvax to get total over whole cohort life course  
+  group_by(ID, drawID, ageatvax, strategy,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  mutate_at(vars(cases, sevcases, deaths,
+                 totaldoses, contains('averted')),
+            sum, na.rm = TRUE) %>%
+  mutate(n = mean(n)) %>%
+  ungroup() %>%
+  mutate(t = 'overall') %>%
+  distinct() %>%
+  rowwise() %>%
+  # Calculate cases averted per population and per doses
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         cases_averted_perdose= cases_averted / totaldoses * 1000,
+         severe_averted_perpop = severe_averted / n * 1000,
+         severe_averted_perdose = severe_averted / totaldoses * 1000) %>%
+  # Get cases per 1000 people
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000)
+
+co <- byageatvax %>%
+      filter(seasonality == 'perennial',
+             pfpr %in% c(0.05, 0.25, 0.45),
+             PEVage == '6m-14y',
+             ageatvax!='14.5-15') %>%
+      select(c(pfpr, seasonality, PEVage, PEVstrategy, EPIextra, ageatvax,
+                cases_averted_perpop)) %>%
+      mutate(ageatvax = factor(ageatvax, levels = c('0.5-1', '1-1.5', '1.5-2', '2-2.5', '2.5-3', '3-3.5', '3.5-4', '4-4.5', '4.5-5', '5-5.5', '5.5-6',  '6-6.5', '6.5-7', '7-7.5', '7.5-8', '8-8.5', '8.5-9', '9-9.5', '9.5-10', '10-10.5', '10.5-11', '11-11.5',  '11.5-12', '12-12.5', '12.5-13', '13-13.5', '13.5-14', '14-14.5', '14.5-15')),
+             ageatvaxhighlight = ifelse(ageatvax == '0.5-1.5'  |ageatvax == '3.5-4.5' |ageatvax == '7.5-8.5' |
+                                          ageatvax == '12.5-13.5', as.character(ageatvax), NA),
+             ageatvaxhighlight = factor(ageatvaxhighlight, levels = c('0.5-1.5','3.5-4.5','7.5-8.5','12.5-13.5')))
+    pfpr.labs <- c("5%", "25%", '45%')
+    names(pfpr.labs) <- c("0.05","0.25", "0.45")
+    
+    ggplot(co) +
+      geom_col(aes(x = ageatvax,
+                   y = cases_averted_perpop,
+                   fill = ageatvaxhighlight)) +
+      # geom_errorbar(aes(x = ageatvax,
+      #                   ymin = cases_averted_perpop_lower,
+      #                   ymax = cases_averted_perpop_upper, 
+      #                   color = ageatvaxhighlight)) +
+      facet_grid(rows = vars(pfpr),
+                 labeller = labeller(pfpr = pfpr.labs)) + 
+      scale_fill_manual(values = CUcols, na.value = 'grey80') +
+      scale_color_manual(values = rep('black',4), na.value = 'grey70') +
+    labs(x = 'Age at vaccination (years)',
+         y = 'Cases averted per 1000 population',
+         fill = '',
+         color = '') + 
+      theme_bw(base_size = 14) +
+      theme(axis.title = element_text(size = 20),
+            plot.title = element_text(size = 22),
+            legend.text = element_text(size = 14),
+            strip.text.x = element_text(size = 12),
+            legend.title = element_text(size = 14),
+            plot.caption = element_text(size = 12),
+            legend.key.size = unit(0.8, 'cm'),
+            axis.text.x = element_text(size = 12, angle = 90),
+            axis.text.y = element_text(size = 12),
+            legend.position = 'none')
+
+```
+
+
+```{r}
+ageatvaxandage <- test_per %>%
+  mutate(age_lower_group = ceiling(age_lower)) %>%
+  group_by(age_lower_group) %>%
+  mutate(age_grp = paste0(first(age_lower), '-', last(age_upper)),
+         age_grp = factor(age_grp, levels = c('0.5-1.5', '1.5-2.5', '2.5-3.5', '3.5-4.5', '4.5-5.5', '5.5-6.5', '6.5-7.5', '7.5-8.5',
+                                              '8.5-9.5', '9.5-10.5', '10.5-11.5', '11.5-12.5', '12.5-13.5', '13.5-14.5', '14.5-15.5',
+                                              '15.5-16.5', '16.5-17.5', '17.5-18.5', '18.5-19.5', '19.5-20.5', '20.5-21.5', '21.5-22.5',
+                                              '22.5-23.5', '23.5-24.5', '24.5-25.5', '25.5-26.5', '26.5-27.5', '27.5-28.5', '28.5-29.5',
+                                              '29.5-30.5', '30.5-31.5', '31.5-32.5', '32.5-33.5', '33.5-34.5', '34.5-35.5', '35.5-36.5',
+                                              '36.5-37.5', '37.5-38.5', '38.5-39.5', '39.5-40.5', '40.5-41.5', '41.5-42.5', '42.5-43.5',
+                                              '43.5-44.5', '44.5-45.5', '45.5-46.5', '46.5-47.5', '47.5-48.5', '48.5-49.5', '49.5-50.5')),
+         ageatvax_lower = as.numeric(str_split_fixed(ageatvax, "-", 2)[, 1]),
+         ageatvax_lower_group = ceiling(ageatvax_lower),
+         ageatvax_upper = str_split_fixed(ageatvax, "-", 2)[, 2]) %>%
+  ungroup() %>% 
+  group_by(ageatvax_lower_group, PEVage) %>%
+  mutate(ageatvax = paste0(first(ageatvax_lower), '-', last(ageatvax_upper)),
+         ageatvax = factor(ageatvax, levels = c('0.5-1.5', '1.5-2.5', '2.5-3.5','2.5-3',
+                                                '3.5-4.5', '4.5-5.5', '4.5-5',
+                                                '5.5-6.5', '6.5-7.5', '7.5-8.5','8.5-9.5','9.5-10.5','9.5-10',
+                                                '10.5-11.5', '11.5-12.5', '12.5-13.5', '13.5-14.5', '14.5-15'))) %>%
+  ungroup() %>%
+  # group by 1 year timesteps
+  # mutate(t = ceiling(t/2)) %>%
+  select(t, ID, drawID, strategy, age_grp, ageatvax, #age_lower_group, ageatvax_lower_group,
+         # age_lower, age_upper, 
+         # ageatvax_lower,ageatvax_upper,
+         int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+         EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+         labels, label_int, strategytype, EPIextra_labels, scen_labels,
+         cases, sevcases, deaths, n,
+         cases_averted, deaths_averted, severe_averted) %>%
+  # Because have now combined 2 half-year age groups into new 1 year age groups, need to get sum of n
+  # First summarize by age group/scenario (not t)
+  group_by(t, ID, drawID, strategy, ageatvax, age_grp, 
+           # age_lower, age_upper,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  # sum of all variables per age group and age at vaccination
+  mutate_at(vars(cases, sevcases, deaths, n,
+                 contains('averted')),
+            sum, na.rm = TRUE) %>%
+  
+  
+  # mutate(n = mean(n)) %>%
+  distinct() %>%
+  # Add back in age lower and age upper 
+  mutate(age_lower = str_split_fixed(age_grp, "-", 2)[, 1],
+         age_upper = str_split_fixed(age_grp, "-", 2)[, 2]) %>%
+  mutate(t = 'overall') %>%
+  rowwise() %>%
+  # Calculate cases averted per population and per doses
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         severe_averted_perpop = severe_averted / n * 1000) %>%
+  # Get cases per population
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000)
+
+test_per %>% ungroup() %>% filter(PEVage != '-') %>% summarize(n = sum(n), .by = c(PEVage, age_lower, age_upper, t, ageatvax)) %>% View()
+test_per %>% ungroup() %>% filter(PEVage != '-') %>% count(PEVage, t, age_lower, age_upper, ageatvax) %>% View()
+cohorts_rawdraws2 %>% filter(drawID == 40, seasonality == 'perennial', pfpr == 0.25) %>% ungroup() %>% filter(PEVage != '-') %>% count(PEVage, age_lower, age_upper, ageatvax) %>% View()
+```
+
+
+```{r}
+test_byage <- test_per %>%
+  filter(drawID == 40) %>%
+  select(t, ID, drawID, strategy, age_grp, age_lower, age_upper,
+         int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+         EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+         labels, label_int, strategytype, EPIextra_labels, scen_labels,
+         cases, sevcases, deaths, n,
+         cases_averted, deaths_averted, severe_averted) %>%
+  mutate(age_lower_group = ifelse(age_lower != '0.5', floor(age_lower), age_lower)) %>%
+  # mutate(age_lower_group = ceiling(age_lower)) %>%
+  group_by(age_lower_group) %>%
+  mutate(age_grp = paste0(first(age_lower), '-', last(age_upper)),
+         age_grp = factor(age_grp, levels = c('0.5-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13',
+                                              '13-14','14-15','15-16','16-17','17-18','18-19','19-20','20-21','21-22','22-23','23-24',
+                                              '24-25','25-26','26-27','27-28','28-29','29-30','30-31','31-32','32-33','33-34','34-35',
+                                              '35-36','36-37','37-38','38-39','39-40','40-41','41-42','42-43','43-44','44-45','45-46'))) %>%
+         # age_grp = factor(age_grp, levels = c('0.5-1.5', '1.5-2.5', '2.5-3.5', '3.5-4.5', '4.5-5.5', '5.5-6.5', '6.5-7.5', '7.5-8.5',
+         #                                      '8.5-9.5', '9.5-10.5', '10.5-11.5', '11.5-12.5', '12.5-13.5', '13.5-14.5', '14.5-15.5',
+         #                                      '15.5-16.5', '16.5-17.5', '17.5-18.5', '18.5-19.5', '19.5-20.5', '20.5-21.5', '21.5-22.5',
+         #                                      '22.5-23.5', '23.5-24.5', '24.5-25.5', '25.5-26.5', '26.5-27.5', '27.5-28.5', '28.5-29.5',
+         #                                      '29.5-30.5', '30.5-31.5', '31.5-32.5', '32.5-33.5', '33.5-34.5', '34.5-35.5', '35.5-36.5',
+         #                                      '36.5-37.5', '37.5-38.5', '38.5-39.5', '39.5-40.5', '40.5-41.5', '41.5-42.5', '42.5-43.5',
+         #                                      '43.5-44.5', '44.5-45.5', '45.5-46.5', '46.5-47.5', '47.5-48.5', '48.5-49.5', '49.5-50.5'))) %>%
+  # group by 1 year timesteps
+  mutate(tnew = ceiling(t/2)) %>% #select(tnew, everything())
+  # First summarize by age group/scenario and time and half year age groups to get 1 value for ecah t, 6month age group
+  group_by(t, ID, drawID, strategy, age_grp, age_lower, age_upper,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  summarize_at(vars(cases, sevcases, deaths,
+                    contains('averted'), n),
+               mean, na.rm = TRUE) %>%
+  # then group by 1 year age groups and time to get sum over simulation
+  group_by(t, ID, drawID, strategy, age_grp, 
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  # sum of outcomes over simulation for each age group
+  summarize_at(vars(cases, sevcases, deaths,
+                    contains('averted'), n),
+               sum, na.rm = TRUE) %>%
+  # mutate(t = 'overall') %>%
+  rowwise() %>%
+  # Calculate outcomes averted per pop and per dose
+  mutate(cases_averted_perpop = cases_averted / n * 1000,
+         severe_averted_perpop = severe_averted / n * 1000) %>%
+  # Get cases per population
+  mutate(cases_per1000pop = cases / n * 1000,
+         sevcases_per1000pop = sevcases / n * 1000) %>%
+  mutate(age_lower = str_split_fixed(age_grp, "-", 2)[, 1],
+         age_upper = str_split_fixed(age_grp, "-", 2)[, 2]) %>%
+  distinct()
+
+```
+
+```{r}
+# investigation into ab_condensed
+cohorts_rawdraws <- readRDS('R:/Kelly/catchupR21-lite2/archive/6_make_cohorts/20240714-165510-95d42754/cohorts_rawdraws.rds')
+ab <- cohorts_rawdraws %>%
+     filter(PEVstrategy %in% c('AB', 'none'))
+ab_condensed <- readRDS("R:/Kelly/catchupR21-lite2/draft/6_make_cohorts/20240716-120004-69693d84/ab_condensed.rds")
+
+# First need to condense 60 cohorts to 1
+testtest <- ab %>%
+  filter(pfpr == 0.25, seasonality == 'perennial', drawID == 40, t < 10, PEV!='none', EPIextra == '5y') %>%
+  # Calculate doses
+  get_epi() 
+
+ttt <- testtest %>%
+  # First condense to 1 'cohort' - grouping by age and strategy and get mean of everything across 60 cohorts
+  group_by(age_lower, age_upper, ID, drawID, strategy,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+  mutate_at(vars(cases, sevcases, deaths,
+                    n, epiprimary, epibooster,
+                    contains('averted')),
+               mean, na.rm = TRUE) %>%
+  mutate(mass = 0) %>%
+  distinct(age_lower, age_upper, ID, drawID, strategy,
+           int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
+           labels, label_int, strategytype, EPIextra_labels, scen_labels, .keep_all = TRUE)
+```
+
