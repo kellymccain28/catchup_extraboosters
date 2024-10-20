@@ -28,15 +28,17 @@ output_ageyr <- data.frame()
 output_ageyrto50 <- data.frame()
 output_last15 <- data.frame()
 
-output_overall <- readRDS('R:/Kelly/catchupR21-lite2/archive/5_process_combined/20240708-114901-0ee7a40a/output_overall_intermediate.rds')
-output_ageyr <- readRDS('R:/Kelly/catchupR21-lite2/archive/5_process_combined/20240708-114901-0ee7a40a/output_ageyr_intermediate.rds')
-output_ageyrto50 <- readRDS('R:/Kelly/catchupR21-lite2/archive/5_process_combined/20240708-114901-0ee7a40a/output_ageyr_toage50_intermediate.rds')
-output_last15 <- readRDS('R:/Kelly/catchupR21-lite2/archive/5_process_combined/20240708-114901-0ee7a40a/output_last15_intermediate.rds')
-
-saveRDS(output_overall, 'output_overall_intermediate.rds')
-saveRDS(output_ageyr, 'output_ageyr_intermediate.rds')
-saveRDS(output_ageyrto50, 'output_ageyr_toage50_intermediate.rds')
-saveRDS(output_last15, 'output_last15_intermediate.rds')
+# using files that started 
+output_overall <- readRDS('R:/Kelly/catchup_extraboosters/draft/5_process_combined/20241018-083359-49de9d8f/output_overall_intermediate.rds')
+# output_ageyr <- readRDS('R:/Kelly/catchup_extraboosters/draft/5_process_combined/20241018-083359-49de9d8f/output_ageyr_intermediate.rds')
+output_ageyrto50 <- readRDS('R:/Kelly/catchup_extraboosters/draft/5_process_combined/20241018-083359-49de9d8f/output_ageyr_toage50_intermediate.rds') %>%
+  select(-c(totaldoses, massdoses, EPIdoses))
+output_last15 <- readRDS('R:/Kelly/catchup_extraboosters/draft/5_process_combined/20241018-083359-49de9d8f/output_last15_intermediate.rds')
+# 
+# saveRDS(output_overall, 'output_overall_intermediate.rds')
+# saveRDS(output_ageyr, 'output_ageyr_intermediate.rds')
+# saveRDS(output_ageyrto50, 'output_ageyr_toage50_intermediate.rds')
+# saveRDS(output_last15, 'output_last15_intermediate.rds')
 
 # output_ageyrto50 <- output_ageyr %>%
 #   filter(age_lower < 50 & # keep only 0.5 year age groups up to age 50
@@ -47,47 +49,48 @@ saveRDS(output_last15, 'output_last15_intermediate.rds')
 
 
 # Add each set of processed runs to dataset
-# for(i in as.integer(c(seq(1, max(pars$scenarioID)-500, by = 500), 22001))){ #seq(0.5, 18, by = 0.5), (removing this bc just adding to orignals for now)
-#   message(i)
-#   orderly2::orderly_dependency("4_combine_runs",
-#                                "latest(parameter:analysis == this:analysis
-#                              && parameter:n500 == environment:i)",
-#                                c("data/summarized_draws_${i}.rds" = "summarized_draws_500.rds",
-#                                  "data/summarized_ageyr_draws_${i}.rds" = 'summarized_ageyr_draws_500.rds',
-#                                  "data/summarized_last15_draws_${i}.rds" = 'summarized_last15_draws_500.rds'))
-# 
-#   ageyr <- readRDS(paste0('data/summarized_ageyr_draws_',i,'.rds'))
-#   message('ageyr read in')
-# 
-#   output_overall <- rbind(output_overall, readRDS(paste0('data/summarized_draws_',i,'.rds')))
-#   message('overall read in')
-# 
-#   output_ageyr <- rbind(output_ageyr, ageyr)
-#   message('ageyr rbinded')
-# 
-#   ageyrto50 <- ageyr %>%
-#     filter(age_lower < 50 & # keep only 0.5 year age groups up to age 50
-#              !(age_lower == 0 & age_upper == 5) &
-#              !(age_lower == 0 & age_upper == 100) &
-#              !(age_lower == 5 & age_upper == 10) &
-#              !(age_lower == 10 & age_upper == 15))
-#   output_ageyrto50 <- rbind(output_ageyrto50, ageyrto50, fill = TRUE  )
-#   message('ageyr to 50 rbinded')
-# 
-# 
-#   output_last15 <- rbind(output_last15, readRDS(paste0('data/summarized_last15_draws_',i,'.rds')), fill = TRUE)
-#   message(paste0(Sys.time(), ' bound last15'))
-# 
-#   saveRDS(output_overall, 'output_overall_intermediate.rds')
-#   saveRDS(output_ageyr, 'output_ageyr_intermediate.rds')
-#   saveRDS(output_ageyrto50 %>%
-#             mutate(totaldoses = rowSums(across(starts_with('dose'))),
-#                    massdoses = rowSums(across(starts_with('n_pev_mass'))),
-#                    EPIdoses = rowSums(across(starts_with('n_pev_epi')))) , 'output_ageyr_toage50_intermediate.rds')
-#   saveRDS(output_last15, 'output_last15_intermediate.rds')
-# 
-#   message(paste0(Sys.time(), ' saved datasets'))
-# }
+for(i in as.integer(c(seq(16001, max(pars$scenarioID)-500, by = 500), 34501))){ #seq(0.5, 18, by = 0.5), (removing this bc just adding to orignals for now)
+  message(i)
+  orderly2::orderly_dependency("4_combine_runs",
+                               "latest(parameter:analysis == this:analysis
+                             && parameter:n500 == environment:i)",
+                               c("data/summarized_draws_${i}.rds" = "summarized_draws_500.rds",
+                                 "data/summarized_ageyr_draws_${i}.rds" = 'summarized_ageyr_draws_500.rds',
+                                 "data/summarized_last15_draws_${i}.rds" = 'summarized_last15_draws_500.rds'))
+
+  ageyr <- readRDS(paste0('data/summarized_ageyr_draws_',i,'.rds'))
+  message('ageyr read in')
+
+  output_overall <- rbind(output_overall, readRDS(paste0('data/summarized_draws_',i,'.rds')))
+  message('overall read in')
+
+  # output_ageyr <- rbind(output_ageyr, ageyr)
+  # message('ageyr rbinded')
+
+  ageyrto50 <- ageyr %>%
+    filter(age_lower < 50 & # keep only 0.5 year age groups up to age 50
+             !(age_lower == 0 & age_upper == 5) &
+             !(age_lower == 0 & age_upper == 100) &
+             !(age_lower == 5 & age_upper == 10) &
+             !(age_lower == 10 & age_upper == 15))
+  output_ageyrto50 <- rbind(output_ageyrto50, ageyrto50, fill = TRUE  )
+  message('ageyr to 50 rbinded')
+
+
+  output_last15 <- rbind(output_last15, readRDS(paste0('data/summarized_last15_draws_',i,'.rds')), fill = TRUE)
+  message(paste0(Sys.time(), ' bound last15'))
+
+  saveRDS(output_overall, 'output_overall_intermediate.rds')
+  message(paste0(Sys.time(), ' saved overall'))
+  # saveRDS(output_ageyr, 'output_ageyr_intermediate.rds')
+  # message(paste0(Sys.time(), ' saved ageyr'))
+  saveRDS(output_ageyrto50, 'output_ageyr_toage50_intermediate.rds')
+  message(paste0(Sys.time(), ' saved ageyr to 50'))
+  saveRDS(output_last15, 'output_last15_intermediate.rds')
+  message(paste0(Sys.time(), ' saved last15'))
+
+  message(paste0(Sys.time(), ' saved datasets'))
+}
 
 
 # Outputs for task 
