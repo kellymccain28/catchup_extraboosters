@@ -16,8 +16,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                              compare,
                              variable,
                              seas) {
-    CUcols <- c('#B03A2E','#6C3483','#1F618D','#148F77','#B9770E','#239B56', 'tan','#283747','#85929E')
-    CUcols_ <- c('black','#6C3483','#1F618D','#148F77','#B9770E','#239B56', 'tan','#283747','#85929E')
+    CUcols <- c('#B03A2E','#6C3483','#1F618D','#148F77','#B9770E','#239B56', 'tan','#3498db','#283747','#85929E')
+    CUcols_ <- c('black','#6C3483','#1F618D','#148F77','#B9770E','#239B56', 'tan','#3498db','#283747','#85929E')
     
     cohortspl <- cohorts %>%
       filter(pfpr != 0.03) %>%

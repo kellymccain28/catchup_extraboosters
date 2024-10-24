@@ -10,7 +10,8 @@ plot_efficiency_frontier <- function(df,
     filter(PEVstrategy == 'catch-up' | PEVstrategy == 'AB') %>% 
     filter(!(PEVstrategy %in% c('hybrid', 'SV'))) %>%
     filter(seasonality == seas_type) %>%
-    filter(pfpr %in% pfpr_vec) #%>%
+    filter(pfpr %in% pfpr_vec)# %>%
+    
     # mutate(labels = factor(labels, levels = c('Routine age-based', "2y booster","5y booster", "10y booster","5y, 10y boosters",
     #                                    '6m-2y', '6m-2y;\n2y booster', '6m-2y;\n5y booster', '6m-2y;\n10y booster', '6m-2y;\n5y, 10y boosters',
     #                                    '6m-4y', '6m-4y;\n2y booster', '6m-4y;\n5y booster', '6m-4y;\n10y booster', '6m-4y;\n5y, 10y boosters',
