@@ -28,10 +28,31 @@ orderly2::orderly_dependency("5_process_combined",
                                # summarized_ageyr.rds = "summarized_ageyr.rds",
                                summarized_last15.rds = "summarized_last15.rds"))
 
-df_summ <- readRDS("summarized_overall.rds")
-df_summ_draws <- readRDS("summarized_overall_draws.rds")
+# Set resources
+orderly_resource(
+  c('plot_themes.R',
+    'plot_cumul_CA.R',
+    'plot_efficiency_frontier.R',
+    'plot_age_dist.R',
+    'plot_cohort.R',
+    'table_CA_perreldose.R',
+    'plot_perc_averted.R',
+    'plots_mim_ammnet.R',
+    'manuscript_figures.R',
+    'get_perc_dominated.R',
+    'get_perc_U5.R',
+    'add_labels.R'
+  )
+)
+source('add_labels.R')
+
+df_summ <- readRDS("summarized_overall.rds") %>% 
+  add_labels()
+df_summ_draws <- readRDS("summarized_overall_draws.rds")%>% 
+  add_labels()
 # df_ageyr <- readRDS("summarized_ageyr.rds")
-df_last15 <- readRDS("summarized_last15.rds")
+df_last15 <- readRDS("summarized_last15.rds") %>% 
+  add_labels()
 
 orderly2::orderly_dependency("6_make_cohorts",
                              "latest()",
@@ -40,9 +61,11 @@ orderly2::orderly_dependency("6_make_cohorts",
                                cohorts_ageatvax.rds = "cohorts_ageatvax.rds",
                                cohorts.rds = "cohorts.rds"))
 
-cohorts_byage <- readRDS('cohorts_byage.rds')
+cohorts_byage <- readRDS('cohorts_byage.rds')%>% 
+  add_labels()
 cohorts <- readRDS('cohorts.rds')
-cohorts_ageatvaxandage <- readRDS('cohorts_ageatvaxandage.rds')
+cohorts_ageatvaxandage <- readRDS('cohorts_ageatvaxandage.rds')%>% 
+  add_labels()
 cohorts_ageatvax <- readRDS('cohorts_ageatvax.rds')
 
 # Outputs for task 
@@ -73,9 +96,9 @@ orderly_artefact(
     # "plots/Age_dist_sevcasesperperson_CU_perennial.png",
     # "plots/Age_dist_casesandsev_perperson_CU_perennial.png",
     # Percent averted (plot_perc_averted.R)
-    "plots/plot_perc_uncomplicated_averted.png",
-    "plots/heatmap_perc_uncomplicated_averted.png",
-    "plots/table_perc_outcomes_averted.csv",
+    # "plots/plot_perc_uncomplicated_averted.png",
+    # "plots/heatmap_perc_uncomplicated_averted.png",
+    # "plots/table_perc_outcomes_averted.csv",
     # Cohort plots 
     ## Efficiency frontiers
     "plots/CAbytotaldosesseasonal.png",
@@ -114,22 +137,6 @@ orderly_artefact(
     "plots/plot_cohorts_ageatvax_cases_per.png",
     "plots/plot_cohorts_ageatvax_CA_per.png",
     "plots/plot_cohorts_ageatvax_CAperpop_per.png"
-    )
-)
-
-# Set resources
-orderly_resource(
-  c('plot_themes.R',
-    'plot_cumul_CA.R',
-    'plot_efficiency_frontier.R',
-    'plot_age_dist.R',
-    'plot_cohort.R',
-    'table_CA_perreldose.R',
-    'plot_perc_averted.R',
-    'plots_mim_ammnet.R',
-    'manuscript_figures.R',
-    'get_perc_dominated.R',
-    'get_perc_U5.R'
     )
 )
 
