@@ -98,15 +98,15 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
             axis.text.y = element_text(size = 12)
       )
     
-    B <- ggplot(if(strategy == 'catch-up no booster' | strategy == 'catch-up all'){copl} else dfpl) +
+    B <- ggplot(if(strategy == 'catch-up no booster' | strategy == 'catch-up all'){copl} else dfpl) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
       geom_col(aes(x = as.factor(pfpr), 
-                   y = .data[[paste0(variable, "_perdose")]], #relevant
+                   y = .data[[paste0(variable, "_perdose")]], 
                    fill = labels, color = labels), 
                position ='dodge', 
                alpha = 0.7) + 
       geom_errorbar(aes(x = as.factor(pfpr), 
-                        ymin = .data[[paste0(variable, "_perdose_lower")]], #relevant
-                        ymax = .data[[paste0(variable, "_perdose_upper")]], #relevant
+                        ymin = .data[[paste0(variable, "_perdose_lower")]], 
+                        ymax = .data[[paste0(variable, "_perdose_upper")]], 
                         color = labels),
                     position = position_dodge(width = 0.9), 
                     width = 0.35, 
@@ -117,8 +117,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
       labs(y = if(variable == 'cases_averted'){'Cumulative clinical cases averted\nper 1,000 doses'} 
            else {'Cumulative severe cases averted\nper 1,000 doses'},
            x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
-           fill = 'Vaccination strategy'#,
-           # caption = if(strategy == 'catch-up no booster' | strategy == 'catch-up all'){"Plot made with cohorts followed over the 30-year simulation."}
+           fill = 'Vaccination strategy'
            ) +
       guides(color = 'none') +
       theme(axis.title = element_text(size = 20),
