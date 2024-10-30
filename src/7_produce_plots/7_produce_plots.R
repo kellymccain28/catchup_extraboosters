@@ -13,6 +13,8 @@ library(ggrepel)
 library(stringr)
 library(viridis)
 library(scales)
+library(grid)
+library(png)
 
 orderly_strict_mode()
 orderly2::orderly_description('Make figures for manuscript')
@@ -41,7 +43,8 @@ orderly_resource(
     'manuscript_figures.R',
     'get_perc_dominated.R',
     'get_perc_U5.R',
-    'add_labels.R'
+    'add_labels.R',
+    'legend.png'
   )
 )
 source('add_labels.R')
