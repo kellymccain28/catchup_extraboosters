@@ -71,100 +71,100 @@ message(names(ageyr))
 yrs <- seq(min(ageyr$t), max(ageyr$t))
 
 # initialize empty data frame for age-based
-# ABcohorts <- data.frame()
-# 
-# for (i in yrs){
-#   ABcohort <- get_cohort(df = ageyr %>% filter(PEVstrategy == 'AB' | PEVstrategy == 'none') %>%
-#                            filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
-#                          time1 = i,
-#                          minage = 0.5,
-#                          maxage = 1) %>%
-#     mutate(strategy = ifelse(PEVstrategy == 'AB' & EPIextra == '-', 'AB',
-#                              ifelse(PEVstrategy == 'AB' & EPIextra == '5y', 'AB - 5y',
-#                                     ifelse(PEVstrategy == 'AB' & EPIextra == '10y', 'AB - 10y',
-#                                            ifelse(PEVstrategy == 'AB' & EPIextra == '5y+10y', 'AB - 5y+10y','noneAB'))))) %>%
-#     outcomes_averted() %>%
-#     filter(PEVstrategy != 'none')
-#   ABcohorts <- rbind(ABcohorts, ABcohort)
-#   message(paste0('finished', i))
-# }
-# message('finished ABcohort')
-# 
-# CU6m2y <- get_cohort(df = ageyr %>% filter((PEVage == '6m-2y' & EPIextra == '-') | PEVstrategy == 'none') %>%
-#                        filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)), # PEVstrategy == 'none'
-#                      time1 = 1, # CU campaigns will only be vaccinated at time = 1
-#                      minage = 0.5,
-#                      maxage = 3) %>%
-#   mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 6m-2y')) %>%
-#   outcomes_averted() %>%
-#   filter(PEVstrategy != 'none')
-# message('finished CU 6m2y cohort')
-# 
-# CU6m4y <- get_cohort(df = ageyr %>% filter((PEVage == '6m-4y' & EPIextra == '-') | PEVstrategy == 'none') %>%
-#                        filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
-#                      time1 = 1, # CU campaigns will only be vaccinated at time = 1
-#                      minage = 0.5,
-#                      maxage = 5) %>%
-#   mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 6m-4y'))%>%
-#   outcomes_averted() %>%
-#   filter(PEVstrategy != 'none')
-# message('finished CU 6m4y cohort')
-# 
-# CU6m9y <- get_cohort(df = ageyr %>% filter((PEVage == '6m-9y' & EPIextra == '-') | PEVstrategy == 'none') %>%
-#                        filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
-#                      time1 = 1, # CU campaigns will only be vaccinated at time = 1
-#                      minage = 0.5,
-#                      maxage = 10) %>%
-#   mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 6m-9y'))%>%
-#   outcomes_averted() %>%
-#   filter(PEVstrategy != 'none')
-# message('finished CU 6m9y cohort')
-# 
-# CU6m14y <- get_cohort(df = ageyr %>% filter((PEVage == '6m-14y' & EPIextra == '-')  | PEVstrategy == 'none') %>%
-#                         filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
-#                       time1 = 1, # CU campaigns will only be vaccinated at time = 1
-#                       minage = 0.5,
-#                       maxage = 15) %>%
-#   mutate(strategy = ifelse(PEVstrategy == 'none', 'none6m14y', 'CU 6m-14y'))%>%
-#   outcomes_averted()
-# # keeping the 'none' here because it'll cover all the other catch-up cohorts
-# message('finished CU 6m14y cohort')
-# 
-# CU5y9y <- get_cohort(df = ageyr %>% filter((PEVage == '5-9' & EPIextra == '-') | PEVstrategy == 'none') %>%
-#                        filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
-#                      time1 = 1, # CU campaigns will only be vaccinated at time = 1
-#                      minage = 5,
-#                      maxage = 10) %>%
-#   mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 5-9y'))%>%
-#   outcomes_averted() %>%
-#   filter(PEVstrategy != 'none')
-# message('finished CU 5-9y cohort')
-# 
-# CU5y14y <- get_cohort(df = ageyr %>% filter((PEVage == '5-14' & EPIextra == '-') | PEVstrategy == 'none') %>%
-#                         filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
-#                       time1 = 1, # CU campaigns will only be vaccinated at time = 1
-#                       minage = 5,
-#                       maxage = 15) %>%
-#   mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 5-14y'))%>%
-#   outcomes_averted() %>%
-#   filter(PEVstrategy != 'none')
-# message('finished CU 5-14y cohort')
-# 
-# cohorts_rawdraws <- rbind(CU6m14y, CU6m2y, CU6m4y, CU6m9y, CU5y9y, CU5y14y, ABcohorts) %>%
-#   # distinct just in case there are some duplicates of the 'none' group
-#   distinct() %>%
-#   select(-starts_with('p_'),
-#          -contains('diff'),-clinical, -severe, -mortality,
-#          -yll, -yld, -daly, -contains('pop'), - contains('FVC'),
-#          -prevalence_2_10, -prevalence_0_100, -prop_n,
-#          -ends_with('perdose')
-#          ) %>%
-#   add_labels()
+ABcohorts <- data.frame()
+
+for (i in yrs){
+  ABcohort <- get_cohort(df = ageyr %>% filter(PEVstrategy == 'AB' | PEVstrategy == 'none') %>%
+                           filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
+                         time1 = i,
+                         minage = 0.5,
+                         maxage = 1) %>%
+    mutate(strategy = ifelse(PEVstrategy == 'AB' & EPIextra == '-', 'AB',
+                             ifelse(PEVstrategy == 'AB' & EPIextra == '5y', 'AB - 5y',
+                                    ifelse(PEVstrategy == 'AB' & EPIextra == '10y', 'AB - 10y',
+                                           ifelse(PEVstrategy == 'AB' & EPIextra == '5y+10y', 'AB - 5y+10y','noneAB'))))) %>%
+    outcomes_averted() %>%
+    filter(PEVstrategy != 'none')
+  ABcohorts <- rbind(ABcohorts, ABcohort)
+  message(paste0('finished', i))
+}
+message('finished ABcohort')
+
+CU6m2y <- get_cohort(df = ageyr %>% filter((PEVage == '6m-2y' & EPIextra == '-') | PEVstrategy == 'none') %>%
+                       filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)), # PEVstrategy == 'none'
+                     time1 = 1, # CU campaigns will only be vaccinated at time = 1
+                     minage = 0.5,
+                     maxage = 3) %>%
+  mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 6m-2y')) %>%
+  outcomes_averted() %>%
+  filter(PEVstrategy != 'none')
+message('finished CU 6m2y cohort')
+
+CU6m4y <- get_cohort(df = ageyr %>% filter((PEVage == '6m-4y' & EPIextra == '-') | PEVstrategy == 'none') %>%
+                       filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
+                     time1 = 1, # CU campaigns will only be vaccinated at time = 1
+                     minage = 0.5,
+                     maxage = 5) %>%
+  mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 6m-4y'))%>%
+  outcomes_averted() %>%
+  filter(PEVstrategy != 'none')
+message('finished CU 6m4y cohort')
+
+CU6m9y <- get_cohort(df = ageyr %>% filter((PEVage == '6m-9y' & EPIextra == '-') | PEVstrategy == 'none') %>%
+                       filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
+                     time1 = 1, # CU campaigns will only be vaccinated at time = 1
+                     minage = 0.5,
+                     maxage = 10) %>%
+  mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 6m-9y'))%>%
+  outcomes_averted() %>%
+  filter(PEVstrategy != 'none')
+message('finished CU 6m9y cohort')
+
+CU6m14y <- get_cohort(df = ageyr %>% filter((PEVage == '6m-14y' & EPIextra == '-')  | PEVstrategy == 'none') %>%
+                        filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
+                      time1 = 1, # CU campaigns will only be vaccinated at time = 1
+                      minage = 0.5,
+                      maxage = 15) %>%
+  mutate(strategy = ifelse(PEVstrategy == 'none', 'none6m14y', 'CU 6m-14y'))%>%
+  outcomes_averted()
+# keeping the 'none' here because it'll cover all the other catch-up cohorts
+message('finished CU 6m14y cohort')
+
+CU5y9y <- get_cohort(df = ageyr %>% filter((PEVage == '5-9' & EPIextra == '-') | PEVstrategy == 'none') %>%
+                       filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
+                     time1 = 1, # CU campaigns will only be vaccinated at time = 1
+                     minage = 5,
+                     maxage = 10) %>%
+  mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 5-9y'))%>%
+  outcomes_averted() %>%
+  filter(PEVstrategy != 'none')
+message('finished CU 5-9y cohort')
+
+CU5y14y <- get_cohort(df = ageyr %>% filter((PEVage == '5-14' & EPIextra == '-') | PEVstrategy == 'none') %>%
+                        filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
+                      time1 = 1, # CU campaigns will only be vaccinated at time = 1
+                      minage = 5,
+                      maxage = 15) %>%
+  mutate(strategy = ifelse(PEVstrategy == 'none', 'none', 'CU 5-14y'))%>%
+  outcomes_averted() %>%
+  filter(PEVstrategy != 'none')
+message('finished CU 5-14y cohort')
+
+cohorts_rawdraws <- rbind(CU6m14y, CU6m2y, CU6m4y, CU6m9y, CU5y9y, CU5y14y, ABcohorts) %>%
+  # distinct just in case there are some duplicates of the 'none' group
+  distinct() %>%
+  select(-starts_with('p_'),
+         -contains('diff'),-clinical, -severe, -mortality,
+         -yll, -yld, -daly, -contains('pop'), - contains('FVC'),
+         -prevalence_2_10, -prevalence_0_100, -prop_n,
+         -ends_with('perdose')
+         ) %>%
+  add_labels()
 
 
-# saveRDS(cohorts_rawdraws, "cohorts_rawdraws.rds")
-cohorts_rawdraws <- readRDS('R:/Kelly/catchup_extraboosters/archive/6_make_cohorts/20241019-135953-3faba4fe/cohorts_rawdraws.rds')
-saveRDS(cohorts_rawdraws, 'cohorts_rawdraws.rds')
+saveRDS(cohorts_rawdraws, "cohorts_rawdraws.rds")
+# cohorts_rawdraws <- readRDS('R:/Kelly/catchup_extraboosters/archive/6_make_cohorts/20241019-135953-3faba4fe/cohorts_rawdraws.rds')
+# saveRDS(cohorts_rawdraws, 'cohorts_rawdraws.rds')
 # function to get EPi doses for a cohort
 # for each timestep (which is in half years)
 get_epi <- function(df){
