@@ -64,12 +64,12 @@ file.copy(from = 'plots/plot_cumulCASA_CU_seasonal.png',
           to = 'manuscript_figures/S3_plot_cumulCASA_CU_seasonal.png')
 
 # S4 
-file.copy(from = 'plots/plot_cumulCASAperpop_AB_perennial.png',
-          to = 'manuscript_figures/S4_plot_cumulCASAperpop_AB_perennial.png')
+file.copy(from = 'plots/plot_cumulCASA_AB_seasonal.png',
+          to = 'manuscript_figures/S4_plot_cumulCASA_AB_seasonal.png')
 
 # S5
-file.copy(from = 'plots/plot_cumulCASA_AB_seasonal.png',
-          to = 'manuscript_figures/S5_plot_cumulCASA_AB_seasonal.png')
+file.copy(from = 'plots/plot_cumulCASAperpop_AB_perennial.png',
+          to = 'manuscript_figures/S5_plot_cumulCASAperpop_AB_perennial.png')
 
 # S6
 file.copy(from = 'plots/cohorts_AB_SA_perpop_perennial.png',
@@ -77,7 +77,7 @@ file.copy(from = 'plots/cohorts_AB_SA_perpop_perennial.png',
 
 # S7
 file.copy(from = 'plots/CASAbytotaldosesseasonal.png',
-          to = 'manuscript_figures/5_CASAbytotaldosesseasonal.png')
+          to = 'manuscript_figures/S7_CASAbytotaldosesseasonal.png')
 
 # Table S5
 file.copy(from = 'plots/percent_cases.csv',
