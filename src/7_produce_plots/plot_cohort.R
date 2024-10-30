@@ -74,9 +74,9 @@ plot_cohort <- function(df,
       geom_line(aes(x = age_lower, 
                     y = .data[[var]], 
                     color = labels), 
-                linewidth = 1.5) +
-       scale_color_manual(values = if(strat == 'AB') {colsAB} else if(strat == 'catch-up'){colsCU}) +
-      scale_fill_manual(values = if(strat == 'AB') {colsAB} else if(strat == 'catch-up'){colsCU}) +
+                linewidth = 1.2) +
+       scale_color_manual(values = if(strat == 'AB') {ABcols} else if(strat == 'catch-up'){colsCU}) +
+      scale_fill_manual(values = if(strat == 'AB') {ABcols} else if(strat == 'catch-up'){colsCU}) +
       scale_x_continuous(breaks = seq(0,40,1)) +
       geom_hline(yintercept = 0, 
                  linetype = 2) + 
