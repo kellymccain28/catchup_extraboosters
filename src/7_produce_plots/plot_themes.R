@@ -11,7 +11,7 @@ colsSVhybrid <- c('#283747', '#85929E')
 colors <- c(col514, col59, col6m14y, col6m2y, col6m4y, col6m9y, colsAB, colsSVhybrid, 'black')
 colors_effpl <- c(colsAB, col6m2y, col6m4y, col6m9y, col6m14y, col59, col514)
 
-CUcols <- c('#B03A2E','#B9770E','#1F618D','#148F77','#6C3483','#CA6F1E','#239B56', 'tan','#3498db','#283747','#85929E')
+CUcols <- c('#B03A2E','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db')#,'tan')
 ABcols <- c('#B03A2E', '#ec407a', '#6a1b9a', '#5c6bc0', '#0288d1','#00796b','#689f38','#ef6c00','#fbc02d')
 
 colsCU <- c(col514[2],col59[3],col6m14y[2],col6m2y[2],col6m4y[2],col6m9y[2])

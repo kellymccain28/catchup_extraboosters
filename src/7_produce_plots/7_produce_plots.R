@@ -72,25 +72,25 @@ cohorts_ageatvaxandage <- readRDS('cohorts_ageatvaxandage.rds')%>%
 cohorts_ageatvax <- readRDS('cohorts_ageatvax.rds')
 
 # Outputs for task 
-orderly_artefact(
-  'Produces a series of plots',
-  c(# Cumulative cases averted (plot_cumul_CA.R)
-    "plots/plot_cumulCA_catchupnobooster_none_seasonal.png", #
-    "plots/plot_cumulCA_AB_none_seasonal.png", #
-    "plots/plot_cumulCA_SVhybrid_none_seasonal.png",
-    "plots/plot_cumulSA_catchupnobooster_none_seasonal.png",
-    "plots/plot_cumulSA_AB_none_seasonal.png",
-    "plots/plot_cumulSA_SVhybrid_none_seasonal.png",
-    "plots/plot_cumulCASA_catchupnobooster_none_seasonal.png", 
-    "plots/plot_cumulCASA_AB_none_seasonal.png", #
-    "plots/plot_cumulCA_catchupnobooster_none_perennial.png", #
-    "plots/plot_cumulCA_AB_none_perennial.png", #
-    "plots/plot_cumulCA_SVhybrid_none_perennial.png",
-    "plots/plot_cumulSA_catchupnobooster_none_perennial.png",
-    "plots/plot_cumulSA_AB_none_perennial.png",
-    "plots/plot_cumulSA_SVhybrid_none_perennial.png",
-    "plots/plot_cumulCASA_catchupnobooster_none_perennial.png", 
-    "plots/plot_cumulCASA_AB_none_perennial.png", #
+# orderly_artefact(
+#   'Produces a series of plots',
+#   c(# Cumulative cases averted (plot_cumul_CA.R)
+    # "plots/plot_cumulCA_catchupnobooster_none_seasonal.png", #
+    # "plots/plot_cumulCA_AB_none_seasonal.png", #
+    # "plots/plot_cumulCA_SVhybrid_none_seasonal.png",
+    # "plots/plot_cumulSA_catchupnobooster_none_seasonal.png",
+    # "plots/plot_cumulSA_AB_none_seasonal.png",
+    # "plots/plot_cumulSA_SVhybrid_none_seasonal.png",
+    # "plots/plot_cumulCASA_catchupnobooster_none_seasonal.png", 
+    # "plots/plot_cumulCASA_AB_none_seasonal.png", #
+    # "plots/plot_cumulCA_catchupnobooster_none_perennial.png", #
+    # "plots/plot_cumulCA_AB_none_perennial.png", #
+    # "plots/plot_cumulCA_SVhybrid_none_perennial.png",
+    # "plots/plot_cumulSA_catchupnobooster_none_perennial.png",
+    # "plots/plot_cumulSA_AB_none_perennial.png",
+    # "plots/plot_cumulSA_SVhybrid_none_perennial.png",
+    # "plots/plot_cumulCASA_catchupnobooster_none_perennial.png", 
+    # "plots/plot_cumulCASA_AB_none_perennial.png", #
     # Age distributions (plot_age_dist.R)
     # 'plots/Age_dist_casesperperson_CU_seasonal.png',
     # "plots/Age_dist_sevcasesperperson_CU_seasonal.png",
@@ -104,44 +104,44 @@ orderly_artefact(
     # "plots/table_perc_outcomes_averted.csv",
     # Cohort plots 
     ## Efficiency frontiers
-    "plots/CAbytotaldosesseasonal.png",
-    "plots/SAbytotaldosesseasonal.png",
-    "plots/casesbytotaldosesseasonal.png",
-    "plots/sevcasesbytotaldosesseasonal.png",
-    'plots/CASAbytotaldosesseasonal.png',
-    
-    "plots/CAbytotaldosesperennial.png",
-    "plots/SAbytotaldosesperennial.png",
-    "plots/casesbytotaldosesperennial.png",
-    "plots/sevcasesbytotaldosesperennial.png",
-    'plots/CASAbytotaldosesperennial.png',
+    # "plots/CAbytotaldosesseasonal.png",
+    # "plots/SAbytotaldosesseasonal.png",
+    # "plots/casesbytotaldosesseasonal.png",
+    # "plots/sevcasesbytotaldosesseasonal.png",
+    # 'plots/CASAbytotaldosesseasonal.png',
+    # 
+    # "plots/CAbytotaldosesperennial.png",
+    # "plots/SAbytotaldosesperennial.png",
+    # "plots/casesbytotaldosesperennial.png",
+    # "plots/sevcasesbytotaldosesperennial.png",
+    # 'plots/CASAbytotaldosesperennial.png',
     # Tables (table_CA_perreldose.R)
-    'plots/outcomes_averted_CUorAB_perennial.csv',
-    'plots/outcomes_averted_combinedstrategies_perennial.csv',
+    # 'plots/outcomes_averted_CUorAB_perennial.csv',
+    # 'plots/outcomes_averted_combinedstrategies_perennial.csv',
     # plots mim ammnet
-    "plots/cohorts_CU_CAperpop_AMMnetMIM_seas.png", 
+    # "plots/cohorts_CU_CAperpop_AMMnetMIM_seas.png", 
     # "plots/cohorts_CU_CAperdose_AMMnetMIM_seas.png",
-    "plots/cohorts_CU_casesperpop_AMMnetMIM_seas.png",
-    "plots/cohorts_AB_CAperpop_AMMnetMIM_seas.png", 
+    # "plots/cohorts_CU_casesperpop_AMMnetMIM_seas.png",
+    # "plots/cohorts_AB_CAperpop_AMMnetMIM_seas.png", 
     # "plots/cohorts_AB_CAperdose_AMMnetMIM_seas.png",
-    "plots/cohorts_AB_casesperpop_AMMnetMIM_seas.png",
-    "plots/plot_cohorts_ageatvax_sevcases_seas.png",
-    "plots/plot_cohorts_ageatvax_cases_seas.png",
-    "plots/plot_cohorts_ageatvax_CA_seas.png",
-    "plots/plot_cohorts_ageatvax_CAperpop_seas.png",
+    # "plots/cohorts_AB_casesperpop_AMMnetMIM_seas.png",
+    # "plots/plot_cohorts_ageatvax_sevcases_seas.png",
+    # "plots/plot_cohorts_ageatvax_cases_seas.png",
+    # "plots/plot_cohorts_ageatvax_CA_seas.png",
+    # "plots/plot_cohorts_ageatvax_CAperpop_seas.png",
     
-    "plots/cohorts_CU_CAperpop_AMMnetMIM_per.png", 
+    # "plots/cohorts_CU_CAperpop_AMMnetMIM_per.png", 
     # "plots/cohorts_CU_CAperdose_AMMnetMIM_per.png",
-    "plots/cohorts_CU_casesperpop_AMMnetMIM_per.png",
-    "plots/cohorts_AB_CAperpop_AMMnetMIM_per.png", 
+    # "plots/cohorts_CU_casesperpop_AMMnetMIM_per.png",
+    # "plots/cohorts_AB_CAperpop_AMMnetMIM_per.png", 
     # "plots/cohorts_AB_CAperdose_AMMnetMIM_per.png",
-    "plots/cohorts_AB_casesperpop_AMMnetMIM_per.png",
-    "plots/plot_cohorts_ageatvax_sevcases_per.png",
-    "plots/plot_cohorts_ageatvax_cases_per.png",
-    "plots/plot_cohorts_ageatvax_CA_per.png",
-    "plots/plot_cohorts_ageatvax_CAperpop_per.png"
-    )
-)
+    # # "plots/cohorts_AB_casesperpop_AMMnetMIM_per.png",
+    # "plots/plot_cohorts_ageatvax_sevcases_per.png",
+    # "plots/plot_cohorts_ageatvax_cases_per.png",
+    # "plots/plot_cohorts_ageatvax_CA_per.png",
+    # "plots/plot_cohorts_ageatvax_CAperpop_per.png"
+#     )
+# )
 
 # Functions to source
 source('plot_themes.R')

@@ -28,7 +28,7 @@ plot_perc_averted <- function(df){
          fill = 'Vaccination strategy',
          color = 'Vaccination strategy') +
     theme_bw() 
-  ggsave("plots/plot_perc_uncomplicated_averted.png", width = 16, height = 8) 
+  ggsave("plots/plot_perc_uncomplicated_averted.pdf", width = 16, height = 8) 
   
   
   # heat <- ggplot(dfpl %>%
@@ -64,14 +64,14 @@ plot_perc_averted <- function(df){
   #         legend.key.size = unit(0.8, 'cm'),
   #         axis.text = element_text(size = 13),
   #         strip.text = element_text(size = 18))
-  # ggsave("plots/heatmap_perc_uncomplicated_averted.png", width = 16, height = 12) 
+  # ggsave("plots/heatmap_perc_uncomplicated_averted.pdf", width = 16, height = 12) 
   # coord_fixed()
   
   # leg <- get_legend(plt)
   # 
   # plot <- plot_grid(plt + theme(legend.position = 'none'), leg, rel_widths = c(4, 0.7))
   # plot <- grid.draw(shift_legend(plt))
-  # png(plot, filename ="plots/plot_perc_uncomplicated_averted.png")
+  # pdf(plot, filename ="plots/plot_perc_uncomplicated_averted.pdf")
   # dev.off()
   #Severe
   # ggplot(dfpl %>%

@@ -136,7 +136,7 @@ plot_efficiency_frontier <- function(df,
          shape = 'Strategy type')
   CAleg <- plot_grid(CA, legend_img, rel_widths = c(4,1))
   
-  ggsave(paste0('plots/CAbytotaldoses', seas_type, '.png'), CAleg, width = 14, height = 8)
+  ggsave(paste0('plots/CAbytotaldoses', seas_type, '.pdf'), CAleg, width = 14, height = 8)
   
   SA <- eff_plot(var = 'severe_averted_perpop', eff_var = 'maxSA') + 
     labs(x = 'Doses per 1000 population',
@@ -144,7 +144,7 @@ plot_efficiency_frontier <- function(df,
          color = 'Vaccination strategy',
          shape = 'Strategy type')
   SAleg <- plot_grid(SA, legend_img, rel_widths = c(4,1))
-  ggsave(paste0('plots/SAbytotaldoses', seas_type,'.png'), SAleg, width = 14, height = 8)
+  ggsave(paste0('plots/SAbytotaldoses', seas_type,'.pdf'), SAleg, width = 14, height = 8)
   
   averted_plt <- cowplot::plot_grid(CA + theme(legend.position="none"), 
                                 SA + theme(legend.position="none"), 
@@ -162,7 +162,7 @@ plot_efficiency_frontier <- function(df,
   # averted_plt <- plot_grid(averted, legend, 
   #                          ncol = 2, rel_widths = c(3.2, 1.1))
   
-  ggsave(paste0('plots/CASAbytotaldoses', seas_type, '.png'), avertedwleg, width = 14, height = 8)
+  ggsave(paste0('plots/CASAbytotaldoses', seas_type, '.pdf'), avertedwleg, width = 14, height = 8)
   
   # Cases and severe cases
   cases <- eff_plot(var = 'cases_perpop', eff_var = 'mincases') + 
@@ -171,7 +171,7 @@ plot_efficiency_frontier <- function(df,
          color = 'Vaccination strategy',
          shape = 'Strategy type')
   casesleg <- plot_grid(cases, legend_img, rel_widths = c(4,1))
-  ggsave(paste0('plots/casesbytotaldoses',seas_type,'.png'), casesleg, width = 14, height = 8)
+  ggsave(paste0('plots/casesbytotaldoses',seas_type,'.pdf'), casesleg, width = 14, height = 8)
   
   severe <- eff_plot(var = 'sevcases_perpop', eff_var = 'minsev') + 
     labs(x = 'Doses per 1000 population',
@@ -179,7 +179,7 @@ plot_efficiency_frontier <- function(df,
          color = 'Vaccination strategy',
          shape = 'Strategy type')  
   severeleg <- plot_grid(severe, legend_img, rel_widths = c(4,1))
-  ggsave(paste0('plots/sevcasesbytotaldoses',seas_type,'.png'), severeleg, width = 14, height = 8)
+  ggsave(paste0('plots/sevcasesbytotaldoses',seas_type,'.pdf'), severeleg, width = 14, height = 8)
   
   
   # Find efficiency frontier across all strategies an dall settings 
@@ -273,7 +273,7 @@ plot_efficiency_frontier <- function(df,
          color = 'Vaccination strategy',
          shape = 'Strategy type')
   
-  ggsave('plots/CAbytotaldoses_ALLSETTINGS.png', CAALL, width = 14, height = 8)
+  ggsave('plots/CAbytotaldoses_ALLSETTINGS.pdf', CAALL, width = 14, height = 8)
   
   
   SAALL <- eff_plot2(var = 'severe_averted_perpop', eff_var = 'maxSA') + 
@@ -282,6 +282,6 @@ plot_efficiency_frontier <- function(df,
          color = 'Vaccination strategy',
          shape = 'Strategy type')
   
-  ggsave('plots/SAbytotaldoses_ALLSETTINGS.png', SAALL, width = 14, height = 8)
+  ggsave('plots/SAbytotaldoses_ALLSETTINGS.pdf', SAALL, width = 14, height = 8)
   
 }
