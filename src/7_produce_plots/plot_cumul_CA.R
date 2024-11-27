@@ -121,14 +121,14 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
            ) +
       guides(color = 'none') +
       theme(axis.title = element_text(size = 20),
-            plot.title = element_text(size = 22),
-            legend.text = element_text(size = 15),
-            strip.text.x = element_text(size = 12),
+            axis.text.x = element_text(size = 14),
+            axis.text.y = element_text(size = 14),
+            plot.caption = element_text(size = 14),
             legend.title = element_text(size = 18),
-            plot.caption = element_text(size = 12),
+            legend.text = element_text(size = 14),
             legend.key.size = unit(0.8, 'cm'),
-            axis.text.x = element_text(size = 12),
-            axis.text.y = element_text(size = 12)
+            strip.text.x = element_text(size = 12),
+            strip.text.y = element_text(size = 12)
       )
     
     p <- cowplot::plot_grid(A + theme(axis.title = element_text(size = 14), 

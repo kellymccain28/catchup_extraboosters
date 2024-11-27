@@ -75,23 +75,23 @@ plot_cohort <- function(df,
                     y = .data[[var]], 
                     color = labels), 
                 linewidth = 1.2) +
-       scale_color_manual(values = if(strat == 'AB') {cohortcols} else if(strat == 'catch-up'){colsCU}) +
+      scale_color_manual(values = if(strat == 'AB') {cohortcols} else if(strat == 'catch-up'){colsCU}) +
       scale_fill_manual(values = if(strat == 'AB') {cohortcols} else if(strat == 'catch-up'){colsCU}) +
-      scale_x_continuous(breaks = seq(0,max(age_lower),1)) +
+      scale_x_continuous(breaks = seq(0,30,2)) +
       geom_hline(yintercept = 0, 
                  linetype = 2) + 
       facet_wrap(~ pfpr , scales = 'free',
                  labeller = labeller(pfpr = pfpr.labs)) + 
-      theme_bw() +
-      theme(axis.text.x = element_text(angle = 90, size = 12),
-            axis.title = element_text(size = 20),
-            plot.title = element_text(size = 22),
-            legend.text = element_text(size = 15),
-            strip.text.x = element_text(size = 12),
+      theme_bw(base_size = 14) +
+      theme(axis.title = element_text(size = 20),
+            axis.text.x = element_text(size = 14),
+            axis.text.y = element_text(size = 14),
+            plot.caption = element_text(size = 14),
             legend.title = element_text(size = 18),
-            plot.caption = element_text(size = 12),
+            legend.text = element_text(size = 14),
             legend.key.size = unit(0.8, 'cm'),
-            axis.text.y = element_text(size = 12))
+            strip.text.x = element_text(size = 12),
+            strip.text.y = element_text(size = 12))
   }
   
   makeplots <- function(strat){# PER POP

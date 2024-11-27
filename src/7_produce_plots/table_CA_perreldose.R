@@ -33,21 +33,67 @@ table_CA_perreldose <- function(df_summ,
               severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
               cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
               severe_averted_perFVC, severe_averted_perFVC_lower, severe_averted_perFVC_upper,
-              seasonality, PEVstrategy, EPIextra)) %>%
-    rename(`PfPR2-10` = pfpr,
-           Strategy = labels, 
-           # `Cases averted` = CA,
-           # `Severe cases averted` = SA,
-           `Cases averted\nper 1,000 pop` = CA_perpop,
-           `Severe cases averted\nper 1,000 pop` = SA_perpop,
-           `Cases averted\nper 1,000 doses` = CA_perdose,
-           `Severe cases averted\nper 1,000 doses` = SA_perdose,
-           `Cases averted\nper 1,000 FVC` = CA_perFVC,
-           `Severe cases averted\nper 1,000 FVC` = SA_perFVC)
+              seasonality, PEVstrategy, EPIextra)) 
   
-  write.csv(dftbl1, paste0('plots/outcomes_averted_CUorAB_', seas_name, '.csv'), row.names = FALSE)
+
+  dftbl2 <- dftbl1 %>%
+    filter(pfpr != 0.01 & pfpr != 0.65) 
+  dftbl2[,2] <- lapply(dftbl2[, 2], function(col) {
+    gsub(", ", "; ", col)  # Replace commas with semicolons
+  })
+  dftbl2 <- dftbl2 %>%
+    mutate(setting = case_when(
+      pfpr == 0.05 & seas_name == 'perennial' ~ "Perennial low transmission: \\textit{Pf}PR_{2-10} = 5\\%",
+      pfpr == 0.25 & seas_name == 'perennial' ~ "Perennial moderate transmission: \\textit{Pf}PR_{2-10} = 25\\%",
+      pfpr == 0.45 & seas_name == 'perennial' ~ "Perennial moderately high transmission: \\textit{Pf}PR_{2-10} = 45\\%",
+      pfpr == 0.65 & seas_name == 'perennial' ~ "Perennial moderate transmission: \\textit{Pf}PR_{2-10} = 65\\%",
+      pfpr == 0.05 & seas_name == 'seasonal' ~ "Seasonal low transmission: \\textit{Pf}PR_{2-10} = 5\\%",
+      pfpr == 0.25 & seas_name == 'seasonal' ~ "Seasonal moderate transmission: \\textit{Pf}PR_{2-10} = 25\\%",
+      pfpr == 0.45 & seas_name == 'seasonal' ~ "Seasonal moderately high transmission: \\textit{Pf}PR_{2-10} = 45\\%",
+      pfpr == 0.65 & seas_name == 'seasonal' ~ "Seasonal moderate transmission: \\textit{Pf}PR_{2-10} = 65\\%"
+    )) %>% ungroup() %>%
+    select(-pfpr) %>%
+    insert_blank_rows_latex('setting') #%>%
+    # mutate(mergerow = ifelse(grepl('transmission', labels), TRUE, FALSE)) 
+    
   
-  dftbl2 <- dftbl %>%
+  dftbl2[,2:7] <- lapply(dftbl2[, 2:7], function(col) {
+    if (is.character(col)) {
+      gsub(", ", "-", col)  # Replace commas with dashes
+    } else {
+      col  # Leave non-character columns unchanged
+    }
+  })
+  
+  dftbl2 <- dftbl2 %>%
+    rename(Strategy = labels, 
+           `Cases averted per 1000 pop` = CA_perpop,
+           `Severe cases averted per 1000 pop` = SA_perpop,
+           `Cases averted per 1000 doses` = CA_perdose,
+           `Severe cases averted per 1000 doses` = SA_perdose,
+           `Cases averted per 1000 FVC` = CA_perFVC,
+           `Severe cases averted per 1000 FVC` = SA_perFVC)
+  # dftbl2[nrow(dftbl2)+1,] <- rep('',8)#colnames(dftbl2)
+  # emptyrow <- dftbl2[46,]
+  
+  # dftbl22 <- rbind(emptyrow, dftbl2[-46,])
+  
+  write.csv(dftbl1 %>%
+              rename(`PfPR2-10` = pfpr,
+                     Strategy = labels, 
+                     `Cases averted\nper 1000 pop` = CA_perpop,
+                     `Severe cases averted\nper 1000 pop` = SA_perpop,
+                     `Cases averted\nper 1000 doses` = CA_perdose,
+                     `Severe cases averted\nper 1000 doses` = SA_perdose,
+                     `Cases averted\nper 1000 FVC` = CA_perFVC,
+                     `Severe cases averted\nper 1000 FVC` = SA_perFVC), 
+            paste0('plots/outcomes_averted_CUorAB_', seas_name, '.csv'), row.names = FALSE)
+  write.table(dftbl2, file = paste0('plots/outcomes_averted_CUorAB_', seas_name, 'forlatex.csv'), 
+              sep = ",", row.names = FALSE, col.names = TRUE, quote = FALSE) # Table 2 (perennial version)
+  
+  
+  # Combined strategies only 
+  dftbl3 <- dftbl %>%
     filter(EPIextra != '-'  & PEVstrategy == 'catch-up') %>%
     group_by(pfpr) %>%
     arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
@@ -57,22 +103,38 @@ table_CA_perreldose <- function(df_summ,
               severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
               cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
               severe_averted_perFVC, severe_averted_perFVC_lower, severe_averted_perFVC_upper,
-              seasonality, PEVstrategy, EPIextra)) %>%
-    rename(`PfPR2-10` = pfpr,
-           Strategy = labels, 
-           # `Cases averted` = CA,
-           # `Severe cases averted` = SA,
-           `Cases averted\nper 1,000 pop` = CA_perpop,
-           `Severe cases averted\nper 1,000 pop` = SA_perpop,
-           `Cases averted\nper 1,000 doses` = CA_perdose,
-           `Severe cases averted\nper 1,000 doses` = SA_perdose,
-           `Cases averted\nper 1,000 FVC` = CA_perFVC,
-           `Severe cases averted\nper 1,000 FVC` = SA_perFVC)
+              seasonality, PEVstrategy, EPIextra)) 
   
-  write.csv(dftbl2, paste0('plots/outcomes_averted_combinedstrategies_', seas_name, '.csv'), row.names = FALSE)
+  dftbl4 <- dftbl3 %>%
+    filter(pfpr != 0.01 & pfpr != 0.65) %>%
+    mutate(setting = case_when(
+      pfpr == 0.05 & seas_name == 'perennial' ~ "Perennial low transmission: \textit{Pf}PR_{2-10} = 5%",
+      pfpr == 0.25 & seas_name == 'perennial' ~ "Perennial moderate transmission: \textit{Pf}PR_{2-10} = 25%",
+      pfpr == 0.45 & seas_name == 'perennial' ~ "Perennial moderately high transmission: \textit{Pf}PR_{2-10} = 45%",
+      pfpr == 0.65 & seas_name == 'perennial' ~ "Perennial moderate transmission: \textit{Pf}PR_{2-10} = 65%",
+      pfpr == 0.05 & seas_name == 'seasonal' ~ "Seasonal low transmission: \textit{Pf}PR_{2-10} = 5%",
+      pfpr == 0.25 & seas_name == 'seasonal' ~ "Seasonal moderate transmission: \textit{Pf}PR_{2-10} = 25%",
+      pfpr == 0.45 & seas_name == 'seasonal' ~ "Seasonal moderately high transmission: \textit{Pf}PR_{2-10} = 45%",
+      pfpr == 0.65 & seas_name == 'seasonal' ~ "Seasonal moderate transmission: \textit{Pf}PR_{2-10} = 65%"
+    )) %>% ungroup() %>%
+    select(-pfpr) %>%
+    insert_blank_rows_latex('setting')
+  
+  write.csv(dftbl3 %>%
+              rename(`PfPR2-10` = pfpr,
+                     Strategy = labels,
+                     `Cases averted\nper 1,000 pop` = CA_perpop,
+                     `Severe cases averted\nper 1,000 pop` = SA_perpop,
+                     `Cases averted\nper 1,000 doses` = CA_perdose,
+                     `Severe cases averted\nper 1,000 doses` = SA_perdose,
+                     `Cases averted\nper 1,000 FVC` = CA_perFVC,
+                     `Severe cases averted\nper 1,000 FVC` = SA_perFVC), 
+            file = paste0('plots/outcomes_averted_combinedstrategies_', seas_name, '.csv'), row.names = FALSE)
+  write.table(dftbl4, file = paste0('plots/outcomes_averted_combinedstrategies_', seas_name, 'forlatex.csv'), 
+              sep = ",", row.names = FALSE, col.names = FALSE) # Table S4
   
   # Get full csv file with all the strategies ranked 
-  dftbl3 <- df_summ %>%
+  dftbl5 <- df_summ %>%
     filter(age_grp == '0-100') %>%
     filter(pfpr %in% c(0.01, 0.05, 0.25, 0.45, 0.65)) %>%
     mutate(pfpr = as.factor(pfpr)) %>%
@@ -98,16 +160,33 @@ table_CA_perreldose <- function(df_summ,
               severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
               cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
               severe_averted_perFVC, severe_averted_perFVC_lower, severe_averted_perFVC_upper,
-              seasonality, PEVstrategy, EPIextra)) %>%
-    rename(`PfPR2-10` = pfpr,
-           Strategy = labels, 
-           `Cases averted\nper 1,000 pop` = CA_perpop,
-           `Severe cases averted\nper 1,000 pop` = SA_perpop,
-           `Cases averted\nper 1,000 doses` = CA_perdose,
-           `Severe cases averted\nper 1,000 doses` = SA_perdose,
-           `Cases averted\nper 1,000 FVC` = CA_perFVC,
-           `Severe cases averted\nper 1,000 FVC` = SA_perFVC)
-  write.csv(dftbl3, 'plots/outcomes_averted_combinedstrategies_perandseas_sorted.csv', row.names = FALSE)
+              seasonality, PEVstrategy, EPIextra)) 
   
+  dftbl6 <- dftbl5 %>%
+    filter(pfpr != 0.01 & pfpr != 0.65) %>%
+    mutate(setting = case_when(
+      pfpr == 0.05 & seas_name == 'perennial' ~ "Perennial low transmission: \textit{Pf}PR_{2-10} = 5%",
+      pfpr == 0.25 & seas_name == 'perennial' ~ "Perennial moderate transmission: \textit{Pf}PR_{2-10} = 25%",
+      pfpr == 0.45 & seas_name == 'perennial' ~ "Perennial moderately high transmission: \textit{Pf}PR_{2-10} = 45%",
+      pfpr == 0.65 & seas_name == 'perennial' ~ "Perennial moderate transmission: \textit{Pf}PR_{2-10} = 65%",
+      pfpr == 0.05 & seas_name == 'seasonal' ~ "Seasonal low transmission: \textit{Pf}PR_{2-10} = 5%",
+      pfpr == 0.25 & seas_name == 'seasonal' ~ "Seasonal moderate transmission: \textit{Pf}PR_{2-10} = 25%",
+      pfpr == 0.45 & seas_name == 'seasonal' ~ "Seasonal moderately high transmission: \textit{Pf}PR_{2-10} = 45%",
+      pfpr == 0.65 & seas_name == 'seasonal' ~ "Seasonal moderate transmission: \textit{Pf}PR_{2-10} = 65%"
+    )) %>% ungroup() %>%
+    select(-pfpr) %>%
+    insert_blank_rows_latex('setting')
+  
+  write.csv(dftbl5 %>%
+              rename(`PfPR2-10` = pfpr,
+                     Strategy = labels, 
+                     `Cases averted\nper 1,000 pop` = CA_perpop,
+                     `Severe cases averted\nper 1,000 pop` = SA_perpop,
+                     `Cases averted\nper 1,000 doses` = CA_perdose,
+                     `Severe cases averted\nper 1,000 doses` = SA_perdose,
+                     `Cases averted\nper 1,000 FVC` = CA_perFVC,
+                     `Severe cases averted\nper 1,000 FVC` = SA_perFVC), 'plots/outcomes_averted_combinedstrategies_perandseas_sorted.csv', row.names = FALSE)
+  write.table(dftbl6, file = paste0('plots/outcomes_averted_combinedstrategies__perandseas_sorted_forlatex.csv'), 
+              sep = ",", row.names = FALSE, col.names = FALSE) # Table S4
 
 }

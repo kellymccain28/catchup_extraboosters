@@ -27,7 +27,16 @@ plot_perc_averted <- function(df){
          x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
          fill = 'Vaccination strategy',
          color = 'Vaccination strategy') +
-    theme_bw() 
+    theme_bw(base_size = 14) + 
+    theme(axis.title = element_text(size = 20),
+          axis.text.x = element_text(size = 14),
+          axis.text.y = element_text(angle = 90, size = 14),
+          plot.caption = element_text(size = 14),
+          legend.title = element_text(size = 18),
+          legend.text = element_text(size = 14),
+          legend.key.size = unit(0.8, 'cm'),
+          strip.text.x = element_text(size = 12),
+          strip.text.y = element_text(size = 12))
   ggsave("plots/plot_perc_uncomplicated_averted.pdf", width = 16, height = 8) 
   
   

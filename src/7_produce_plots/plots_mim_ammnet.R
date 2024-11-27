@@ -226,14 +226,14 @@ makeplots <- function(){
          color = '') + 
       theme_bw(base_size = 14) +
       theme(axis.title = element_text(size = 20),
-            plot.title = element_text(size = 22),
+            axis.text.x = element_text(size = 14),
+            axis.text.y = element_text(size = 14),
+            plot.caption = element_text(size = 14),
+            legend.title = element_text(size = 18),
             legend.text = element_text(size = 14),
-            strip.text.x = element_text(size = 12),
-            legend.title = element_text(size = 14),
-            plot.caption = element_text(size = 12),
             legend.key.size = unit(0.8, 'cm'),
-            axis.text.x = element_text(size = 12, angle = 90),
-            axis.text.y = element_text(size = 12),
+            strip.text.x = element_text(size = 12),
+            strip.text.y = element_text(size = 12),
             legend.position = 'none')
     write.csv(co, paste0('plots/cohorts_sum_ageatvax', seas,'.csv'))
     return(totals)

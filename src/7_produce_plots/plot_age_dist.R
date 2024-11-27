@@ -36,10 +36,15 @@ plot_age_dist <- function(df,
       scale_fill_manual(values = CUcols) +
       scale_linetype_manual(values = c(6, 6, 1, 1)) +
       scale_x_continuous(breaks = seq(0,25, by = 2)) +
-      theme(axis.title = element_text(size = 12),
-            plot.title = element_text(size = 18),
-            legend.text = element_text(size = 10),
-            legend.title = element_text(size = 12),
+      theme(axis.title = element_text(size = 20),
+            axis.text.x = element_text(size = 14),
+            axis.text.y = element_text(size = 14),
+            plot.caption = element_text(size = 14),
+            legend.title = element_text(size = 18),
+            legend.text = element_text(size = 14),
+            legend.key.size = unit(0.8, 'cm'),
+            strip.text.x = element_text(size = 12),
+            strip.text.y = element_text(size = 12),
             legend.position = 'bottom')
     
     return(plt)

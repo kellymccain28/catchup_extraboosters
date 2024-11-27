@@ -110,17 +110,17 @@ plot_efficiency_frontier <- function(df,
       facet_wrap(~pfpr,
                  scales = 'free',
                  labeller = labeller(pfpr = pfpr.labs)) +
-      theme_bw(base_size = 12) +
-      theme(axis.title = element_text(size = 12),
-            plot.title = element_text(size = 18),
-            legend.text = element_text(size = 10),
-            legend.title = element_text(size = 12),
-            legend.position = 'none',
-            strip.text.x = element_text(size = 10),
-            strip.text.y = element_text(size = 10),
-            plot.caption = element_text(size = 12),
-            axis.text.x = element_text(size = 10),
-            axis.text.y = element_text(angle = 90, size = 10)
+      theme_bw(base_size = 14) +
+      theme(axis.title = element_text(size = 20),
+            axis.text.x = element_text(size = 14),
+            axis.text.y = element_text(angle = 90, size = 14),
+            plot.caption = element_text(size = 14),
+            legend.title = element_text(size = 18),
+            legend.text = element_text(size = 14),
+            legend.key.size = unit(0.8, 'cm'),
+            strip.text.x = element_text(size = 12),
+            strip.text.y = element_text(size = 12),
+            legend.position = 'none'
       ) 
     return(plt)
   }
