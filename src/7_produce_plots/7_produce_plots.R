@@ -44,7 +44,8 @@ orderly_resource(
     'get_perc_dominated.R',
     'get_perc_U5.R',
     'add_labels.R',
-    'legend.png'
+    'legend.png',
+    'insert_blank_rows_latex.R'
   )
 )
 source('add_labels.R')
@@ -71,77 +72,6 @@ cohorts_ageatvaxandage <- readRDS('cohorts_ageatvaxandage.rds')%>%
   add_labels()
 cohorts_ageatvax <- readRDS('cohorts_ageatvax.rds')
 
-# Outputs for task 
-# orderly_artefact(
-#   'Produces a series of plots',
-#   c(# Cumulative cases averted (plot_cumul_CA.R)
-    # "plots/plot_cumulCA_catchupnobooster_none_seasonal.png", #
-    # "plots/plot_cumulCA_AB_none_seasonal.png", #
-    # "plots/plot_cumulCA_SVhybrid_none_seasonal.png",
-    # "plots/plot_cumulSA_catchupnobooster_none_seasonal.png",
-    # "plots/plot_cumulSA_AB_none_seasonal.png",
-    # "plots/plot_cumulSA_SVhybrid_none_seasonal.png",
-    # "plots/plot_cumulCASA_catchupnobooster_none_seasonal.png", 
-    # "plots/plot_cumulCASA_AB_none_seasonal.png", #
-    # "plots/plot_cumulCA_catchupnobooster_none_perennial.png", #
-    # "plots/plot_cumulCA_AB_none_perennial.png", #
-    # "plots/plot_cumulCA_SVhybrid_none_perennial.png",
-    # "plots/plot_cumulSA_catchupnobooster_none_perennial.png",
-    # "plots/plot_cumulSA_AB_none_perennial.png",
-    # "plots/plot_cumulSA_SVhybrid_none_perennial.png",
-    # "plots/plot_cumulCASA_catchupnobooster_none_perennial.png", 
-    # "plots/plot_cumulCASA_AB_none_perennial.png", #
-    # Age distributions (plot_age_dist.R)
-    # 'plots/Age_dist_casesperperson_CU_seasonal.png',
-    # "plots/Age_dist_sevcasesperperson_CU_seasonal.png",
-    # "plots/Age_dist_casesandsev_perperson_CU_seasonal.png",
-    # 'plots/Age_dist_casesperperson_CU_perennial.png',
-    # "plots/Age_dist_sevcasesperperson_CU_perennial.png",
-    # "plots/Age_dist_casesandsev_perperson_CU_perennial.png",
-    # Percent averted (plot_perc_averted.R)
-    # "plots/plot_perc_uncomplicated_averted.png",
-    # "plots/heatmap_perc_uncomplicated_averted.png",
-    # "plots/table_perc_outcomes_averted.csv",
-    # Cohort plots 
-    ## Efficiency frontiers
-    # "plots/CAbytotaldosesseasonal.png",
-    # "plots/SAbytotaldosesseasonal.png",
-    # "plots/casesbytotaldosesseasonal.png",
-    # "plots/sevcasesbytotaldosesseasonal.png",
-    # 'plots/CASAbytotaldosesseasonal.png',
-    # 
-    # "plots/CAbytotaldosesperennial.png",
-    # "plots/SAbytotaldosesperennial.png",
-    # "plots/casesbytotaldosesperennial.png",
-    # "plots/sevcasesbytotaldosesperennial.png",
-    # 'plots/CASAbytotaldosesperennial.png',
-    # Tables (table_CA_perreldose.R)
-    # 'plots/outcomes_averted_CUorAB_perennial.csv',
-    # 'plots/outcomes_averted_combinedstrategies_perennial.csv',
-    # plots mim ammnet
-    # "plots/cohorts_CU_CAperpop_AMMnetMIM_seas.png", 
-    # "plots/cohorts_CU_CAperdose_AMMnetMIM_seas.png",
-    # "plots/cohorts_CU_casesperpop_AMMnetMIM_seas.png",
-    # "plots/cohorts_AB_CAperpop_AMMnetMIM_seas.png", 
-    # "plots/cohorts_AB_CAperdose_AMMnetMIM_seas.png",
-    # "plots/cohorts_AB_casesperpop_AMMnetMIM_seas.png",
-    # "plots/plot_cohorts_ageatvax_sevcases_seas.png",
-    # "plots/plot_cohorts_ageatvax_cases_seas.png",
-    # "plots/plot_cohorts_ageatvax_CA_seas.png",
-    # "plots/plot_cohorts_ageatvax_CAperpop_seas.png",
-    
-    # "plots/cohorts_CU_CAperpop_AMMnetMIM_per.png", 
-    # "plots/cohorts_CU_CAperdose_AMMnetMIM_per.png",
-    # "plots/cohorts_CU_casesperpop_AMMnetMIM_per.png",
-    # "plots/cohorts_AB_CAperpop_AMMnetMIM_per.png", 
-    # "plots/cohorts_AB_CAperdose_AMMnetMIM_per.png",
-    # # "plots/cohorts_AB_casesperpop_AMMnetMIM_per.png",
-    # "plots/plot_cohorts_ageatvax_sevcases_per.png",
-    # "plots/plot_cohorts_ageatvax_cases_per.png",
-    # "plots/plot_cohorts_ageatvax_CA_per.png",
-    # "plots/plot_cohorts_ageatvax_CAperpop_per.png"
-#     )
-# )
 
 # Functions to source
 source('plot_themes.R')
@@ -152,6 +82,7 @@ source('plot_cohort.R')
 source('table_CA_perreldose.R')
 source('plot_perc_averted.R')
 source('plots_mim_ammnet.R')
+source('insert_blank_rows_latex.R')
 
 dir.create('plots/')
 # Make the plots 
