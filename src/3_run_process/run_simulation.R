@@ -75,7 +75,8 @@ runsim <- function(x){
     # get mean of population and doses by month
     mutate_at(vars(n_0_182.5:n_3650_5475, 
                    n_730_3650, n_0_36500,
-                   n_detect_730_3650, n_detect_0_36500,
+                   n_detect_lm_730_3650, n_detect_lm_0_36500,
+                   n_detect_pcr_730_3650, n_detect_pcr_0_36500,
                    infectivity), mean, na.rm = TRUE) |>
     
     # get sums of cases by month
