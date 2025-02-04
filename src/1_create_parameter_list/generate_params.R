@@ -1,7 +1,9 @@
 # Generate parameters for malariasimulation ------------------------------------
 
 generate_params <- function(inputpath,   # path to input scenarios
-                            outputpath){ # path where output file will be stored
+                            outputpath#,  # path where output file will be stored
+                            # age_scaling
+                            ){  # value for scaling of age-based efficacy (1 or 0.64)
   #setwd(path)
   # read in dataframe of all scenario combinations
   scenarios <- readRDS(inputpath)
@@ -54,8 +56,8 @@ generate_params <- function(inputpath,   # path to input scenarios
     }
     
     # outcome definitions ----------
-    render_min_ages = c(c(0, 0.5, seq(1, 49.5, by = 0.5))*year, 50 * year, 0, 0, 5*year, 10*year)#seq(50, 95, by = 5)*year, 
-    render_max_ages = c(c(0.5, seq(1, 50, by = 0.5))*year, 100*year, 100 * year, 5*year, 10*year, 15*year) #seq(55, 100, by = 5)*year,
+    render_min_ages = c(c(0, 0.5, seq(1, 46.5, by = 0.5))*year, 46.5 * year, 0, 0, 5*year, 10*year)#seq(50, 95, by = 5)*year, 
+    render_max_ages = c(c(0.5, seq(1, 47, by = 0.5))*year, 100*year, 100 * year, 5*year, 10*year, 15*year) #seq(55, 100, by = 5)*year,
     
     # Set clinical incidence rendering 
     params$clinical_incidence_rendering_min_ages = render_min_ages
