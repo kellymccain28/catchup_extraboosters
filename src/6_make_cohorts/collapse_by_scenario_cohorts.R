@@ -6,8 +6,9 @@ collapse_by_scenario_cohorts <- function(df,
   if(by == 'age'){
     df <- df %>%
       group_by(t, age_grp, int_ID, strategy,age_lower, age_upper, 
-               pfpr, seasonality, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA,
-               labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+               pfpr, seasonality, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA#,
+               # labels, label_int, strategytype, EPIextra_labels, scen_labels
+               ) %>%
       summarize(across(c(n, 
                          cases, sevcases, deaths, 
                          contains('averted'), #totaldoses,
@@ -21,8 +22,9 @@ collapse_by_scenario_cohorts <- function(df,
   } else if (by == 'overall'){
     df <- df %>%
       group_by(int_ID,
-               pfpr, seasonality, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA,
-               labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+               pfpr, seasonality, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA#,
+               # labels, label_int, strategytype, EPIextra_labels, scen_labels
+               ) %>%
       summarize(across(c(n, cases, sevcases, deaths, 
                          contains('averted'), totaldoses,
                          cases_per1000pop, sevcases_per1000pop),
@@ -35,8 +37,9 @@ collapse_by_scenario_cohorts <- function(df,
   } else if (by == 'ageatvax'){
     df <- df %>%
       group_by(ageatvax, int_ID,strategy,
-               pfpr, seasonality, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA,
-               labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+               pfpr, seasonality, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA#,
+               # labels, label_int, strategytype, EPIextra_labels, scen_labels
+               ) %>%
       summarize(across(c(n, cases, sevcases, deaths, 
                          contains('averted'),  totaldoses,
                          cases_per1000pop, sevcases_per1000pop),
@@ -50,8 +53,9 @@ collapse_by_scenario_cohorts <- function(df,
     df <- df %>%
       group_by(ageatvax, int_ID, age_grp, age_lower, age_upper, 
                strategy,
-               pfpr, seasonality, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA,
-               labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+               pfpr, seasonality, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA#,
+               # labels, label_int, strategytype, EPIextra_labels, scen_labels
+               ) %>%
       summarize(across(c(n, cases, sevcases, deaths, 
                          contains('averted'),  #totaldoses,
                          cases_per1000pop, sevcases_per1000pop),
