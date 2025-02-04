@@ -6,12 +6,13 @@ process_runs <- function(df,
                          aggregation){
   
   # Pre-processing, filter out first 5 years where there is no vaccination and reset to 1-30 years
+  # 4/2/25: changed burnin for last15 to 15*12 instead of 5*15 because by 12 months 
   df <- df %>%
     drop_burnin(burnin = 5*12)
   
   if(aggregation == 'last15'){
     df <- df %>%
-      drop_burnin(burnin = 5*15) # to get last 15 years of 30 year sim
+      drop_burnin(burnin = 15*12) # to get last 15 years of 30 year sim
   }
   
   # Don't run the processing over last 15 years if not none or AB (will save space)
