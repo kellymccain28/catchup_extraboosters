@@ -1,5 +1,5 @@
 # Workflow to pull and combine processed runs (task 4)
-send_report4 <- function(queue_hold){
+send_report4 <- function(queue_hold, age_scaling){
 
   # Read in parameter list 
   # pars <- readRDS('R:/Kelly/catchupR21/archive/1_create_parameter_list/20240503-125203-48a00fa0/parameters_torun_R21.rds')
@@ -17,7 +17,8 @@ send_report4 <- function(queue_hold){
   bundle4 <- task_create_bulk_expr(
     orderly2::orderly_run('4_combine_runs', parameters = list(analysis = 'catch-up',
                                                               n500 = by,
-                                                              to = to)),
+                                                              to = to, 
+                                                              age_scaling = age_scaling)),
     nlist,
     resources = res
   )

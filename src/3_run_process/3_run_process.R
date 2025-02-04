@@ -30,12 +30,14 @@ orderly_parameters(analysis = NULL, # parameter to say it is a catch-up or mass 
                    EPIextra = NULL, 
                    massbooster_rep = NULL,
                    MDA = NULL,
-                   par_index = NULL)
+                   par_index = NULL,
+                   age_scaling = NULL)
 
 
 # Set dependencies
 orderly2::orderly_dependency("1_create_parameter_list",
-                             "latest(parameter:analysis == this:analysis)",
+                             "latest(parameter:analysis == this:analysis
+                             && parameter:age_scaling == this:age_scaling)",
                              c(parameters_torun_R21.rds = "parameters_torun_R21.rds"))
 param_df <- readRDS('parameters_torun_R21.rds')
 

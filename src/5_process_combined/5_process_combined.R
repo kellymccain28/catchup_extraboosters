@@ -13,27 +13,28 @@ orderly_strict_mode()
 orderly2::orderly_description('Combine processed malariasimulation runs by groups of 500')
 
 # Set parameters for task 
-orderly_parameters(analysis = NULL)
+orderly_parameters(analysis = NULL, 
+                   age_scaling = NULL)
 
 # Set dependencies 
 orderly2::orderly_dependency("1_create_parameter_list",
-                             "latest(parameter:analysis == this:analysis)",
+                             "latest(parameter:analysis == this:analysis
+                             && parameter:age_scaling == this:age_scaling)",
                              c(parameters_torun_R21.rds = "parameters_torun_R21.rds"))
 
 pars <- readRDS("parameters_torun_R21.rds")
 
 
 output_overall <- data.frame()
-output_ageyr <- data.frame()
+# output_ageyr <- data.frame()
 output_ageyrto50 <- data.frame()
 output_last15 <- data.frame()
 
 # using files that started 
-output_overall <- readRDS('R:/Kelly/catchup_extraboosters/draft/5_process_combined/20241018-083359-49de9d8f/output_overall_intermediate.rds')
+# output_overall <- readRDS('R:/Kelly/catchup_extraboosters/archive/5_process_combined/20241018-170856-c8607bb1/output_overall_intermediate.rds')
 # output_ageyr <- readRDS('R:/Kelly/catchup_extraboosters/draft/5_process_combined/20241018-083359-49de9d8f/output_ageyr_intermediate.rds')
-output_ageyrto50 <- readRDS('R:/Kelly/catchup_extraboosters/draft/5_process_combined/20241018-083359-49de9d8f/output_ageyr_toage50_intermediate.rds') %>%
-  select(-c(totaldoses, massdoses, EPIdoses))
-output_last15 <- readRDS('R:/Kelly/catchup_extraboosters/draft/5_process_combined/20241018-083359-49de9d8f/output_last15_intermediate.rds')
+# output_ageyrto50 <- readRDS('R:/Kelly/catchup_extraboosters/archive/5_process_combined/20241018-170856-c8607bb1/output_ageyr_toage50_intermediate.rds') 
+# output_last15 <- readRDS('R:/Kelly/catchup_extraboosters/archive/5_process_combined/20241018-170856-c8607bb1/output_last15_intermediate.rds')
 # 
 # saveRDS(output_overall, 'output_overall_intermediate.rds')
 # saveRDS(output_ageyr, 'output_ageyr_intermediate.rds')
@@ -49,7 +50,7 @@ output_last15 <- readRDS('R:/Kelly/catchup_extraboosters/draft/5_process_combine
 
 
 # Add each set of processed runs to dataset
-for(i in as.integer(c(seq(16001, max(pars$scenarioID)-500, by = 500), 34501))){ #seq(0.5, 18, by = 0.5), (removing this bc just adding to orignals for now)
+for(i in as.integer(c(seq(1, max(pars$scenarioID)-500, by = 500), 34501))){ #seq(0.5, 18, by = 0.5), (removing this bc just adding to orignals for now)
   message(i)
   orderly2::orderly_dependency("4_combine_runs",
                                "latest(parameter:analysis == this:analysis
@@ -98,10 +99,6 @@ orderly_artefact(
   'Produces processed datasets, summarized by age over whole sim, last 15 yrs, and first 5 years,
   and summarized by age and year, all with and without draws',
   c(#'output_ageyr_combined_raw.rds', # combined dataset with no further processing 
-    # Whole sim - age + year
-    # "summarized_ageyr.rds",
-    # "summarized_toage50_ageyr.rds",
-    # "summarized_toage50_ageyr_draws.rds",
     # Overall (30 years) - age only
     "summarized_overall.rds",
     "summarized_overall_draws.rds",

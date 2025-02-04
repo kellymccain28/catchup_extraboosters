@@ -12,7 +12,8 @@ library(malariasimulation)
 orderly_strict_mode()
 
 # Set parameters for task 
-orderly_parameters(analysis = NULL) # either catch-up or mass 
+orderly_parameters(analysis = NULL,# either catch-up or mass
+                   age_scaling = NULL) 
 
 # OUtputs for task 
 orderly_artefact(
@@ -211,7 +212,8 @@ saveRDS(combo, 'scenarios_torun_R21.rds')
 
 # Second, make and export parameter list --------------------------------------------------------------
 generate_params('scenarios_torun_R21.rds', # file path to pull
-                "parameters_torun_R21.rds")      # file path to push
+                "parameters_torun_R21.rds",
+                age_scaling)      # file path to push
 
 
 ###############################################

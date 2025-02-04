@@ -13,10 +13,11 @@ orderly_strict_mode()
 orderly2::orderly_description('Create cohorts from processed ageyr dataset')
 
 # Set parameters for task
-orderly_parameters(analysis = NULL)
+orderly_parameters(analysis = NULL,
+                   age_scaling = NULL)
 
 orderly2::orderly_dependency("5_process_combined",
-                             "latest()",
+                             "latest(parameter:age_scaling == this:age_scaling)",
                              c(output_ageyr_toage50_intermediate.rds = 'output_ageyr_toage50_intermediate.rds'#,
                                # summarized_ageyr_draws.rds = "summarized_ageyr_draws.rds"
                                ))
@@ -50,7 +51,7 @@ source('get_cohort.R')
 source('collapse_by_scenario_cohorts.R')
 source('calc_inci_pppy.R')
 source('outcomes_averted.R')
-source('add_labels.R')
+# source('add_labels.R')
 
 
 ageyr <- readRDS('output_ageyr_toage50_intermediate.rds') %>%

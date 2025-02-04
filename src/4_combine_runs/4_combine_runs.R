@@ -14,7 +14,8 @@ orderly2::orderly_description('Combine processed malariasimulation runs by group
 # Set parameters for task 
 orderly_parameters(analysis = NULL,
                    n500 = NULL,
-                   to = NULL)
+                   to = NULL,
+                   age_scaling = NULL)
 
 start <- paste0(Sys.time(), ' start')
 message(start)
@@ -69,7 +70,8 @@ for (i in num_tostart:num_toend){
                              && parameter:EPIextra == environment:EPIextra
                              && parameter:massbooster_rep == environment:massbooster_rep
                              && parameter:MDA == environment:MDA
-                             && parameter:par_index == environment:par_index)",
+                             && parameter:par_index == environment:par_index
+                             && parameter:age_scaling == this:age_scaling)",
                              c("data/overall/processed_run_overall${par_index}.rds" = "processed_run_overall.rds",
                                "data/ageyr/processed_run_ageyr${par_index}.rds" = 'processed_run_ageyr.rds'))
 
@@ -92,7 +94,8 @@ for (i in num_tostart:num_toend){
                              && parameter:EPIextra == environment:EPIextra
                              && parameter:massbooster_rep == environment:massbooster_rep
                              && parameter:MDA == environment:MDA
-                             && parameter:par_index == environment:par_index)",
+                             && parameter:par_index == environment:par_index
+                             && parameter:age_scaling == this:age_scaling)",
                                  c("data/last15/processed_run_last15${par_index}.rds" = 'processed_run_last15.rds'))
     last15runs[[i]] <- readRDS(paste0('data/last15/processed_run_last15', par_index,'.rds'))
     message(paste0(Sys.time(), ' got AB or none dependencies'))

@@ -1,5 +1,5 @@
 # Workflow to send simulation/processing runs to the cluster 
-send_report3 <- function(pars, x, queue_hold){ #x is the rows in pars df that we want to run 
+send_report3 <- function(pars, x, queue_hold, age_scaling){ #x is the rows in pars df that we want to run 
   # Read in parameter list 
   # x <- 1:nrow(pars)
   # x <- c(8835:nrow(pars))
@@ -23,10 +23,11 @@ send_report3 <- function(pars, x, queue_hold){ #x is the rows in pars df that we
                                                              EPIextra = EPIextra,
                                                              massbooster_rep = massbooster_rep,
                                                              MDA = MDA,
-                                                             par_index = scenarioID)),
+                                                             par_index = scenarioID,
+                                                             age_scaling = age_scaling)),
     pars[x,],
     resources = res, #strongminded_africanclawedfrog
-    bundle_name = 'report3_run_and_process_extra2yboosters'
+    bundle_name = 'report3'
   )
   
   return(bundle3)

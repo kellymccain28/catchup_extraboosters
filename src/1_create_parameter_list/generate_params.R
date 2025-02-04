@@ -1,8 +1,8 @@
 # Generate parameters for malariasimulation ------------------------------------
 
 generate_params <- function(inputpath,   # path to input scenarios
-                            outputpath#,  # path where output file will be stored
-                            # age_scaling
+                            outputpath,  # path where output file will be stored
+                            age_scaling
                             ){  # value for scaling of age-based efficacy (1 or 0.64)
   #setwd(path)
   # read in dataframe of all scenario combinations
@@ -144,7 +144,7 @@ generate_params <- function(inputpath,   # path to input scenarios
     
     # Vaccination with a PEV ----
     if (PEV == 'R21'){
-    
+    # here, should add if ages_scaling is true or false and what that would mean
       # R21 ----------
       # median of these parameters is variable -- chose to take median from Table 1 in R21 paper https://ssrn.com/abstract=4597985
       # r21_efficacy <- read.csv('efficacy_parameters.csv') %>%

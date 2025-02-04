@@ -20,11 +20,11 @@ orderly_strict_mode()
 orderly2::orderly_description('Make figures for manuscript')
 
 # Set parameters for task 
-# no parameters
+orderly_parameters(age_scaling = NULL)
 
 # Set dependencies 
 orderly2::orderly_dependency("5_process_combined",
-                             "latest()",
+                             "latest(parameter:age_scaling == this:age_scaling)",
                              c(summarized_overall.rds = "summarized_overall.rds",
                                summarized_overall_draws.rds = "summarized_overall_draws.rds",
                                # summarized_ageyr.rds = "summarized_ageyr.rds",
@@ -59,7 +59,7 @@ df_last15 <- readRDS("summarized_last15.rds") %>%
   add_labels()
 
 orderly2::orderly_dependency("6_make_cohorts",
-                             "latest()",
+                             "latest(parameter:age_scaling == this:age_scaling)",
                              c(cohorts_byage.rds = "cohorts_byage.rds",
                                cohorts_ageatvaxandage.rds = "cohorts_ageatvaxandage.rds",
                                cohorts_ageatvax.rds = "cohorts_ageatvax.rds",
