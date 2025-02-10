@@ -1,16 +1,23 @@
 # Helper function to get rates from model run 
 
-get_rates1 <- function(df, time_div){
+get_rates1 <- function(df, aggregation){#, time_div){
   # Get rates and join prevalence and doses
   rates <- get_rates(df %>% ungroup(),
-                     time_divisor = time_div,
-                     baseline_t = 0, # default
-                     age_divisor = 365,
-                     scaler = 0.215,
-                     treatment_scaler = 0.5,
-                     baseline_treatment = 0.45,
-                     aggregate_age = FALSE)  |>
-    mutate(time_div = time_div, 
+                     baseline_year = 1) 
+  
+  # Get half years
+  rates$halfyear <- ifelse(rates$month <=6, (rates$year - 0.5)*2, 
+                                ifelse(rates$month > 6, (rates$year)*2, NA))
+  
+  
+  # Make new column for overall simulation summarization 
+  if(aggregation == 'overall' | aggregation == 'last15'){
+    rates$halfyear = 1
+  }
+  
+  rates_agg <- postie:::rates_aggregate(rates, 
+                                        c("age_lower", "age_upper", "halfyear")) %>%
+    mutate(#time_div = time_div, 
            ID = df$ID[1],
            sim_length = df$sim_length[1],
            scenario = df$scenario[1],
@@ -30,5 +37,5 @@ get_rates1 <- function(df, time_div){
            int_ID = df$int_ID[1]
     )
   
-  return(rates)
+  return(rates_agg)
 }

@@ -45,49 +45,28 @@ runsim <- function(x){
            EPIbooster = data$EPIbooster,
            EPIextra = data$EPIextra,
            massbooster_rep = data$massbooster_rep,
-           MDA = data$MDA) |>
+           MDA = data$MDA,
+           age_scaling = data$age_scaling) |>
     ungroup() |>
     
     filter(timestep > 0) |> # remove warmup period
     
-    mutate(year = ceiling(timestep/365),
-           month = ceiling(timestep/(365/12))) |>
-    
     # keep only necessary variables
-    dplyr::select(ID, scenario, drawID, EIR, warmup, sim_length, population, pfpr, month, year, seasonality, speciesprop,
+    dplyr::select(ID, scenario, drawID, EIR, warmup, sim_length, population, pfpr, seasonality, #speciesprop,
                   treatment, SMC, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA, 
-                  infectivity,
+                  age_scaling,
+                  # infectivity,
                   timestep, ft,
                   starts_with("n_pev"),
                   starts_with("n_inc"), -starts_with("p_inc"),
                   starts_with("n_inc_severe"), -starts_with("p_inc_severe"),
                   starts_with("n_detect"), -starts_with("p_detect"),
-                  starts_with("n_"), -starts_with("n_age"), 
+                  starts_with("n_"), #-starts_with("n_age"), 
                   -n_bitten, n_treated, n_infections) |>
     
     # add in an intervention ID
-    dplyr::mutate(int_ID = paste(pfpr, seasonality, PEV, PEVstrategy, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA, sep = '_')) |>
+    dplyr::mutate(int_ID = paste(pfpr, seasonality, PEV, PEVstrategy, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA, sep = '_'))
     
-    # group by month and scenarios 
-    group_by(ID, scenario, drawID, EIR, warmup, sim_length, population, pfpr, month, year, seasonality, speciesprop,
-             treatment, SMC, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA) |>
-    
-    # get mean of population and doses by month
-    mutate_at(vars(n_0_182.5:n_3650_5475, 
-                   n_730_3650, n_0_36500,
-                   n_detect_lm_730_3650, n_detect_lm_0_36500,
-                   n_detect_pcr_730_3650, n_detect_pcr_0_36500,
-                   infectivity), mean, na.rm = TRUE) |>
-    
-    # get sums of cases by month
-    mutate_at(vars(starts_with('n_pev'), 
-                   n_inc_clinical_0_182.5:n_inc_severe_3650_5475,
-                   n_treated, n_infections), sum, na.rm = TRUE) |> 
-    select(-c(timestep)) |> # removing timestep that is per day 
-    distinct() |>
-    mutate(timestep = month)  # this is so that postie can use the timestep variable - 
-                              # need to adjust processing functions to account for timestep not being a day 
-  
   return(output)
 }
 

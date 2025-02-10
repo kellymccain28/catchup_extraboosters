@@ -29,7 +29,7 @@ mortality_rate <- function(x,
     # this mortality rate is already included in postie processing functions so is not needed 
     # dplyr::mutate(mortality_rate = scaler * .data$severe) |> 
     
-    dplyr::mutate(deaths = .data$mortality * .data$n)  # deaths
+    dplyr::mutate(deaths = .data$mortality * .data$person_days)  # deaths
 }
 
 # DALYs ------------------------------------------------------------------------
