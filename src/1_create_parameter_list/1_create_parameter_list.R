@@ -332,4 +332,5 @@ combo <- combo |>
 saveRDS(combo, 'baseline_scenarios.rds')
 
 generate_params('baseline_scenarios.rds', # file path to pull
-                "baseline_parameters.rds") # file path to push 
+                "baseline_parameters.rds", # file path to push 
+                age_scaling)

@@ -56,7 +56,7 @@ generate_params <- function(inputpath,   # path to input scenarios
     }
     
     # outcome definitions ----------
-    render_min_ages = c(c(0, 0.5, seq(1, 46.5, by = 0.5))*year, 46.5 * year, 0, 0, 5*year, 10*year)#seq(50, 95, by = 5)*year, 
+    render_min_ages = c(c(0, 0.5, seq(1, 46.5, by = 0.5))*year, 47 * year, 0, 0, 5*year, 10*year)#seq(50, 95, by = 5)*year, 
     render_max_ages = c(c(0.5, seq(1, 47, by = 0.5))*year, 100*year, 100 * year, 5*year, 10*year, 15*year) #seq(55, 100, by = 5)*year,
     
     # Set clinical incidence rendering 
@@ -308,8 +308,6 @@ generate_params <- function(inputpath,   # path to input scenarios
               epiboosters <- round(c(12 * month, 2 * year, 10 * year))
             }
             
-            epiboost_cov <- matrix(0.8, rep(1, length(epiboosters)-1), nrow = length(pevtimesteps), ncol = length(epiboosters))
-            
             epiboosterprofiles <- if (length(epiboosters) == 1){ 
               list(r21_booster_profile) 
             } else if (length(epiboosters) == 2){
@@ -321,6 +319,8 @@ generate_params <- function(inputpath,   # path to input scenarios
             }
             
             pevtimesteps <- warmup + program_start # starting 5 years after warmup ends
+            
+            epiboost_cov <- matrix(0.8, rep(1, length(epiboosters)-1), nrow = length(pevtimesteps), ncol = length(epiboosters))
             
             params <- set_pev_epi(
               parameters = params,
@@ -395,7 +395,7 @@ generate_params <- function(inputpath,   # path to input scenarios
               booster_spacing = SVbooster, # timesteps following initial vaccination 
               booster_profile = list(r21_booster_profile),
               booster_coverage = boost_cov # prop of vaccinated pop who will receive booster vaccine
-            ) 
+              ) 
           }
           
           # mass ----------
@@ -557,7 +557,7 @@ generate_params <- function(inputpath,   # path to input scenarios
               min_wait = 20 * year,
               booster_spacing = massboosters,
               booster_coverage = massboost_cov,
-              booster_profile = list(r21_booster_profile) 
+              booster_profile = list(r21_booster_profile)
             )
             
             print(paste0("Mass timesteps: ", mass_pev_timesteps <- params$mass_pev_timesteps - warmup))
@@ -625,6 +625,7 @@ generate_params <- function(inputpath,   # path to input scenarios
     # save as data.frame
     data$params <- list(params)
     data$scenarioID <- x
+    data$age_scaling <- age_scaling
     
     # print count
     print(paste(x,'pfpr=',data$pfpr))
