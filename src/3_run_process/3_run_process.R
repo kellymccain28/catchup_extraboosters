@@ -63,7 +63,7 @@ orderly_resource(
     "get_rates1.R",
     "get_prev.R",
     "get_doses.R",
-    "add_doses.R"#,
+    "add_doses.R")#,
     # "deaths_dalys.R")
 )
 
