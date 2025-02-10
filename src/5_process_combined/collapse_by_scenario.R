@@ -2,14 +2,14 @@
 
 collapse_by_scenario <- function(df){
   df <- df %>%
-    group_by(t, age_grp, age_lower, age_upper, int_ID, 
-             pfpr, seasonality, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA#,
+    group_by(halfyear, age_grp, age_lower, age_upper, int_ID, 
+             pfpr, seasonality, PEVstrategy, PEVage, EPIbooster, EPIextra, age_scaling, PEV, PEVcov, PEVrounds, massbooster_rep, MDA, 
              # labels, label_int, strategytype, EPIextra_labels, scen_labels
              ) %>%
     summarize(across(c(clinical, severe, mortality,
                        n, prop_n, contains('dose'), contains('n_pev'),
                        prevalence_2_10, prevalence_0_100,
-                       cases, sevcases, deaths, yll, yld, daly,
+                       cases, sevcases, deaths, # yll, yld, daly,
                        cases_perpop, sevcases_perpop, deaths_perpop,
                        contains('averted'), contains('baseline'), 
                        clinical_diff, p_CA, p_SA, p_clin_diff),

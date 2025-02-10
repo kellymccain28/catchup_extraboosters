@@ -7,8 +7,8 @@ process_combined <- function(df){
   dfname <- stringr::str_replace(deparse(substitute(df)), pattern = 'output_', replacement = '')
   
   draws <- df %>%
-    outcomes_averted() #%>%
-    # add_labels() 
+    outcomes_averted() %>%
+    add_agegrps()
   message(paste0(Sys.time(), 'get draws ', dfname))
   if(dfname != 'ageyr'){ # save draws df only if not by ageyr (too big)
     saveRDS(draws, paste0('summarized_', dfname, '_draws.rds'))

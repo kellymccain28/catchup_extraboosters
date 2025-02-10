@@ -116,7 +116,7 @@ orderly_artefact(
 # Set resources
 orderly_resource(
   c('collapse_by_scenario.R',
-    'add_labels.R',
+    'add_agegrps.R',
     'outcomes_averted.R',
     'find_frontiers.R',
     'process_combined.R'
@@ -124,7 +124,7 @@ orderly_resource(
 
 # Functions to source
 source('collapse_by_scenario.R')
-source('add_labels.R')
+source('add_agegrps.R')
 source('outcomes_averted.R')
 source('find_frontiers.R')
 source('process_combined.R')

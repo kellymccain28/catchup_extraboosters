@@ -42,7 +42,7 @@ orderly_resource(
     'collapse_by_scenario_cohorts.R',
     'calc_inci_pppy.R',
     'outcomes_averted.R',
-    'add_labels.R')
+    'add_agegrps.R')
 )
 
 
@@ -51,7 +51,7 @@ source('get_cohort.R')
 source('collapse_by_scenario_cohorts.R')
 source('calc_inci_pppy.R')
 source('outcomes_averted.R')
-# source('add_labels.R')
+source('add_agegrps.R')
 
 
 ageyr <- readRDS('output_ageyr_toage50_intermediate.rds') %>%
@@ -160,7 +160,7 @@ cohorts_rawdraws <- rbind(CU6m14y, CU6m2y, CU6m4y, CU6m9y, CU5y9y, CU5y14y, ABco
          -prevalence_2_10, -prevalence_0_100, -prop_n,
          -ends_with('perdose')
          ) %>%
-  add_labels()
+  add_agegrps()
 
 
 saveRDS(cohorts_rawdraws, "cohorts_rawdraws.rds")
@@ -215,8 +215,9 @@ ab_condensed <- cohorts_rawdraws %>%
   # First condense to 1 'cohort' - grouping by age and strategy and get median of everything across 60 cohorts
   group_by(age_lower, age_upper, ID, drawID, strategy,
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
-           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
+           # labels, label_int, strategytype, EPIextra_labels, scen_labels
+           ) %>%
   mutate_at(vars(cases, sevcases, deaths,
                     n, epiprimary, epibooster,
                     contains('averted')),
@@ -225,7 +226,8 @@ ab_condensed <- cohorts_rawdraws %>%
   distinct(age_lower, age_upper, ID, drawID, strategy,
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
            EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-           labels, label_int, strategytype, EPIextra_labels, scen_labels, .keep_all = TRUE)
+           # labels, label_int, strategytype, EPIextra_labels, scen_labels, 
+           .keep_all = TRUE)
 saveRDS(ab_condensed, 'ab_condensed.rds')
 
 # Now for CU cohorts
@@ -246,15 +248,16 @@ allcohorts_draws <- cohorts_rawdraws2 %>%
   select(t, ID, drawID, strategy,
          int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-         labels, label_int, strategytype, EPIextra_labels, scen_labels,
+         # labels, label_int, strategytype, EPIextra_labels, scen_labels,
          cases, sevcases, deaths, 
          epiprimary, epibooster, mass, n, totaldoses,
          cases_averted, deaths_averted, severe_averted) %>%
   # Get sum of n in each cohort over all ages in cohort (i.e. 6m-2y would have multiple age groups that we want to sum up)
   group_by(t, ID, drawID, strategy, 
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
-           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
+           # labels, label_int, strategytype, EPIextra_labels, scen_labels
+           ) %>%
   summarize_at(vars(cases, sevcases, deaths,
                  epiprimary, epibooster, mass, n,
                  contains('averted')), 
@@ -262,8 +265,9 @@ allcohorts_draws <- cohorts_rawdraws2 %>%
   # get overall values by grouping by strategy only
   group_by(ID, drawID, strategy,
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
-           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
+           # labels, label_int, strategytype, EPIextra_labels, scen_labels
+           ) %>%
   mutate_at(vars(cases, sevcases, deaths,
                  epiprimary, epibooster, mass,
                  contains('averted')),
@@ -296,7 +300,7 @@ cohorts_byage_draws <- cohorts_rawdraws2 %>%
   select(t, ID, drawID, strategy, age_grp, age_lower, age_upper,
          int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-         labels, label_int, strategytype, EPIextra_labels, scen_labels,
+         # labels, label_int, strategytype, EPIextra_labels, scen_labels,
          cases, sevcases, deaths, n,
          cases_averted, deaths_averted, severe_averted) %>%
   mutate(age_lower_group = ceiling(age_lower)) %>%#ifelse(age_lower != '0.5', floor(age_lower), age_lower)) %>%
@@ -308,15 +312,16 @@ cohorts_byage_draws <- cohorts_rawdraws2 %>%
                                               '22.5-23.5', '23.5-24.5', '24.5-25.5', '25.5-26.5', '26.5-27.5', '27.5-28.5', '28.5-29.5',
                                               '29.5-30.5', '30.5-31.5', '31.5-32.5', '32.5-33.5', '33.5-34.5', '34.5-35.5', '35.5-36.5',
                                               '36.5-37.5', '37.5-38.5', '38.5-39.5', '39.5-40.5', '40.5-41.5', '41.5-42.5', '42.5-43.5',
-                                              '43.5-44.5', '44.5-45.5', '45.5-46.5', '46.5-47.5', '47.5-48.5', '48.5-49.5', '49.5-50.5'))) %>%
+                                              '43.5-44.5', '44.5-45.5', '45.5-46.5'))) %>%#, '46.5-47.5', '47.5-48.5', '48.5-49.5', '49.5-50.5'))) %>%
   # group by 1 year timesteps
   mutate(t = ceiling(t/2)) %>%
   # First summarize by age group/scenario and time and half year age groups to get 1 mean value n and sum cases 
   # for each 1y t, 6month age group (age_lower and age_upper are half year still)
   group_by(t, ID, drawID, strategy, age_grp, age_lower, age_upper,
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
-           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
+           # labels, label_int, strategytype, EPIextra_labels, scen_labels
+           ) %>%
   mutate_at(vars(cases, sevcases, deaths,
                  contains('averted')),
             sum, na.rm = TRUE) %>%
@@ -325,8 +330,9 @@ cohorts_byage_draws <- cohorts_rawdraws2 %>%
   # then group by 1 year age groups and 1 year timesteps to get sum over simulation
   group_by(t, ID, drawID, strategy, age_grp, 
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
-           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
+           # labels, label_int, strategytype, EPIextra_labels, scen_labels
+           ) %>%
   # sum of outcomes over simulation for each age group
   summarize_at(vars(cases, sevcases, deaths,
                     contains('averted'), n),
@@ -343,7 +349,7 @@ cohorts_byage_draws <- cohorts_rawdraws2 %>%
                             levels = c('0.5', '1.5', '2.5', '3.5', '4.5', '5.5', '6.5', '7.5', '8.5', '9.5',
                                        '10.5', '11.5', '12.5', '13.5', '14.5', '15.5', '16.5', '17.5', '18.5', '19.5',
                                        '20.5', '21.5', '22.5', '23.5', '24.5', '25.5', '26.5', '27.5', '28.5', '29.5',
-                                       '30.5', '31.5', '32.5', '33.5', '34.5', '35.5')),
+                                       '30.5', '31.5', '32.5', '33.5', '34.5', '35.5', '36.5', '37.5')),
          age_upper = str_split_fixed(age_grp, "-", 2)[, 2]) %>%
   distinct()
 
@@ -367,8 +373,9 @@ cohorts_ageatvax_draws <- cohorts_rawdraws2 %>%
   # Group by ageatvax (and strategy) only to get total over whole cohort life course  
   group_by(ID, drawID, ageatvax, strategy,
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
-           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
+           # labels, label_int, strategytype, EPIextra_labels, scen_labels
+           ) %>%
   mutate_at(vars(cases, sevcases, deaths,
                  totaldoses, contains('averted')),
             sum, na.rm = TRUE) %>%
@@ -385,14 +392,15 @@ cohorts_ageatvax_draws <- cohorts_rawdraws2 %>%
   select(ID, drawID, strategy, ageatvax,
          int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-         labels, label_int, strategytype, EPIextra_labels, scen_labels,
+         # labels, label_int, strategytype, EPIextra_labels, scen_labels,
          cases, sevcases, deaths, n, totaldoses,
          cases_averted, deaths_averted, severe_averted) %>%
   # Group by 1 year ageatvax (and strategy) only to get total over whole cohort life course  
   group_by(ID, drawID, ageatvax, strategy,
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
-           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
+           # labels, label_int, strategytype, EPIextra_labels, scen_labels
+           ) %>%
   mutate_at(vars(cases, sevcases, deaths, n,
                  totaldoses, contains('averted')),
             sum, na.rm = TRUE) %>%
@@ -447,7 +455,7 @@ cohorts_ageatvaxandage_draws <- cohorts_rawdraws2 %>%
   select(t, ID, drawID, strategy, age_grp, ageatvax, age_lower, age_upper,
          int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-         labels, label_int, strategytype, EPIextra_labels, scen_labels,
+         # labels, label_int, strategytype, EPIextra_labels, scen_labels,
          cases, sevcases, deaths, n, totaldoses,
          cases_averted, deaths_averted, severe_averted) %>%
   # Because have now combined 2 half-year age groups into new 1 year age groups, need to get sum of everything over these 2 age groups
@@ -456,8 +464,9 @@ cohorts_ageatvaxandage_draws <- cohorts_rawdraws2 %>%
   group_by(ID, drawID, strategy, ageatvax, age_grp, 
            age_lower, age_upper, 
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
-           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
+           # labels, label_int, strategytype, EPIextra_labels, scen_labels
+           ) %>%
   # sum of all variables per new 1 year age group and 1 year age at vaccination
   summarize_at(vars(cases, sevcases, deaths,
                  totaldoses, n,
@@ -466,8 +475,9 @@ cohorts_ageatvaxandage_draws <- cohorts_rawdraws2 %>%
   # Now, summarizing by 1 year age group and 1 year age at vax (not age_lower, age_upper -- which are by 6m)
   group_by(ID, drawID, strategy, ageatvax, age_grp, 
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
-           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
-           labels, label_int, strategytype, EPIextra_labels, scen_labels) %>%
+           EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
+           # labels, label_int, strategytype, EPIextra_labels, scen_labels
+           ) %>%
   # sum of all variables per new 1 year age group and 1 year age at vaccination
   summarize_at(vars(cases, sevcases, deaths,
                  totaldoses, n,
