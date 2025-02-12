@@ -93,6 +93,10 @@ process_runs <- function(df,
     # remove yll and dalys because these aren't working with half-year age groups (because of 1 year age bands in life table)
     select(-yll, -dalys)
   
+  # Add in n value - we want average n over time per age group, not sum (which is what person_days is)
+  # to get this we can just divide the summed value by the number of timesteps over which it was summed
+  processed$n <- processed$person_days / time_div
+  
   #' 9. add severe outcomes
   # processed <- processed %>%
   #   mortality_rate() |> 

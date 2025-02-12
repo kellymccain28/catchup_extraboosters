@@ -26,7 +26,7 @@ send_report3 <- function(pars, x, queue_hold, age_scaling){ #x is the rows in pa
                                                              par_index = scenarioID,
                                                              age_scaling = age_scaling)),
     pars[x,],
-    resources = res, #strongminded_africanclawedfrog
+    resources = res, 
     bundle_name = 'report3'
   )
   

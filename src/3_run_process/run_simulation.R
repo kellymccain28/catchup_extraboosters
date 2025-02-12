@@ -29,7 +29,7 @@ runsim <- function(x){
            drawID = data$drawID,
            EIR = data$starting_EIR,
            warmup = data$warmup,
-           sim_length = data$sim_length,
+           sim_length = data$sim_length - 5*365, # vaccination starts 5 years after
            population = data$population,
            pfpr = data$pfpr,
            timestep = timestep - data$warmup,
@@ -52,7 +52,7 @@ runsim <- function(x){
     filter(timestep > 0) |> # remove warmup period
     
     # keep only necessary variables
-    dplyr::select(ID, scenario, drawID, EIR, warmup, sim_length, population, pfpr, seasonality, #speciesprop,
+    dplyr::select(ID, scenario, drawID, EIR,sim_length, warmup, population, pfpr, seasonality, #speciesprop,
                   treatment, SMC, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA, 
                   age_scaling,
                   # infectivity,
