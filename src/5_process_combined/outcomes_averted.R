@@ -24,21 +24,20 @@ outcomes_averted <- function(df){
   base_IDs <- unique(baseline$scenario)
   
   noneaverted <- df |> # filter(!(scenario %in% base_IDs)) |>
-    left_join(baseline |> select(-scenario, -dose3), by = joinvars) |>
+    left_join(baseline |> select(-scenario), by = joinvars) |>
     mutate(#dalys_averted = daly_baseline - daly, 
            cases_averted = cases_baseline - cases,
            deaths_averted = deaths_baseline - deaths, 
            severe_averted = severe_baseline - sevcases,
            clinical_diff = clinical_baseline - clinical, # cases/pop difference between vaccinated and not vaccinated
-           cases_averted_clin = clinical_diff * n) # total number of cases averted 
+           cases_averted_clin = clinical_diff * person_days) # total number of cases averted 
   
   averted <- noneaverted |>
-    # left_join(ABaverted) |>
     mutate(totaldoses = rowSums(across(starts_with('dose'))),
            massdoses = rowSums(across(starts_with('n_pev_mass'))),
            EPIdoses = rowSums(across(starts_with('n_pev_epi')))) %>% 
     # Get new variable that has cases averted in the standard AB strategy for each of the year, pfpr, seasonality settings + drawID and age group
-    group_by(t, pfpr, seasonality, age_lower, age_upper, drawID) %>%
+    group_by(halfyear, pfpr, seasonality, age_lower, age_upper, drawID) %>%
     rowwise() %>%
     ungroup() %>%
     mutate(across(cases_averted, 
@@ -59,6 +58,7 @@ outcomes_averted <- function(df){
                   ~ .x / dose3 * 1000, .names = "{.col}_perFVC"),
            across(deaths_averted, 
                   ~ .x / n * 1000, .names = "{.col}_perpop")) |>
+    # Below is the same as clinical, severe, mortality 
     mutate(across(c(cases, sevcases, deaths),
                   ~ .x / n, .names = "{.col}_perpop")) |> # per person
     # Convert NaN's coming from the calculations above to NAs
