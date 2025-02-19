@@ -20,9 +20,9 @@ orderly_parameters(analysis = NULL,
 orderly2::orderly_dependency("1_create_parameter_list",
                              "latest(parameter:analysis == this:analysis
                              && parameter:age_scaling == this:age_scaling)",
-                             c(parameters_torun_R21.rds = "parameters_torun_R21.rds"))
+                             c(scenarios_torun_R21.rds = "scenarios_torun_R21.rds"))
 
-pars <- readRDS("parameters_torun_R21.rds")
+pars <- readRDS("scenarios_torun_R21.rds")
 
 
 output_overall <- data.frame()

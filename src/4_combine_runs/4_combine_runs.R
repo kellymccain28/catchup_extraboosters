@@ -26,8 +26,11 @@ source('completed_reports.R')
 # Set dependencies -- all of the processed runs, looped over the parameter list 
 orderly2::orderly_dependency("1_create_parameter_list",
                              "latest(parameter:analysis == this:analysis)",
-                             c(parameters_torun_R21.rds = "parameters_torun_R21.rds"))
-pars <- readRDS('parameters_torun_R21.rds')
+                             c(scenarios_torun_R21.rds = "scenarios_torun_R21.rds"))
+pars <- readRDS('scenarios_torun_R21.rds')
+
+# Get list of dfs taht have been completed recently 
+
 
 # Initialize the dataframes
 num_tostart = n500
