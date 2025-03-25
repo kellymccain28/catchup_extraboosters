@@ -12,7 +12,7 @@ library(postie)
 library(tidyr)
 library(retry)
 library(zoo)
-library(beers) #devtools::install_github("mrc-ide/beers")
+# library(beers) #devtools::install_github("mrc-ide/beers")
 
 orderly_strict_mode()
 orderly2::orderly_description('Process raw malariasimulation runs overall and by half year/age')
