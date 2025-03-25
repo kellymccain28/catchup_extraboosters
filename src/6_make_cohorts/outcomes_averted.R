@@ -4,15 +4,15 @@
 #' @param aggregation aggregation level (overall or ageyr)
 outcomes_averted <- function(df){
   
-  joinvars <- c('ID', 'drawID', 'age_lower','age_upper', 't')
+  joinvars <- c('ID', 'drawID', 'age_lower','age_upper', 'halfyear')
   baseline_vars <- c('scenario', 'ID', 'drawID', 'age_lower', 'age_upper',
-                     'daly_baseline', 'cases_baseline', 'severe_baseline', 'deaths_baseline', 'clinical_baseline',
-                     'dose3', 't')
+                      'cases_baseline', 'severe_baseline', 'deaths_baseline', 'clinical_baseline',#'daly_baseline',
+                     'dose3', 'halfyear')
   
   baseline <- df |>
     ungroup() |>
     filter(PEV == 'none') |> # filter out interventions
-    rename(daly_baseline = daly,
+    rename(#daly_baseline = daly,
            cases_baseline = cases,
            severe_baseline = sevcases,
            deaths_baseline = deaths,
@@ -23,7 +23,7 @@ outcomes_averted <- function(df){
   
   noneaverted <- df |> # filter(!(scenario %in% base_IDs)) |>
     left_join(baseline |> select(-scenario, -dose3), by = joinvars) |>
-    mutate(dalys_averted = daly_baseline - daly, 
+    mutate(#dalys_averted = daly_baseline - daly, 
            cases_averted = cases_baseline - cases,
            deaths_averted = deaths_baseline - deaths, 
            severe_averted = severe_baseline - sevcases,

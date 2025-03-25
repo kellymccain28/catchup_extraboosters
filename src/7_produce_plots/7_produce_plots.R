@@ -67,10 +67,12 @@ orderly2::orderly_dependency("6_make_cohorts",
 
 cohorts_byage <- readRDS('cohorts_byage.rds')%>% 
   add_labels()
-cohorts <- readRDS('cohorts.rds')
+cohorts <- readRDS('cohorts.rds')%>% 
+  add_labels()
 cohorts_ageatvaxandage <- readRDS('cohorts_ageatvaxandage.rds')%>% 
   add_labels()
-cohorts_ageatvax <- readRDS('cohorts_ageatvax.rds')
+cohorts_ageatvax <- readRDS('cohorts_ageatvax.rds')%>% 
+  add_labels()
 
 
 # Functions to source

@@ -5,7 +5,7 @@ collapse_by_scenario_cohorts <- function(df,
   
   if(by == 'age'){
     df <- df %>%
-      group_by(t, age_grp, int_ID, strategy,age_lower, age_upper, 
+      group_by(halfyear, age_grp, int_ID, strategy,age_lower, age_upper, 
                pfpr, seasonality, PEV, PEVstrategy, PEVcov, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA#,
                # labels, label_int, strategytype, EPIextra_labels, scen_labels
                ) %>%

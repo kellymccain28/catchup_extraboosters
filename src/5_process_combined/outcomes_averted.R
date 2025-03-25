@@ -5,11 +5,11 @@
 outcomes_averted <- function(df){
   
   joinvars <- c('ID', 'drawID', 'age_lower','age_upper', 'halfyear')
-  baseline_vars <- c('scenario', 'ID', 'drawID', 'age_lower', 'age_upper',
+  baseline_vars <- c('scenario', 'ID', 'drawID', 'age_lower', 'age_upper','dose3',
                      # 'daly_baseline', 
                      'cases_baseline', 'severe_baseline', 'deaths_baseline', 'clinical_baseline',
                      'halfyear')
-                     #'dose3', 't')
+                     #, 't')
   
   baseline <- df |>
     ungroup() |>
@@ -38,7 +38,7 @@ outcomes_averted <- function(df){
            massdoses = rowSums(across(starts_with('n_pev_mass'))),
            EPIdoses = rowSums(across(starts_with('n_pev_epi')))) %>% 
     # Get new variable that has cases averted in the standard AB strategy for each of the year, pfpr, seasonality settings + drawID and age group
-    group_by(t, pfpr, seasonality, age_lower, age_upper, drawID) %>%
+    group_by(halfyear, pfpr, seasonality, age_lower, age_upper, drawID) %>%
     rowwise() %>%
     ungroup() %>%
     mutate(across(cases_averted, 

@@ -7,8 +7,8 @@ collapse_by_scenario <- function(df){
              # labels, label_int, strategytype, EPIextra_labels, scen_labels
              ) %>%
     summarize(across(c(clinical, severe, mortality,
-                       n, prop_n, contains('dose'), contains('n_pev'),
-                       prevalence_2_10, prevalence_0_100,
+                       n, contains('dose'), contains('n_pev'),#prop_n, 
+                       lm_prevalence_2_10, lm_prevalence_0_100,
                        cases, sevcases, deaths, # yll, yld, daly,
                        cases_perpop, sevcases_perpop, deaths_perpop,
                        contains('averted'), contains('baseline'), 
