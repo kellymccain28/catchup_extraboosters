@@ -179,7 +179,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                                          variable = 'cases_averted',
                                          seas = seasonalities[s])
     ggsave(paste0("plots/plot_cumulCA_SVhybrid_none_", seasonalities[s], ".pdf"), 
-           plot = CAseasonal_routine[[1]], width = 16, height = 6)
+           plot = CAseasonal_routine[[1]], width = 17, height = 6)
     
     # CAcombination <- plot_cumul_CA2(df_summ,
     #                                      strategy = 'combination',
