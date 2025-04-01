@@ -1,4 +1,4 @@
- # Script to run all orderly reports 
+# Script to run all orderly reports 
 library(hipercow)
 library(orderly2)
 # source("C:/Users/kem22/OneDrive - Imperial College London/R work/Useful functions/completed_reports.R")
@@ -7,6 +7,7 @@ library(orderly2)
 orderly2::orderly_run(name = '1_create_parameter_list',
                       parameters = list(analysis = 'catch-up',
                                         age_scaling = 1)) # 1 or 0.64
+
 
 # skip report 2 because don't need to re-calibrate
 
