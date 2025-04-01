@@ -20,9 +20,9 @@ orderly_parameters(analysis = NULL,
 orderly2::orderly_dependency("1_create_parameter_list",
                              "latest(parameter:analysis == this:analysis
                              && parameter:age_scaling == this:age_scaling)",
-                             c(scenarios_torun_R21.rds = "scenarios_torun_R21.rds"))
+                             c(parameters_torun_R21.rds = "parameters_torun_R21.rds"))
 
-pars <- readRDS("scenarios_torun_R21.rds")
+pars <- readRDS("parameters_torun_R21.rds")
 
 
 output_overall <- data.frame()
@@ -48,21 +48,31 @@ output_last15 <- data.frame()
 #            !(age_lower == 5 & age_upper == 10) &
 #            !(age_lower == 10 & age_upper == 15))
 
+# done4 <- completed_reports(report_name = '4_combine_runs')
+# donerecent <- done4 %>% filter(date_time > 20250311000000)
+# donerecent <- donerecent %>% arrange(n500, date_time) %>%
+#   group_by(n500, age_scaling) %>% slice_max(date_time)
+# saveRDS(donerecent, 'pars_folders.rds')
+orderly_resource('pars_folders.rds')
+pars_folders <- readRDS('pars_folders.rds')
 
 # Add each set of processed runs to dataset
 for(i in as.integer(c(seq(1, max(pars$scenarioID)-500, by = 500), 34501))){ #seq(0.5, 18, by = 0.5), (removing this bc just adding to orignals for now)
   message(i)
-  orderly2::orderly_dependency("4_combine_runs",
-                               "latest(parameter:analysis == this:analysis
-                             && parameter:n500 == environment:i)",
-                               c("data/summarized_draws_${i}.rds" = "summarized_draws_500.rds",
-                                 "data/summarized_ageyr_draws_${i}.rds" = 'summarized_ageyr_draws_500.rds',
-                                 "data/summarized_last15_draws_${i}.rds" = 'summarized_last15_draws_500.rds'))
-
-  ageyr <- readRDS(paste0('data/summarized_ageyr_draws_',i,'.rds'))
+  
+  folder <- pars_folders[pars_folders$n500 == i,]$directory_name
+  # orderly2::orderly_dependency("4_combine_runs",
+  #                              "latest(parameter:analysis == this:analysis
+  #                            && parameter:n500 == environment:i && parameter_age_scaling == this:age_scaling)",
+  #                              c("data/summarized_draws_${i}.rds" = "summarized_draws_500.rds",
+  #                                "data/summarized_ageyr_draws_${i}.rds" = 'summarized_ageyr_draws_500.rds',
+  #                                "data/summarized_last15_draws_${i}.rds" = 'summarized_last15_draws_500.rds'))
+  # ageyr <- readRDS(paste0('data/summarized_ageyr_draws_',i,'.rds'))
+  ageyr <- readRDS(paste0("R:/Kelly/catchup_extraboosters/archive/4_combine_runs/", folder, '/summarized_ageyr_draws_500.rds'))
   message('ageyr read in')
 
-  output_overall <- rbind(output_overall, readRDS(paste0('data/summarized_draws_',i,'.rds')))
+  # output_overall <- rbind(output_overall, readRDS(paste0('data/summarized_draws_',i,'.rds')))
+  output_overall <- rbind(output_overall, readRDS(paste0("R:/Kelly/catchup_extraboosters/archive/4_combine_runs/", folder, '/summarized_draws_500.rds')))
   message('overall read in')
 
   # output_ageyr <- rbind(output_ageyr, ageyr)
@@ -78,7 +88,8 @@ for(i in as.integer(c(seq(1, max(pars$scenarioID)-500, by = 500), 34501))){ #seq
   message('ageyr to 50 rbinded')
 
 
-  output_last15 <- rbind(output_last15, readRDS(paste0('data/summarized_last15_draws_',i,'.rds')), fill = TRUE)
+  # output_last15 <- rbind(output_last15, readRDS(paste0('data/summarized_last15_draws_',i,'.rds')), fill = TRUE)
+  output_last15 <- rbind(output_last15, readRDS(paste0("R:/Kelly/catchup_extraboosters/archive/4_combine_runs/", folder, '/summarized_last15_draws_500.rds')), fill = TRUE)
   message(paste0(Sys.time(), ' bound last15'))
 
   saveRDS(output_overall, 'output_overall_intermediate.rds')
@@ -92,7 +103,13 @@ for(i in as.integer(c(seq(1, max(pars$scenarioID)-500, by = 500), 34501))){ #seq
 
   message(paste0(Sys.time(), ' saved datasets'))
 }
+# output_overall <- readRDS("R:/Kelly/catchup_extraboosters/draft/5_process_combined/20250220-144148-c744e235/output_overall_intermediate.rds")
+# output_last15 <- readRDS("R:/Kelly/catchup_extraboosters/draft/5_process_combined/20250220-144148-c744e235/output_last15_intermediate.rds")
+# output_ageyr_toage50_intermediate <- readRDS("R:/Kelly/catchup_extraboosters/draft/5_process_combined/20250220-144148-c744e235/output_ageyr_toage50_intermediate.rds")
 
+# saveRDS(output_overall, 'output_overall_intermediate.rds')
+# saveRDS(output_ageyr_toage50_intermediate, 'output_ageyr_toage50_intermediate.rds')
+# saveRDS(output_last15, 'output_last15_intermediate.rds')
 
 # Outputs for task 
 orderly_artefact(
