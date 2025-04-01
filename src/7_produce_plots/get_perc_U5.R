@@ -5,7 +5,7 @@
 dfu5 <- df_summ_draws %>% 
   filter(age_grp == '0-5' | age_grp == '0-100' | age_grp == '5-10' | age_grp == '10-15') %>%
   select(-age_lower, -age_upper) %>%
-  select(labels,age_grp, t, PEVstrategy, #drawID,
+  select(labels,age_grp, halfyear, PEVstrategy, #drawID,
          PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA, label_int, pfpr, seasonality,
          cases, 
          sevcases,
@@ -19,7 +19,7 @@ dfu5 <- df_summ_draws %>%
          U5_severe = ifelse(age_grp == '0-5', sevcases, NA),
          school_cases = ifelse(school_aged == 1, cases, NA),
          school_severe = ifelse(school_aged == 1, sevcases, NA)) %>%
-  group_by(labels, t, PEVstrategy, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA, 
+  group_by(labels, halfyear, PEVstrategy, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA, 
            label_int, pfpr, seasonality) %>%
   tidyr::fill(U5_CA, .direction = 'downup') %>%
   tidyr::fill(U5_SA, .direction = 'downup') %>%
@@ -34,7 +34,7 @@ dfu5 <- df_summ_draws %>%
          p_cases_school = ifelse(age_grp == '0-100', school_cases / cases * 100, NA),
          p_severe_school = ifelse(age_grp == '0-100', school_severe / sevcases * 100, NA)) %>%
   # filter(age_grp == '0-100') %>%
-  group_by(labels, age_grp, t, 
+  group_by(labels, age_grp, halfyear, 
            PEVstrategy, PEVage, PEVrounds, EPIbooster, EPIextra, massbooster_rep, MDA, 
            label_int, pfpr, seasonality) %>%
   # Get median, and 95% CrI for each of the variables

@@ -188,42 +188,6 @@ generate_params <- function(inputpath,   # path to input scenarios
           # r21_booster_profile2 <- r21_booster_profile
           # r21_booster_profile2$cs <- as.numeric(r21_params$r21_cs_boost2) 
           
-          # Scaled vaccine efficacy for older children (0.64 * cs) according to Bojang et al 2005
-          r21_older_profile <- create_pev_profile(
-            vmax = r21_profile$vmax,
-            alpha = r21_profile$alpha,
-            beta = r21_profile$beta,
-            cs = log(exp(r21_profile$cs) * 0.64),
-            rho = r21_profile$rho,
-            ds = r21_profile$ds,
-            dl = r21_profile$dl
-          )
-          # r21_older_profile <- r21_profile 
-          # r21_older_profile$cs <- log(exp(r21_older_profile$cs) * 0.64)
-          
-          r21_older_booster_profile <- create_pev_profile(
-            vmax = r21_booster_profile$vmax,
-            alpha = r21_booster_profile$alpha,
-            beta = r21_booster_profile$beta,
-            cs = log(exp(r21_booster_profile$cs) * 0.64),
-            rho = r21_booster_profile$rho,
-            ds = r21_booster_profile$ds,
-            dl = r21_booster_profile$dl
-          )
-          # r21_older_booster_profile <- r21_booster_profile
-          # r21_older_booster_profile$cs <- log(exp(r21_older_booster_profile$cs) * 0.64)
-          
-          r21_older_booster_profile2 <- create_pev_profile(
-            vmax = r21_booster_profile2$vmax,
-            alpha = r21_booster_profile2$alpha,
-            beta = r21_booster_profile2$beta,
-            cs = log(exp(r21_booster_profile2$cs) * 0.64),
-            rho = r21_booster_profile2$rho,
-            ds = r21_booster_profile2$ds,
-            dl = r21_booster_profile2$dl
-          )
-          # r21_older_booster_profile2 <- r21_booster_profile2
-          # r21_older_booster_profile2$cs <- log(exp(r21_older_booster_profile2$cs) * 0.64)
           
           program_start <- 5 * year
           
@@ -279,7 +243,8 @@ generate_params <- function(inputpath,   # path to input scenarios
               booster_spacing = epiboosters,
               booster_coverage = boost_cov,
               booster_profile = list(r21_booster_profile),
-              seasonal_boosters = FALSE
+              seasonal_boosters = FALSE,
+              adolesc_scaling = age_scaling
             )
             
             print(paste0('EPI timesteps: ', pev_epi_timesteps <- params$pev_epi_timesteps - warmup))
@@ -332,7 +297,8 @@ generate_params <- function(inputpath,   # path to input scenarios
               booster_spacing = epiboosters,
               booster_coverage = epiboost_cov,
               booster_profile = epiboosterprofiles,
-              seasonal_boosters = FALSE
+              seasonal_boosters = FALSE,
+              adolesc_scaling = age_scaling
             )
             
             print(paste0('EPI timesteps: ', pev_epi_timesteps <- params$pev_epi_timesteps - warmup))
@@ -361,7 +327,8 @@ generate_params <- function(inputpath,   # path to input scenarios
               booster_spacing = hybridbooster,
               booster_coverage = boost_cov,
               booster_profile = list(r21_booster_profile),
-              seasonal_boosters = TRUE
+              seasonal_boosters = TRUE,
+              adolesc_scaling = age_scaling
             )
             
             print(paste0('EPI timesteps: ', pev_epi_timesteps <- params$pev_epi_timesteps - warmup))
@@ -394,8 +361,9 @@ generate_params <- function(inputpath,   # path to input scenarios
               min_wait = 0,
               booster_spacing = SVbooster, # timesteps following initial vaccination 
               booster_profile = list(r21_booster_profile),
-              booster_coverage = boost_cov # prop of vaccinated pop who will receive booster vaccine
-              ) 
+              booster_coverage = boost_cov, # prop of vaccinated pop who will receive booster vaccine
+              adult_scaling = 1, 
+              adolesc_scaling = age_scaling) 
           }
           
           # mass ----------
@@ -419,7 +387,8 @@ generate_params <- function(inputpath,   # path to input scenarios
               booster_spacing = EPIboosters,
               booster_coverage = EPIboost_cov,
               booster_profile = list(r21_booster_profile),
-              seasonal_boosters = FALSE)
+              seasonal_boosters = FALSE,
+              adolesc_scaling = age_scaling)
             
             # Get timing for mass vaccination rounds
             peak <- peak_season_offset(params)
@@ -470,8 +439,10 @@ generate_params <- function(inputpath,   # path to input scenarios
               min_wait = min_wait,
               booster_spacing = massboosters, # timesteps following initial vaccination
               booster_profile = massboosterprofiles,#list(r21_booster_profile, rep(r21_booster_profile2, length(massboosters) -1)),
-              booster_coverage = massbooster_cov # prop of vaccinated pop who will receive booster vaccine
-            )
+              booster_coverage = massbooster_cov, # prop of vaccinated pop who will receive booster vaccine
+              adult_scaling = 1, 
+              adolesc_scaling = age_scaling
+              )
             
             # var for outputting to check RTS,S timings are correct
             print(paste0("Mass timesteps: ", mass_pev_timesteps <- params$mass_pev_timesteps - warmup))
@@ -543,7 +514,8 @@ generate_params <- function(inputpath,   # path to input scenarios
               booster_spacing = epiboosters,
               booster_coverage = epiboost_cov,
               booster_profile = epiboosterprofiles, # first booster is one thing, then any others are different
-              seasonal_boosters = FALSE
+              seasonal_boosters = FALSE,
+              adolesc_scaling = age_scaling
             )
             
             # Set catch-up mass campaigns
@@ -557,7 +529,9 @@ generate_params <- function(inputpath,   # path to input scenarios
               min_wait = 20 * year,
               booster_spacing = massboosters,
               booster_coverage = massboost_cov,
-              booster_profile = list(r21_booster_profile)
+              booster_profile = list(r21_booster_profile),
+              adult_scaling = 1, 
+              adolesc_scaling = age_scaling
             )
             
             print(paste0("Mass timesteps: ", mass_pev_timesteps <- params$mass_pev_timesteps - warmup))
