@@ -4,6 +4,7 @@ Code to  estimate the impact of expanding target age groups for vaccination with
 
 The workflow_all.R script will run each of the orderly2 tasks in the correct order. Each orderly task, with the exception of 2_calibration_to_PfPR, has parameters that indicate the scaling of the antibodies by age; the entire workflow was run twice - once with a scaling factor of 1, presented in the main results, and once with a scaling factor of 0.64, presented in the Supplementary Information. The provision.R script contains the packages required to run the analysis. Note that this analysis was run on the HPC in the Department of Infectious Disease Epidemiology at Imperial College. 
 
+```
 src/
     ├── 1_create_parameter_list/                           # Scripts to create a parameter set across all combinations of seasonality, PfPR, and interventions.
         ├── 1_create_parameter_list.R                      # Orderly task to produce the output 
@@ -75,3 +76,4 @@ src/
         └── table_CA_perreldose.R                          # Make tables 
 provision.R                                                # Packages required for analysis 
 workflow_all.R                                             # Workflow, running through each orderly task in order
+```
