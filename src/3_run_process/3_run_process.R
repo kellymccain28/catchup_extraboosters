@@ -12,7 +12,7 @@ library(postie)
 library(tidyr)
 library(retry)
 library(zoo)
-library(beers) #devtools::install_github("mrc-ide/beers")
+# library(beers) #devtools::install_github("mrc-ide/beers")
 
 orderly_strict_mode()
 orderly2::orderly_description('Process raw malariasimulation runs overall and by half year/age')
@@ -43,7 +43,7 @@ param_df <- readRDS('parameters_torun_R21.rds')
 # Outputs for task 
 orderly_artefact(
   description = 'Produces a raw model run then a processed run for each row in the parameter dataset - summarized overall by age or by age/year',
-  files = c("raw_modelrun.rds",
+  files = c(#"raw_modelrun.rds",
     "processed_run_overall.rds",
     "processed_run_ageyr.rds")
 )
@@ -83,8 +83,8 @@ df <- runsim(par_index)
 message('Finished running model')
 
 # save output ----------
-message('save model run')
-saveRDS(df, "raw_modelrun.rds")
+# message('save model run')
+# saveRDS(df, "raw_modelrun.rds")
 
 
 # Process runs overall

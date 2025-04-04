@@ -5,11 +5,11 @@
 outcomes_averted <- function(df){
   
   joinvars <- c('ID', 'drawID', 'age_lower','age_upper', 'halfyear')
-  baseline_vars <- c('scenario', 'ID', 'drawID', 'age_lower', 'age_upper',
+  baseline_vars <- c('scenario', 'ID', 'drawID', 'age_lower', 'age_upper','dose3',
                      # 'daly_baseline', 
                      'cases_baseline', 'severe_baseline', 'deaths_baseline', 'clinical_baseline',
                      'halfyear')
-                     #'dose3', 't')
+                     #, 't')
   
   baseline <- df |>
     ungroup() |>

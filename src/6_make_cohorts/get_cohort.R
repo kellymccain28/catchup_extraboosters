@@ -11,11 +11,11 @@ get_cohort <- function(df, time1, minage, maxage, strategy = ''){
   min_age <- minage
   max_age <- maxage
   
-  for(i in time1:max(df$t)){
+  for(i in time1:max(df$halfyear)){
   # i=1# for CU, only get cohort that is vaccinated at time 1 
     p <- df %>%
       filter(age_lower >= min_age & age_upper <= max_age &
-             t == i)
+             halfyear == i)
     
     cohort_cases_over_time <- bind_rows(cohort_cases_over_time, p)
     
@@ -32,8 +32,8 @@ get_cohort <- function(df, time1, minage, maxage, strategy = ''){
   
   #Get age of first vaccination 
   cohort_cases_over_time <- cohort_cases_over_time %>%
-    mutate(ageatvax = ifelse(t == 1, paste0(age_lower,'-', age_upper), 
-                             paste0(age_lower - (t*0.5-0.5),'-', age_upper - (t*0.5-0.5)))) %>%
+    mutate(ageatvax = ifelse(halfyear == 1, paste0(age_lower,'-', age_upper), 
+                             paste0(age_lower - (halfyear*0.5-0.5),'-', age_upper - (halfyear*0.5-0.5)))) %>%
     mutate(ageatvax = ifelse(PEVstrategy == 'AB', '0.5-1', ifelse(PEVstrategy == 'none', 'no vax', ageatvax)))
 
   return(cohort_cases_over_time)

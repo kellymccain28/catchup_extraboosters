@@ -24,8 +24,8 @@ orderly2::orderly_dependency("5_process_combined",
 
 # Outputs for task
 orderly_artefact(
-  'Produces a dataset with cohorts for age-based, 6m-2y, 6m-14y, and none',
-  c('cohorts_byage.rds',
+  description = 'Produces a dataset with cohorts for age-based, 6m-2y, 6m-14y, and none',
+  files = c('cohorts_byage.rds',
     "cohorts_byage_draws.rds",
     # "cohorts_rawdraws.rds",
     'cohorts.rds',
@@ -40,7 +40,7 @@ orderly_artefact(
 orderly_resource(
   c('get_cohort.R',
     'collapse_by_scenario_cohorts.R',
-    'calc_inci_pppy.R',
+    # 'calc_inci_pppy.R',
     'outcomes_averted.R',
     'add_agegrps.R')
 )
@@ -49,7 +49,7 @@ orderly_resource(
 # Functions to source
 source('get_cohort.R')
 source('collapse_by_scenario_cohorts.R')
-source('calc_inci_pppy.R')
+# source('calc_inci_pppy.R')
 source('outcomes_averted.R')
 source('add_agegrps.R')
 
@@ -69,7 +69,7 @@ message(names(ageyr))
 
 #### Get cohorts
 # years over which to loop
-yrs <- seq(min(ageyr$t), max(ageyr$t))
+yrs <- seq(min(ageyr$halfyear), max(ageyr$halfyear))
 
 # initialize empty data frame for age-based
 ABcohorts <- data.frame()
@@ -156,8 +156,8 @@ cohorts_rawdraws <- rbind(CU6m14y, CU6m2y, CU6m4y, CU6m9y, CU5y9y, CU5y14y, ABco
   distinct() %>%
   select(-starts_with('p_'),
          -contains('diff'),-clinical, -severe, -mortality,
-         -yll, -yld, -daly, -contains('pop'), - contains('FVC'),
-         -prevalence_2_10, -prevalence_0_100, -prop_n,
+         -contains('pop'), - contains('FVC'),#-yll, -yld, -daly, 
+         -contains('prevalence'),#prevalence_2_10, -prevalence_0_100, #-prop_n,
          -ends_with('perdose')
          ) %>%
   add_agegrps()
@@ -171,28 +171,28 @@ saveRDS(cohorts_rawdraws, "cohorts_rawdraws.rds")
 get_epi <- function(df){
   df <- df %>%
     rowwise() %>%
-    mutate(epiprimary = case_when(t == 1 & age_lower == 0.5 & age_upper == 1 & PEVage != '5-9' & PEVage != '5-14' ~
+    mutate(epiprimary = case_when(halfyear == 1 & age_lower == 0.5 & age_upper == 1 & PEVage != '5-9' & PEVage != '5-14' ~
                                     sum(n_pev_epi_dose_1, n_pev_epi_dose_2, n_pev_epi_dose_3, na.rm = TRUE),
-                                  t == 1 & age_lower == 5.0 & age_upper == 5.5 & (PEVage == '5-9' | PEVage == '5-14') ~
+                                  halfyear == 1 & age_lower == 5.0 & age_upper == 5.5 & (PEVage == '5-9' | PEVage == '5-14') ~
                                     sum(n_pev_epi_dose_1, n_pev_epi_dose_2, n_pev_epi_dose_3, na.rm = TRUE), # want to count the EPI doses for 5-9 and 5-14 cohorts in time 1
                                   TRUE ~ NA),
-           epibooster = case_when(t == 3 & age_lower == 1.5 & age_upper == 2 & PEVage != '5-9' & PEVage != '5-14'~ n_pev_epi_booster_1, # all first doses for cohorts that don't have catch-ups to older kids
-                                  t == 3 & age_lower == 6 & age_upper == 6.5 & (PEVage == '5-9' | PEVage == '5-14')~ n_pev_epi_booster_1, # first doses for cohorts with CU to oldre kids (ages are different)
+           epibooster = case_when(halfyear == 3 & age_lower == 1.5 & age_upper == 2 & PEVage != '5-9' & PEVage != '5-14'~ n_pev_epi_booster_1, # all first doses for cohorts that don't have catch-ups to older kids
+                                  halfyear == 3 & age_lower == 6 & age_upper == 6.5 & (PEVage == '5-9' | PEVage == '5-14')~ n_pev_epi_booster_1, # first doses for cohorts with CU to oldre kids (ages are different)
                                   # Second boosters
-                                  t == 5 & EPIextra == '2y'& age_lower == 2.5 & age_upper == 3 & PEVage == '-' ~ n_pev_epi_booster_2, 
-                                  t == 11 & EPIextra == '5y' & age_lower == 5.5 & age_upper == 6 & PEVage == '-' ~ n_pev_epi_booster_2,
-                                  t == 21 & EPIextra == '10y'& age_lower == 10.5 & age_upper == 11 & PEVage == '-' ~ n_pev_epi_booster_2,
-                                  t == 5 & EPIextra == '2y+5y'& age_lower == 2.5 & age_upper == 3 & PEVage == '-' ~ n_pev_epi_booster_2, # 1st extra booster at 2 years
-                                  t == 5 & EPIextra == '2y+10y'& age_lower == 2.5 & age_upper == 3 & PEVage == '-' ~ n_pev_epi_booster_2, # 1st extra booster at 2 years
-                                  t == 11 & EPIextra == '5y+10y'& age_lower == 5.5 & age_upper == 6 & PEVage == '-' ~ n_pev_epi_booster_2, # 1st extra booster at 5 years
-                                  t == 5 & EPIextra == '2y+5y+10y'& age_lower == 2.5 & age_upper == 3 & PEVage == '-' ~ n_pev_epi_booster_2, # first extra booster at 2 years
+                                  halfyear == 5 & EPIextra == '2y'& age_lower == 2.5 & age_upper == 3 & PEVage == '-' ~ n_pev_epi_booster_2, 
+                                  halfyear == 11 & EPIextra == '5y' & age_lower == 5.5 & age_upper == 6 & PEVage == '-' ~ n_pev_epi_booster_2,
+                                  halfyear == 21 & EPIextra == '10y'& age_lower == 10.5 & age_upper == 11 & PEVage == '-' ~ n_pev_epi_booster_2,
+                                  halfyear == 5 & EPIextra == '2y+5y'& age_lower == 2.5 & age_upper == 3 & PEVage == '-' ~ n_pev_epi_booster_2, # 1st extra booster at 2 years
+                                  halfyear == 5 & EPIextra == '2y+10y'& age_lower == 2.5 & age_upper == 3 & PEVage == '-' ~ n_pev_epi_booster_2, # 1st extra booster at 2 years
+                                  halfyear == 11 & EPIextra == '5y+10y'& age_lower == 5.5 & age_upper == 6 & PEVage == '-' ~ n_pev_epi_booster_2, # 1st extra booster at 5 years
+                                  halfyear == 5 & EPIextra == '2y+5y+10y'& age_lower == 2.5 & age_upper == 3 & PEVage == '-' ~ n_pev_epi_booster_2, # first extra booster at 2 years
                                   # Third boosters
-                                  t == 11 & EPIextra == '2y+5y' & age_lower == 5.5 & age_upper == 6 & PEVage == '-' ~ n_pev_epi_booster_3, # second extra booster at 5 years
-                                  t == 21 & EPIextra == '2y+10y' & age_lower == 10.5 & age_upper == 11 & PEVage == '-' ~ n_pev_epi_booster_3, # second extra booster at 10 years
-                                  t == 21 & EPIextra == '5y+10y' & age_lower == 10.5 & age_upper == 11 & PEVage == '-' ~ n_pev_epi_booster_3, # second extra booster at 10 years
-                                  t == 11 & EPIextra == '2y+5y+10y' & age_lower == 5.5 & age_upper == 6 & PEVage == '-' ~ n_pev_epi_booster_3, # second extra booster at 5 years
+                                  halfyear == 11 & EPIextra == '2y+5y' & age_lower == 5.5 & age_upper == 6 & PEVage == '-' ~ n_pev_epi_booster_3, # second extra booster at 5 years
+                                  halfyear == 21 & EPIextra == '2y+10y' & age_lower == 10.5 & age_upper == 11 & PEVage == '-' ~ n_pev_epi_booster_3, # second extra booster at 10 years
+                                  halfyear == 21 & EPIextra == '5y+10y' & age_lower == 10.5 & age_upper == 11 & PEVage == '-' ~ n_pev_epi_booster_3, # second extra booster at 10 years
+                                  halfyear == 11 & EPIextra == '2y+5y+10y' & age_lower == 5.5 & age_upper == 6 & PEVage == '-' ~ n_pev_epi_booster_3, # second extra booster at 5 years
                                   # Fourth boosters
-                                  t == 21 & EPIextra == '2y+5y+10y' & age_lower == 10.5 & age_upper == 11 & PEVage == '-' ~ n_pev_epi_booster_4, # third extra booster at 10 years
+                                  halfyear == 21 & EPIextra == '2y+5y+10y' & age_lower == 10.5 & age_upper == 11 & PEVage == '-' ~ n_pev_epi_booster_4, # third extra booster at 10 years
                                   TRUE ~ NA)) %>% # there are no catch-up cohorts with extra boosters
     ungroup()
 }
@@ -200,9 +200,9 @@ get_epi <- function(df){
 get_mass <- function(df){
   df <- df %>%
     rowwise() %>%
-    mutate(mass = ifelse(t == 1 & age_lower == 0.5 & age_upper == 1 & !(PEVage %in% c('5-9', '5-14')),
+    mutate(mass = ifelse(halfyear == 1 & age_lower == 0.5 & age_upper == 1 & !(PEVage %in% c('5-9', '5-14')),
                          sum(n_pev_mass_dose_1, n_pev_mass_dose_2, n_pev_mass_dose_3, n_pev_mass_booster_1, na.rm = TRUE),
-                         ifelse(t == 1 & (PEVage == '5-9' | PEVage == '5-14') & age_lower == 5 & age_upper == 5.5,
+                         ifelse(halfyear == 1 & (PEVage == '5-9' | PEVage == '5-14') & age_lower == 5 & age_upper == 5.5,
                                 sum(n_pev_mass_dose_1, n_pev_mass_dose_2, n_pev_mass_dose_3, n_pev_mass_booster_1, na.rm = TRUE), 0))) %>%
     ungroup()
 }
@@ -245,7 +245,7 @@ cohorts_rawdraws2 <- rbind(CU_only, ab_condensed)
 ##########################################################
 # get overall values for cohorts
 allcohorts_draws <- cohorts_rawdraws2 %>%
-  select(t, ID, drawID, strategy,
+  select(halfyear, ID, drawID, strategy,
          int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
          # labels, label_int, strategytype, EPIextra_labels, scen_labels,
@@ -253,7 +253,7 @@ allcohorts_draws <- cohorts_rawdraws2 %>%
          epiprimary, epibooster, mass, n, totaldoses,
          cases_averted, deaths_averted, severe_averted) %>%
   # Get sum of n in each cohort over all ages in cohort (i.e. 6m-2y would have multiple age groups that we want to sum up)
-  group_by(t, ID, drawID, strategy, 
+  group_by(halfyear, ID, drawID, strategy, 
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
            EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
            # labels, label_int, strategytype, EPIextra_labels, scen_labels
@@ -275,7 +275,7 @@ allcohorts_draws <- cohorts_rawdraws2 %>%
   # get mean population over all time periods, grouped by strategy
   mutate(n = mean(n)) %>%
   rowwise() %>%
-  mutate(t = 'overall',
+  mutate(halfyear = 'overall',
          totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
   mutate(cases_averted_perpop = cases_averted / n * 1000,
          cases_averted_perdose= cases_averted / totaldoses * 1000,
@@ -297,7 +297,7 @@ saveRDS(allcohorts, "cohorts.rds")
 ##########################################################
 # Summarize over cohorts by age and t -- used for age distribution plot; to account for the age/time dynamics associated with immunity
 cohorts_byage_draws <- cohorts_rawdraws2 %>% 
-  select(t, ID, drawID, strategy, age_grp, age_lower, age_upper,
+  select(halfyear, ID, drawID, strategy, age_grp, age_lower, age_upper,
          int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
          # labels, label_int, strategytype, EPIextra_labels, scen_labels,
@@ -314,10 +314,10 @@ cohorts_byage_draws <- cohorts_rawdraws2 %>%
                                               '36.5-37.5', '37.5-38.5', '38.5-39.5', '39.5-40.5', '40.5-41.5', '41.5-42.5', '42.5-43.5',
                                               '43.5-44.5', '44.5-45.5', '45.5-46.5'))) %>%#, '46.5-47.5', '47.5-48.5', '48.5-49.5', '49.5-50.5'))) %>%
   # group by 1 year timesteps
-  mutate(t = ceiling(t/2)) %>%
+  mutate(halfyear = ceiling(halfyear/2)) %>%
   # First summarize by age group/scenario and time and half year age groups to get 1 mean value n and sum cases 
   # for each 1y t, 6month age group (age_lower and age_upper are half year still)
-  group_by(t, ID, drawID, strategy, age_grp, age_lower, age_upper,
+  group_by(halfyear, ID, drawID, strategy, age_grp, age_lower, age_upper,
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
            EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
            # labels, label_int, strategytype, EPIextra_labels, scen_labels
@@ -328,7 +328,7 @@ cohorts_byage_draws <- cohorts_rawdraws2 %>%
   mutate(n = mean(n)) %>% 
   distinct() %>%
   # then group by 1 year age groups and 1 year timesteps to get sum over simulation
-  group_by(t, ID, drawID, strategy, age_grp, 
+  group_by(halfyear, ID, drawID, strategy, age_grp, 
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
            EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality#,
            # labels, label_int, strategytype, EPIextra_labels, scen_labels
@@ -405,7 +405,7 @@ cohorts_ageatvax_draws <- cohorts_rawdraws2 %>%
                  totaldoses, contains('averted')),
             sum, na.rm = TRUE) %>%
   ungroup() %>%
-  mutate(t = 'overall') %>%
+  mutate(halfyear = 'overall') %>%
   distinct() %>%
   rowwise() %>%
   # Calculate cases averted per population and per doses
@@ -452,7 +452,7 @@ cohorts_ageatvaxandage_draws <- cohorts_rawdraws2 %>%
          ageatvax = factor(ageatvax, levels = c('0.5-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13',
                                                 '13-14','14-15'))) %>%
   ungroup() %>%
-  select(t, ID, drawID, strategy, age_grp, ageatvax, age_lower, age_upper,
+  select(halfyear, ID, drawID, strategy, age_grp, ageatvax, age_lower, age_upper,
          int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
          # labels, label_int, strategytype, EPIextra_labels, scen_labels,
@@ -460,7 +460,7 @@ cohorts_ageatvaxandage_draws <- cohorts_rawdraws2 %>%
          cases_averted, deaths_averted, severe_averted) %>%
   # Because have now combined 2 half-year age groups into new 1 year age groups, need to get sum of everything over these 2 age groups
   # First summarize by 6 month age group/scenario (not t)
-  mutate(t = 'overall') %>%
+  mutate(halfyear = 'overall') %>%
   group_by(ID, drawID, strategy, ageatvax, age_grp, 
            age_lower, age_upper, 
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,

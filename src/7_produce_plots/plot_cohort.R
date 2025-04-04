@@ -97,7 +97,7 @@ plot_cohort <- function(df,
   makeplots <- function(strat){# PER POP
     cases_cohort <- make_co_plot(var = 'cases_averted_perpop',
                                  strat = strat) + 
-      labs(y = 'Uncomplicated cases averted per 1000 people',
+      labs(y = 'Clinical cases averted per 1000 people',
            x = 'Age (years)',
            fill = 'Vaccination strategy',
            color = 'Vaccination strategy')
@@ -136,7 +136,7 @@ plot_cohort <- function(df,
     # OVERALL COUNTS 
     cases_cohort <- make_co_plot(var = 'cases_averted',
                                  strat = strat) + 
-      labs(y = 'Cumulative uncomplicated cases averted',
+      labs(y = 'Cumulative clinical cases averted',
            x = 'Age (years)',
            fill = 'Vaccination strategy',
            color = 'Vaccination strategy')
