@@ -8,7 +8,9 @@ library(orderly2)
 #                       parameters = list(analysis = 'catch-up',
 #                                         age_scaling = 1)) # 1 or 0.64
 
-# skip report 2 because don't need to re-calibrate
+# Task 2 - calibration of EIR to PfPR  
+# ONly need to run this once to get EIR estimate (same can be used regardless of vaccination scaling)
+task_create_expr(orderly2::orderly_run(name = '2_calibration_to_PfPR'))
 
 
 # Task 3 - run and process
