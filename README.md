@@ -74,6 +74,9 @@ src/
         ├── plot_themes.R                                  # Helper function to define plot themes
         ├── plots_mim_ammnet.R                             # Create plots of age at vaccination and cohorts
         └── table_CA_perreldose.R                          # Make tables 
+    └── 7_part2_compare_scaled/                            # Scripts to produce plots comparing the two assumptions
+        ├── 7_part2_compare_scaled.R                       # Orderly task to produce plots
+        ├── add_lim_labels.R                               # Add labels
 provision.R                                                # Packages required for analysis 
 workflow_all.R                                             # Workflow, running through each orderly task in order
 ```
