@@ -81,8 +81,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
       theme_bw() +
       scale_fill_manual(values = CUcols1) +
       scale_color_manual(values = CUcols_) +
-      labs(y = if(variable == 'cases_averted'){'Cumulative clinical cases averted\nper 1,000 population'} 
-           else {'Cumulative severe cases averted\nper 1,000 population'},
+      labs(y = if(variable == 'cases_averted'){'Cumulative clinical cases averted\nper 1000 population'} 
+           else {'Cumulative severe cases averted\nper 1000 population'},
            x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
            fill = 'Vaccination strategy'
       ) +
@@ -114,8 +114,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
       theme_bw() +
       scale_fill_manual(values = CUcols1) +
       scale_color_manual(values = CUcols_) +
-      labs(y = if(variable == 'cases_averted'){'Cumulative clinical cases averted\nper 1,000 doses'} 
-           else {'Cumulative severe cases averted\nper 1,000 doses'},
+      labs(y = if(variable == 'cases_averted'){'Cumulative clinical cases averted\nper 1000 doses'} 
+           else {'Cumulative severe cases averted\nper 1000 doses'},
            x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
            fill = 'Vaccination strategy'
            ) +

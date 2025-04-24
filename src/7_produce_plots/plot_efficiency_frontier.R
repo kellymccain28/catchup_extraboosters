@@ -140,7 +140,7 @@ plot_efficiency_frontier <- function(df,
   
   SA <- eff_plot(var = 'severe_averted_perpop', eff_var = 'maxSA') + 
     labs(x = 'Doses per 1000 population',
-         y = 'Cumulative severe cases averted\nper 1000 population',
+         y = 'Cumulative severe cases\naverted per 1000 population',
          color = 'Vaccination strategy',
          shape = 'Strategy type')
   SAleg <- plot_grid(SA, legend_img, rel_widths = c(4,1))
