@@ -28,7 +28,7 @@ orderly2::orderly_dependency("5_process_combined",
 orderly2::orderly_dependency("5_process_combined",
                              "latest(parameter:age_scaling == 0.64)",
                              c(summarized_overall_64.rds = "summarized_overall_draws.rds",
-                               summarized_last15_64.rds = "summarized_last1_draws5.rds"))
+                               summarized_last15_64.rds = "summarized_last15_draws5.rds"))
 
 orderly2::orderly_dependency("6_make_cohorts",
                              "latest(parameter:age_scaling == 1)",
@@ -37,397 +37,9 @@ orderly2::orderly_dependency("6_make_cohorts",
                              "latest(parameter:age_scaling == 0.64)",
                              c(cohorts_rawdraws.rds = "cohorts_rawdraws.rds"))
 
-df_summ_1 <- readRDS("summarized_overall_draws_1.rds") %>% 
-  select(age_grp, age_lower, halfyear, clinical, severe, person_days, time, seasonality, pfpr, 
-         PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
-         year, week, month, day, 
-         cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
-  rename(baseline_CA_perpop = cases_averted_perpop,
-         baseline_SA_perpop = severe_averted_perpop,
-         baseline_CA_perdose = cases_averted_perdose,
-         baseline_SA_perdose = severe_averted_perdose) %>%
-  filter(age_grp == '0-100')
-df_summ_64 <- readRDS("summarized_overall_draws_64.rds") %>% 
-  select(age_grp, age_lower, halfyear, clinical, severe, person_days, time, seasonality, pfpr, 
-         PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
-         year, week, month, day, 
-         cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
-  filter(age_grp == '0-100')
-df_last15_1 <- readRDS("summarized_last15_draws_1.rds") %>% 
-  select(age_grp, age_lower, halfyear, clinical, severe, person_days, time, seasonality, pfpr, 
-         PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
-         year, week, month, day, 
-         cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
-  rename(baseline_CA_perpop = cases_averted_perpop,
-         baseline_SA_perpop = severe_averted_perpop,
-         baseline_CA_perdose = cases_averted_perdose,
-         baseline_SA_perdose = severe_averted_perdose)%>%
-  filter(age_grp == '0-100')
-df_last15_64 <- readRDS("summarized_last15_draws_64.rds") %>% 
-  select(age_grp, age_lower, halfyear, clinical, severe, person_days, time, seasonality, pfpr, 
-         PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
-         year, week, month, day, 
-         cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
-  filter(age_grp == '0-100')
 
-
-
-# just for use in non-dependency
-# df_summ_64 <- summarized_overall_draws64 %>%
-#   select(drawID, age_grp, age_lower, halfyear, clinical, severe, person_days, seasonality, pfpr, PEVage, EPIextra, int_ID,
-#          age_scaling, PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
-#          
-#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose) %>%
-#   filter(age_grp == '0-100')
-# df_last15_64 <- summarized_last15_draws64 %>%
-#   select(drawID, age_grp, age_lower, halfyear, clinical, severe, person_days, seasonality, pfpr, PEVage, EPIextra, int_ID,
-#          age_scaling, PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
-#          
-#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
-#   filter(age_grp == '0-100')
-# df_summ_1 <- summarized_overall_draws1 %>%
-#   select(drawID, age_grp, age_lower, halfyear, clinical, severe, person_days, seasonality, pfpr, PEVage, EPIextra, int_ID,
-#          age_scaling, PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
-#          
-#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose) %>%
-#   rename(baseline_CA_perpop = cases_averted_perpop,
-#          baseline_SA_perpop = severe_averted_perpop,
-#          baseline_CA_perdose = cases_averted_perdose,
-#          baseline_SA_perdose = severe_averted_perdose)%>%
-#   filter(age_grp == '0-100')
-# df_last15_1 <- summarized_last15_draws1 %>%
-#   select(drawID, age_grp, age_lower, halfyear, clinical, severe, person_days, seasonality, pfpr, PEVage, EPIextra, int_ID,
-#          age_scaling, PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
-#          
-#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
-#   rename(baseline_CA_perpop = cases_averted_perpop,
-#          baseline_SA_perpop = severe_averted_perpop,
-#          baseline_CA_perdose = cases_averted_perdose,
-#          baseline_SA_perdose = severe_averted_perdose)%>%
-#   filter(age_grp == '0-100')
-
-# First, make a plot showing the cumulative difference in clinical cases per dose in scaled versus non-scaled runs in overall dataset
-df_summ <- left_join(df_summ_1, df_summ_64, by = c('drawID','age_grp','age_lower','seasonality','pfpr',
-                                                   'PEVstrategy','massbooster_rep','EPIbooster','PEVage','EPIextra','int_ID')) %>%
-  # Calculate differences
-  mutate(diff_CA_perpop = baseline_CA_perpop - cases_averted_perpop,
-         diff_SA_perpop = baseline_SA_perpop - severe_averted_perpop,
-         diff_CA_perdose = baseline_CA_perdose - cases_averted_perdose,
-         diff_SA_perdose = baseline_SA_perdose - severe_averted_perdose,
-         pdiff_CA_perpop = diff_CA_perpop / baseline_CA_perpop,
-         pdiff_SA_perpop = diff_SA_perpop / baseline_SA_perpop,
-         pdiff_CA_perdose = diff_CA_perdose / baseline_CA_perdose,
-         pdiff_SA_perdose = diff_SA_perdose / baseline_SA_perdose) %>%
-  add_lim_labels() 
-
-# Then get 95% Cis and medians 
-diff_overall <- df_summ %>%
-  group_by(age_grp, age_lower, int_ID, labels,PEVstrategy,
-           pfpr, seasonality, PEVage, EPIextra
-  ) %>%
-  summarize(across(c(contains('averted'), contains('baseline'),
-                     contains('diff')),
-                   list(lower = ~quantile(.x, 0.025, na.rm = TRUE),
-                        median = ~quantile(.x, 0.5, na.rm = TRUE),
-                        upper = ~quantile(.x, 0.975, na.rm = TRUE)),
-                   .names = "{.col}_{.fn}") ) %>%
-  # rename those variables with _median to be just the variable name 
-  rename_with(.fn = \(x)sub("_median","", x)) 
-
-
-# Then do the same for the age-based ones 
-# First, make a plot showing the cumulative difference in clinical cases per dose in scaled versus non-scaled runs 
-df_last15 <- left_join(df_last15_1, df_last15_64, by = c('drawID','age_grp','age_lower','seasonality','pfpr',
-                                                         'PEVstrategy','massbooster_rep','EPIbooster','PEVage','EPIextra','int_ID')) %>%
-  # Calculate differences
-  mutate(diff_CA_perpop = baseline_CA_perpop - cases_averted_perpop,
-         diff_SA_perpop = baseline_SA_perpop - severe_averted_perpop,
-         diff_CA_perdose = baseline_CA_perdose - cases_averted_perdose,
-         diff_SA_perdose = baseline_SA_perdose - severe_averted_perdose,
-         pdiff_CA_perpop = diff_CA_perpop / baseline_CA_perpop,
-         pdiff_SA_perpop = diff_SA_perpop / baseline_SA_perpop,
-         pdiff_CA_perdose = diff_CA_perdose / baseline_CA_perdose,
-         pdiff_SA_perdose = diff_SA_perdose / baseline_SA_perdose) %>%
-  add_lim_labels() 
-
-# Then get 95% Cis and medians 
-diff_last15 <- df_last15 %>%
-  group_by(age_grp, age_lower, int_ID, labels,PEVstrategy,
-           pfpr, seasonality, PEVage, EPIextra
-  ) %>%
-  summarize(across(c(contains('averted'), contains('baseline'),
-                     contains('diff')),
-                   list(lower = ~quantile(.x, 0.025, na.rm = TRUE),
-                        median = ~quantile(.x, 0.5, na.rm = TRUE),
-                        upper = ~quantile(.x, 0.975, na.rm = TRUE)),
-                   .names = "{.col}_{.fn}") ) %>%
-  # rename those variables with _median to be just the variable name 
-  rename_with(.fn = \(x)sub("_median","", x)) 
-
-CUcols1 <- c('#B03A2E','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
-CUcols_ <- c('black','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
-
-# Make a plot of the difference between the two types first for overall then last15 
-variables = c('diff_CA_perpop', 'diff_SA_perpop', 'pdiff_CA_perpop','pdiff_SA_perpop')
-for(variable in variables){
-  df <- diff_overall %>%
-    filter((EPIextra == '-'  & PEVstrategy == 'catch-up') | (PEVstrategy == 'AB' & EPIextra == '-') & pfpr != 0.03)
-  
-  A <- ggplot(df) +
-    geom_col(aes(x = as.factor(pfpr), 
-                 y = .data[[variable]], 
-                 fill = labels, color = labels), 
-             position ='dodge', 
-             alpha = 0.7) + 
-    geom_errorbar(aes(x = as.factor(pfpr), 
-                      ymin = .data[[paste0(variable, "_lower")]],
-                      ymax = .data[[paste0(variable, "_upper")]], 
-                      color = labels),
-                  position = position_dodge(width = 0.9), 
-                  width = 0.35, 
-                  linewidth = 0.7) +
-    theme_bw() +
-    scale_fill_manual(values = CUcols1) +
-    scale_color_manual(values = CUcols_) +
-    facet_wrap(~seasonality) +
-    labs(y = if(variable == 'diff_CA_perpop'){
-      'Difference in cumulative clinical cases averted\nper 1,000 population'
-    } else if(variable == 'pdiff_CA_perpop'){
-      'Percent difference in cumulative clinical cases averted\nper 1,000 population'
-    } else if (variable == 'diff_SA_perpop'){
-      'Difference in cumulative severe cases averted\nper 1,000 population'
-    } else if (variable == 'pdiff_SA_perpop'){
-      'Percent difference in cumulative severe cases averted\nper 1,000 population'
-    },
-    x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
-    fill = 'Vaccination strategy',
-    caption = 'Negative values indicate that the non-scaled strategy averted more cases compared to the scaled strategy,\nand positive values show that the scaled strategy averted more cases.'
-    ) +
-    guides(color = 'none') +
-    theme(axis.title = element_text(size = 20),
-          plot.title = element_text(size = 22),
-          legend.text = element_text(size = 15),
-          strip.text.x = element_text(size = 12),
-          legend.title = element_text(size = 18),
-          plot.caption = element_text(size = 12),
-          legend.key.size = unit(0.8, 'cm'),
-          axis.text.x = element_text(size = 12),
-          axis.text.y = element_text(size = 12)
-    )
-  
-  if(grepl('p', variable)){
-    A <- A + 
-      scale_y_continuous(labels = scales::label_percent()) 
-  }
-    
-  ggsave(file = paste0(variable, "summ.png"), A, width = 15, height = 8)
-  
-}
-
-for(variable in variables){
-  df <- diff_last15 %>% 
-    filter(PEVstrategy == 'AB' & pfpr != 0.03)  
-  
-  A <- ggplot(df) +
-    geom_col(aes(x = as.factor(pfpr), 
-                 y = .data[[variable]], 
-                 fill = labels, color = labels), 
-             position ='dodge', 
-             alpha = 0.7) + 
-    geom_errorbar(aes(x = as.factor(pfpr), 
-                      ymin = .data[[paste0(variable, "_lower")]],
-                      ymax = .data[[paste0(variable, "_upper")]], 
-                      color = labels),
-                  position = position_dodge(width = 0.9), 
-                  width = 0.35, 
-                  linewidth = 0.7) +
-    theme_bw() +
-    scale_fill_manual(values = CUcols1) +
-    scale_color_manual(values = CUcols_) +
-    facet_wrap(~seasonality) +
-    labs(y = if(variable == 'diff_CA_perpop'){
-      'Difference in cumulative clinical cases averted\nper 1,000 population'
-    } else if(variable == 'pdiff_CA_perpop'){
-      'Percent difference in cumulative clinical cases averted\nper 1,000 population'
-    } else if (variable == 'diff_SA_perpop'){
-      'Difference in cumulative severe cases averted\nper 1,000 population'
-    } else if (variable == 'pdiff_SA_perpop'){
-      'Percent difference in cumulative severe cases averted\nper 1,000 population'
-    },
-    x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
-         fill = 'Vaccination strategy'
-    ) +
-    guides(color = 'none') +
-    theme(axis.title = element_text(size = 20),
-          plot.title = element_text(size = 22),
-          legend.text = element_text(size = 15),
-          strip.text.x = element_text(size = 12),
-          legend.title = element_text(size = 18),
-          plot.caption = element_text(size = 12),
-          legend.key.size = unit(0.8, 'cm'),
-          axis.text.x = element_text(size = 12),
-          axis.text.y = element_text(size = 12)
-    )
-  
-  if(grepl('p', variable)){
-    A <- A + 
-      scale_y_continuous(labels = scales::label_percent()) 
-  }
-  
-  ggsave(file = paste0(variable, "last15.png"), A, width = 15, height = 8)
-  
-}
-
-
-
-
-## Cohorts 
-
-cohorts_draws1 <- readRDS("cohorts_rawdraws1.rds") 
-cohorts_draws1 <- cohorts_draws1%>%
-  rename(baseline_CA_perpop = cases_averted_perpop,
-         baseline_SA_perpop = severe_averted_perpop,
-         baseline_CA_perdose = cases_averted_perdose,
-         baseline_SA_perdose = severe_averted_perdose)
-
-cohorts_draws64 <- readRDS('cohorts_rawdraws64.rds')
-
-cohortsdraws <- left_join(cohorts_draws1, cohorts_draws64, by = c('drawID','halfyear','seasonality','pfpr',
-                                                                  'PEVstrategy','massbooster_rep','EPIbooster','PEVage','EPIextra','int_ID')) %>%
-  # Calculate differences
-  mutate(diff_CA_perpop = baseline_CA_perpop - cases_averted_perpop,
-         diff_SA_perpop = baseline_SA_perpop - severe_averted_perpop,
-         diff_CA_perdose = baseline_CA_perdose - cases_averted_perdose,
-         diff_SA_perdose = baseline_SA_perdose - severe_averted_perdose,
-         pdiff_CA_perpop = diff_CA_perpop / baseline_CA_perpop,
-         pdiff_SA_perpop = diff_SA_perpop / baseline_SA_perpop,
-         pdiff_CA_perdose = diff_CA_perdose / baseline_CA_perdose,
-         pdiff_SA_perdose = diff_SA_perdose / baseline_SA_perdose) %>%
-  add_lim_labels() 
-
-# Then get 95% Cis and medians 
-diffcohorts <- cohortsdraws %>%
-  group_by(halfyear, int_ID, labels, PEVstrategy,
-           pfpr, seasonality, PEVage, EPIextra
-  ) %>%
-  summarize(across(c(contains('averted'), contains('baseline'),
-                     contains('diff')),
-                   list(lower = ~quantile(.x, 0.025, na.rm = TRUE),
-                        median = ~quantile(.x, 0.5, na.rm = TRUE),
-                        upper = ~quantile(.x, 0.975, na.rm = TRUE)),
-                   .names = "{.col}_{.fn}") ) %>%
-  # rename those variables with _median to be just the variable name 
-  rename_with(.fn = \(x)sub("_median","", x)) 
-
-# Per dose 
-variables = c('diff_CA_perdose', 'diff_SA_perdose', 'pdiff_CA_perdose','pdiff_SA_perdose')
-for(variable in variables){
-  df <- diffcohorts %>% 
-    filter((EPIextra == '-'  & PEVstrategy == 'catch-up') | (PEVstrategy == 'AB' & EPIextra == '-') & pfpr != 0.03)  
-  
-  B <- ggplot(df) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
-    geom_col(aes(x = as.factor(pfpr), 
-                 y = .data[[variable]], 
-                 fill = labels, color = labels), 
-             position ='dodge', 
-             alpha = 0.7) + 
-    geom_errorbar(aes(x = as.factor(pfpr), 
-                      ymin = .data[[paste0(variable, "_lower")]], 
-                      ymax = .data[[paste0(variable, "_upper")]], 
-                      color = labels),
-                  position = position_dodge(width = 0.9), 
-                  width = 0.35, 
-                  linewidth = 0.7) +
-    theme_bw() +
-    scale_fill_manual(values = CUcols1) +
-    scale_color_manual(values = CUcols_) +
-    facet_wrap(~seasonality) +
-    labs(y = if(variable == 'diff_CA_perdose'){
-      'Difference in cumulative clinical cases averted\nper 1,000 doses'
-    } else if(variable == 'pdiff_CA_perdose'){
-      'Percent difference in cumulative clinical cases averted\nper 1,000 doses'
-    } else if (variable == 'diff_SA_perdose'){
-      'Difference in cumulative severe cases averted\nper 1,000 doses'
-    } else if (variable == 'pdiff_SA_perdose'){
-      'Percent difference in cumulative severe cases averted\nper 1,000 doses'
-    },
-    x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
-         fill = 'Vaccination strategy'
-    ) +
-    guides(color = 'none') +
-    theme(axis.title = element_text(size = 20),
-          axis.text.x = element_text(size = 14),
-          axis.text.y = element_text(size = 14),
-          plot.caption = element_text(size = 14),
-          legend.title = element_text(size = 18),
-          legend.text = element_text(size = 14),
-          legend.key.size = unit(0.8, 'cm'),
-          strip.text.x = element_text(size = 12),
-          strip.text.y = element_text(size = 12)
-    )
-  
-  if(grepl('p', variable)){
-    B <- B + 
-      scale_y_continuous(labels = scales::label_percent()) 
-  }
-  
-  ggsave(file = paste0(variable, "cohorts_CU.png"), B, width = 15, height = 8)
-}
-
-for(variable in variables){
-  df <- diff_last15 %>% 
-    filter(PEVstrategy == 'AB' & pfpr != 0.03)  
-  
-  B <- gdiff_last15B <- ggplot(df) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
-    geom_col(aes(x = as.factor(pfpr), 
-                 y = .data[[variable]], 
-                 fill = labels, color = labels), 
-             position ='dodge', 
-             alpha = 0.7) + 
-    geom_errorbar(aes(x = as.factor(pfpr), 
-                      ymin = .data[[paste0(variable, "_lower")]], 
-                      ymax = .data[[paste0(variable, "_upper")]], 
-                      color = labels),
-                  position = position_dodge(width = 0.9), 
-                  width = 0.35, 
-                  linewidth = 0.7) +
-    theme_bw() +
-    scale_fill_manual(values = CUcols1) +
-    scale_color_manual(values = CUcols_) +
-    scale_y_continuous(labels = scales::label_percent()) +
-    facet_wrap(~seasonality) +
-    labs(y = if(variable == 'diff_CA_perdose'){
-      'Difference in cumulative clinical cases averted\nper 1,000 doses'
-    } else if(variable == 'pdiff_CA_perdose'){
-      'Percent difference in cumulative clinical cases averted\nper 1,000 doses'
-    } else if (variable == 'diff_SA_perdose'){
-      'Difference in cumulative severe cases averted\nper 1,000 doses'
-    } else if (variable == 'pdiff_SA_perdose'){
-      'Percent difference in cumulative severe cases averted\nper 1,000 doses'
-    },
-    x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
-         fill = 'Vaccination strategy'
-    ) +
-    guides(color = 'none') +
-    theme(axis.title = element_text(size = 20),
-          axis.text.x = element_text(size = 14),
-          axis.text.y = element_text(size = 14),
-          plot.caption = element_text(size = 14),
-          legend.title = element_text(size = 18),
-          legend.text = element_text(size = 14),
-          legend.key.size = unit(0.8, 'cm'),
-          strip.text.x = element_text(size = 12),
-          strip.text.y = element_text(size = 12)
-    )
-  
-  if(grepl('p', variable)){
-    B <- B + 
-      scale_y_continuous(labels = scales::label_percent()) 
-  }
-  
-  ggsave(file = paste0(variable, "AB.png"), B, width = 15, height = 8)
-  
-}
+summ_1 <- readRDS("summarized_overall_draws_1.rds")
+summ_64 <- readRDS("summarized_overall_draws_64.rds")
 
 
 
@@ -597,3 +209,402 @@ averted_plt <- cowplot::plot_grid(CA + theme(legend.position="none"),
 avertedwleg <- plot_grid(averted_plt, legend_img, 
                          ncol = 2, rel_widths = c(4,1))
 ggsave(paste0('CASAbytotaldoses', seas_type, '.pdf'), avertedwleg, width = 14, height = 8)
+
+
+
+
+
+
+
+
+
+
+# df_summ_1 <- readRDS("summarized_overall_draws_1.rds") %>% 
+#   select(age_grp, age_lower, halfyear, clinical, severe, person_days, time, seasonality, pfpr, 
+#          PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
+#          year, week, month, day, 
+#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
+#   rename(baseline_CA_perpop = cases_averted_perpop,
+#          baseline_SA_perpop = severe_averted_perpop,
+#          baseline_CA_perdose = cases_averted_perdose,
+#          baseline_SA_perdose = severe_averted_perdose) %>%
+#   filter(age_grp == '0-100')
+# df_summ_64 <- readRDS("summarized_overall_draws_64.rds") %>% 
+#   select(age_grp, age_lower, halfyear, clinical, severe, person_days, time, seasonality, pfpr, 
+#          PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
+#          year, week, month, day, 
+#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
+#   filter(age_grp == '0-100')
+# df_last15_1 <- readRDS("summarized_last15_draws_1.rds") %>% 
+#   select(age_grp, age_lower, halfyear, clinical, severe, person_days, time, seasonality, pfpr, 
+#          PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
+#          year, week, month, day, 
+#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
+#   rename(baseline_CA_perpop = cases_averted_perpop,
+#          baseline_SA_perpop = severe_averted_perpop,
+#          baseline_CA_perdose = cases_averted_perdose,
+#          baseline_SA_perdose = severe_averted_perdose)%>%
+#   filter(age_grp == '0-100')
+# df_last15_64 <- readRDS("summarized_last15_draws_64.rds") %>% 
+#   select(age_grp, age_lower, halfyear, clinical, severe, person_days, time, seasonality, pfpr, 
+#          PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
+#          year, week, month, day, 
+#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
+#   filter(age_grp == '0-100')
+# just for use in non-dependency
+# df_summ_64 <- summarized_overall_draws64 %>%
+#   select(drawID, age_grp, age_lower, halfyear, clinical, severe, person_days, seasonality, pfpr, PEVage, EPIextra, int_ID,
+#          age_scaling, PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
+#          
+#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose) %>%
+#   filter(age_grp == '0-100')
+# df_last15_64 <- summarized_last15_draws64 %>%
+#   select(drawID, age_grp, age_lower, halfyear, clinical, severe, person_days, seasonality, pfpr, PEVage, EPIextra, int_ID,
+#          age_scaling, PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
+#          
+#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
+#   filter(age_grp == '0-100')
+# df_summ_1 <- summarized_overall_draws1 %>%
+#   select(drawID, age_grp, age_lower, halfyear, clinical, severe, person_days, seasonality, pfpr, PEVage, EPIextra, int_ID,
+#          age_scaling, PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
+#          
+#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose) %>%
+#   rename(baseline_CA_perpop = cases_averted_perpop,
+#          baseline_SA_perpop = severe_averted_perpop,
+#          baseline_CA_perdose = cases_averted_perdose,
+#          baseline_SA_perdose = severe_averted_perdose)%>%
+#   filter(age_grp == '0-100')
+# df_last15_1 <- summarized_last15_draws1 %>%
+#   select(drawID, age_grp, age_lower, halfyear, clinical, severe, person_days, seasonality, pfpr, PEVage, EPIextra, int_ID,
+#          age_scaling, PEVstrategy, PEVrounds, EPIbooster, PEVage, EPIextra, massbooster_rep, age_scaling, 
+#          
+#          cases_averted_perpop, severe_averted_perpop, cases_averted_perdose, severe_averted_perdose)%>%
+#   rename(baseline_CA_perpop = cases_averted_perpop,
+#          baseline_SA_perpop = severe_averted_perpop,
+#          baseline_CA_perdose = cases_averted_perdose,
+#          baseline_SA_perdose = severe_averted_perdose)%>%
+#   filter(age_grp == '0-100')
+
+# # First, make a plot showing the cumulative difference in clinical cases per dose in scaled versus non-scaled runs in overall dataset
+# df_summ <- left_join(df_summ_1, df_summ_64, by = c('drawID','age_grp','age_lower','seasonality','pfpr',
+#                                                    'PEVstrategy','massbooster_rep','EPIbooster','PEVage','EPIextra','int_ID')) %>%
+#   # Calculate differences
+#   mutate(diff_CA_perpop = baseline_CA_perpop - cases_averted_perpop,
+#          diff_SA_perpop = baseline_SA_perpop - severe_averted_perpop,
+#          diff_CA_perdose = baseline_CA_perdose - cases_averted_perdose,
+#          diff_SA_perdose = baseline_SA_perdose - severe_averted_perdose,
+#          pdiff_CA_perpop = diff_CA_perpop / baseline_CA_perpop,
+#          pdiff_SA_perpop = diff_SA_perpop / baseline_SA_perpop,
+#          pdiff_CA_perdose = diff_CA_perdose / baseline_CA_perdose,
+#          pdiff_SA_perdose = diff_SA_perdose / baseline_SA_perdose) %>%
+#   add_lim_labels() 
+# 
+# # Then get 95% Cis and medians 
+# diff_overall <- df_summ %>%
+#   group_by(age_grp, age_lower, int_ID, labels,PEVstrategy,
+#            pfpr, seasonality, PEVage, EPIextra
+#   ) %>%
+#   summarize(across(c(contains('averted'), contains('baseline'),
+#                      contains('diff')),
+#                    list(lower = ~quantile(.x, 0.025, na.rm = TRUE),
+#                         median = ~quantile(.x, 0.5, na.rm = TRUE),
+#                         upper = ~quantile(.x, 0.975, na.rm = TRUE)),
+#                    .names = "{.col}_{.fn}") ) %>%
+#   # rename those variables with _median to be just the variable name 
+#   rename_with(.fn = \(x)sub("_median","", x)) 
+# 
+# 
+# # Then do the same for the age-based ones 
+# # First, make a plot showing the cumulative difference in clinical cases per dose in scaled versus non-scaled runs 
+# df_last15 <- left_join(df_last15_1, df_last15_64, by = c('drawID','age_grp','age_lower','seasonality','pfpr',
+#                                                          'PEVstrategy','massbooster_rep','EPIbooster','PEVage','EPIextra','int_ID')) %>%
+#   # Calculate differences
+#   mutate(diff_CA_perpop = baseline_CA_perpop - cases_averted_perpop,
+#          diff_SA_perpop = baseline_SA_perpop - severe_averted_perpop,
+#          diff_CA_perdose = baseline_CA_perdose - cases_averted_perdose,
+#          diff_SA_perdose = baseline_SA_perdose - severe_averted_perdose,
+#          pdiff_CA_perpop = diff_CA_perpop / baseline_CA_perpop,
+#          pdiff_SA_perpop = diff_SA_perpop / baseline_SA_perpop,
+#          pdiff_CA_perdose = diff_CA_perdose / baseline_CA_perdose,
+#          pdiff_SA_perdose = diff_SA_perdose / baseline_SA_perdose) %>%
+#   add_lim_labels() 
+# 
+# # Then get 95% Cis and medians 
+# diff_last15 <- df_last15 %>%
+#   group_by(age_grp, age_lower, int_ID, labels,PEVstrategy,
+#            pfpr, seasonality, PEVage, EPIextra
+#   ) %>%
+#   summarize(across(c(contains('averted'), contains('baseline'),
+#                      contains('diff')),
+#                    list(lower = ~quantile(.x, 0.025, na.rm = TRUE),
+#                         median = ~quantile(.x, 0.5, na.rm = TRUE),
+#                         upper = ~quantile(.x, 0.975, na.rm = TRUE)),
+#                    .names = "{.col}_{.fn}") ) %>%
+#   # rename those variables with _median to be just the variable name 
+#   rename_with(.fn = \(x)sub("_median","", x)) 
+# 
+# CUcols1 <- c('#B03A2E','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
+# CUcols_ <- c('black','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
+# 
+# # Make a plot of the difference between the two types first for overall then last15 
+# variables = c('diff_CA_perpop', 'diff_SA_perpop', 'pdiff_CA_perpop','pdiff_SA_perpop')
+# for(variable in variables){
+#   df <- diff_overall %>%
+#     filter((EPIextra == '-'  & PEVstrategy == 'catch-up') | (PEVstrategy == 'AB' & EPIextra == '-') & pfpr != 0.03)
+#   
+#   A <- ggplot(df) +
+#     geom_col(aes(x = as.factor(pfpr), 
+#                  y = .data[[variable]], 
+#                  fill = labels, color = labels), 
+#              position ='dodge', 
+#              alpha = 0.7) + 
+#     geom_errorbar(aes(x = as.factor(pfpr), 
+#                       ymin = .data[[paste0(variable, "_lower")]],
+#                       ymax = .data[[paste0(variable, "_upper")]], 
+#                       color = labels),
+#                   position = position_dodge(width = 0.9), 
+#                   width = 0.35, 
+#                   linewidth = 0.7) +
+#     theme_bw() +
+#     scale_fill_manual(values = CUcols1) +
+#     scale_color_manual(values = CUcols_) +
+#     facet_wrap(~seasonality) +
+#     labs(y = if(variable == 'diff_CA_perpop'){
+#       'Difference in cumulative clinical cases averted\nper 1,000 population'
+#     } else if(variable == 'pdiff_CA_perpop'){
+#       'Percent difference in cumulative clinical cases averted\nper 1,000 population'
+#     } else if (variable == 'diff_SA_perpop'){
+#       'Difference in cumulative severe cases averted\nper 1,000 population'
+#     } else if (variable == 'pdiff_SA_perpop'){
+#       'Percent difference in cumulative severe cases averted\nper 1,000 population'
+#     },
+#     x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+#     fill = 'Vaccination strategy',
+#     caption = 'Negative values indicate that the non-scaled strategy averted more cases compared to the scaled strategy,\nand positive values show that the scaled strategy averted more cases.'
+#     ) +
+#     guides(color = 'none') +
+#     theme(axis.title = element_text(size = 20),
+#           plot.title = element_text(size = 22),
+#           legend.text = element_text(size = 15),
+#           strip.text.x = element_text(size = 12),
+#           legend.title = element_text(size = 18),
+#           plot.caption = element_text(size = 12),
+#           legend.key.size = unit(0.8, 'cm'),
+#           axis.text.x = element_text(size = 12),
+#           axis.text.y = element_text(size = 12)
+#     )
+#   
+#   if(grepl('p', variable)){
+#     A <- A + 
+#       scale_y_continuous(labels = scales::label_percent()) 
+#   }
+#   
+#   ggsave(file = paste0(variable, "summ.png"), A, width = 15, height = 8)
+#   
+# }
+# 
+# for(variable in variables){
+#   df <- diff_last15 %>% 
+#     filter(PEVstrategy == 'AB' & pfpr != 0.03)  
+#   
+#   A <- ggplot(df) +
+#     geom_col(aes(x = as.factor(pfpr), 
+#                  y = .data[[variable]], 
+#                  fill = labels, color = labels), 
+#              position ='dodge', 
+#              alpha = 0.7) + 
+#     geom_errorbar(aes(x = as.factor(pfpr), 
+#                       ymin = .data[[paste0(variable, "_lower")]],
+#                       ymax = .data[[paste0(variable, "_upper")]], 
+#                       color = labels),
+#                   position = position_dodge(width = 0.9), 
+#                   width = 0.35, 
+#                   linewidth = 0.7) +
+#     theme_bw() +
+#     scale_fill_manual(values = CUcols1) +
+#     scale_color_manual(values = CUcols_) +
+#     facet_wrap(~seasonality) +
+#     labs(y = if(variable == 'diff_CA_perpop'){
+#       'Difference in cumulative clinical cases averted\nper 1,000 population'
+#     } else if(variable == 'pdiff_CA_perpop'){
+#       'Percent difference in cumulative clinical cases averted\nper 1,000 population'
+#     } else if (variable == 'diff_SA_perpop'){
+#       'Difference in cumulative severe cases averted\nper 1,000 population'
+#     } else if (variable == 'pdiff_SA_perpop'){
+#       'Percent difference in cumulative severe cases averted\nper 1,000 population'
+#     },
+#     x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+#     fill = 'Vaccination strategy'
+#     ) +
+#     guides(color = 'none') +
+#     theme(axis.title = element_text(size = 20),
+#           plot.title = element_text(size = 22),
+#           legend.text = element_text(size = 15),
+#           strip.text.x = element_text(size = 12),
+#           legend.title = element_text(size = 18),
+#           plot.caption = element_text(size = 12),
+#           legend.key.size = unit(0.8, 'cm'),
+#           axis.text.x = element_text(size = 12),
+#           axis.text.y = element_text(size = 12)
+#     )
+#   
+#   if(grepl('p', variable)){
+#     A <- A + 
+#       scale_y_continuous(labels = scales::label_percent()) 
+#   }
+#   
+#   ggsave(file = paste0(variable, "last15.png"), A, width = 15, height = 8)
+#   
+# }
+# 
+# 
+# 
+# 
+# ## Cohorts 
+# 
+# cohorts_draws1 <- readRDS("cohorts_rawdraws1.rds") 
+# cohorts_draws1 <- cohorts_draws1%>%
+#   rename(baseline_CA_perpop = cases_averted_perpop,
+#          baseline_SA_perpop = severe_averted_perpop,
+#          baseline_CA_perdose = cases_averted_perdose,
+#          baseline_SA_perdose = severe_averted_perdose)
+# 
+# cohorts_draws64 <- readRDS('cohorts_rawdraws64.rds')
+# 
+# cohortsdraws <- left_join(cohorts_draws1, cohorts_draws64, by = c('drawID','halfyear','seasonality','pfpr',
+#                                                                   'PEVstrategy','massbooster_rep','EPIbooster','PEVage','EPIextra','int_ID')) %>%
+#   # Calculate differences
+#   mutate(diff_CA_perpop = baseline_CA_perpop - cases_averted_perpop,
+#          diff_SA_perpop = baseline_SA_perpop - severe_averted_perpop,
+#          diff_CA_perdose = baseline_CA_perdose - cases_averted_perdose,
+#          diff_SA_perdose = baseline_SA_perdose - severe_averted_perdose,
+#          pdiff_CA_perpop = diff_CA_perpop / baseline_CA_perpop,
+#          pdiff_SA_perpop = diff_SA_perpop / baseline_SA_perpop,
+#          pdiff_CA_perdose = diff_CA_perdose / baseline_CA_perdose,
+#          pdiff_SA_perdose = diff_SA_perdose / baseline_SA_perdose) %>%
+#   add_lim_labels() 
+# 
+# # Then get 95% Cis and medians 
+# diffcohorts <- cohortsdraws %>%
+#   group_by(halfyear, int_ID, labels, PEVstrategy,
+#            pfpr, seasonality, PEVage, EPIextra
+#   ) %>%
+#   summarize(across(c(contains('averted'), contains('baseline'),
+#                      contains('diff')),
+#                    list(lower = ~quantile(.x, 0.025, na.rm = TRUE),
+#                         median = ~quantile(.x, 0.5, na.rm = TRUE),
+#                         upper = ~quantile(.x, 0.975, na.rm = TRUE)),
+#                    .names = "{.col}_{.fn}") ) %>%
+#   # rename those variables with _median to be just the variable name 
+#   rename_with(.fn = \(x)sub("_median","", x)) 
+# 
+# # Per dose 
+# variables = c('diff_CA_perdose', 'diff_SA_perdose', 'pdiff_CA_perdose','pdiff_SA_perdose')
+# for(variable in variables){
+#   df <- diffcohorts %>% 
+#     filter((EPIextra == '-'  & PEVstrategy == 'catch-up') | (PEVstrategy == 'AB' & EPIextra == '-') & pfpr != 0.03)  
+#   
+#   B <- ggplot(df) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+#     geom_col(aes(x = as.factor(pfpr), 
+#                  y = .data[[variable]], 
+#                  fill = labels, color = labels), 
+#              position ='dodge', 
+#              alpha = 0.7) + 
+#     geom_errorbar(aes(x = as.factor(pfpr), 
+#                       ymin = .data[[paste0(variable, "_lower")]], 
+#                       ymax = .data[[paste0(variable, "_upper")]], 
+#                       color = labels),
+#                   position = position_dodge(width = 0.9), 
+#                   width = 0.35, 
+#                   linewidth = 0.7) +
+#     theme_bw() +
+#     scale_fill_manual(values = CUcols1) +
+#     scale_color_manual(values = CUcols_) +
+#     facet_wrap(~seasonality) +
+#     labs(y = if(variable == 'diff_CA_perdose'){
+#       'Difference in cumulative clinical cases averted\nper 1,000 doses'
+#     } else if(variable == 'pdiff_CA_perdose'){
+#       'Percent difference in cumulative clinical cases averted\nper 1,000 doses'
+#     } else if (variable == 'diff_SA_perdose'){
+#       'Difference in cumulative severe cases averted\nper 1,000 doses'
+#     } else if (variable == 'pdiff_SA_perdose'){
+#       'Percent difference in cumulative severe cases averted\nper 1,000 doses'
+#     },
+#     x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+#     fill = 'Vaccination strategy'
+#     ) +
+#     guides(color = 'none') +
+#     theme(axis.title = element_text(size = 20),
+#           axis.text.x = element_text(size = 14),
+#           axis.text.y = element_text(size = 14),
+#           plot.caption = element_text(size = 14),
+#           legend.title = element_text(size = 18),
+#           legend.text = element_text(size = 14),
+#           legend.key.size = unit(0.8, 'cm'),
+#           strip.text.x = element_text(size = 12),
+#           strip.text.y = element_text(size = 12)
+#     )
+#   
+#   if(grepl('p', variable)){
+#     B <- B + 
+#       scale_y_continuous(labels = scales::label_percent()) 
+#   }
+#   
+#   ggsave(file = paste0(variable, "cohorts_CU.png"), B, width = 15, height = 8)
+# }
+# 
+# for(variable in variables){
+#   df <- diff_last15 %>% 
+#     filter(PEVstrategy == 'AB' & pfpr != 0.03)  
+#   
+#   B <- gdiff_last15B <- ggplot(df) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+#     geom_col(aes(x = as.factor(pfpr), 
+#                  y = .data[[variable]], 
+#                  fill = labels, color = labels), 
+#              position ='dodge', 
+#              alpha = 0.7) + 
+#     geom_errorbar(aes(x = as.factor(pfpr), 
+#                       ymin = .data[[paste0(variable, "_lower")]], 
+#                       ymax = .data[[paste0(variable, "_upper")]], 
+#                       color = labels),
+#                   position = position_dodge(width = 0.9), 
+#                   width = 0.35, 
+#                   linewidth = 0.7) +
+#     theme_bw() +
+#     scale_fill_manual(values = CUcols1) +
+#     scale_color_manual(values = CUcols_) +
+#     scale_y_continuous(labels = scales::label_percent()) +
+#     facet_wrap(~seasonality) +
+#     labs(y = if(variable == 'diff_CA_perdose'){
+#       'Difference in cumulative clinical cases averted\nper 1,000 doses'
+#     } else if(variable == 'pdiff_CA_perdose'){
+#       'Percent difference in cumulative clinical cases averted\nper 1,000 doses'
+#     } else if (variable == 'diff_SA_perdose'){
+#       'Difference in cumulative severe cases averted\nper 1,000 doses'
+#     } else if (variable == 'pdiff_SA_perdose'){
+#       'Percent difference in cumulative severe cases averted\nper 1,000 doses'
+#     },
+#     x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+#     fill = 'Vaccination strategy'
+#     ) +
+#     guides(color = 'none') +
+#     theme(axis.title = element_text(size = 20),
+#           axis.text.x = element_text(size = 14),
+#           axis.text.y = element_text(size = 14),
+#           plot.caption = element_text(size = 14),
+#           legend.title = element_text(size = 18),
+#           legend.text = element_text(size = 14),
+#           legend.key.size = unit(0.8, 'cm'),
+#           strip.text.x = element_text(size = 12),
+#           strip.text.y = element_text(size = 12)
+#     )
+#   
+#   if(grepl('p', variable)){
+#     B <- B + 
+#       scale_y_continuous(labels = scales::label_percent()) 
+#   }
+#   
+#   ggsave(file = paste0(variable, "AB.png"), B, width = 15, height = 8)
+#   
+# }
+
