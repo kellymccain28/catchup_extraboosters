@@ -189,7 +189,7 @@ makeplots <- function(){
       theme(axis.title = element_text(size = 8),
             # plot.title = element_text(size = 22),
             legend.text = element_text(size = 8),
-            legend.title = element_text(size = 10),
+            legend.title = element_text(size = 8),
             plot.caption = element_text(size = 10),
             legend.key.size = unit(0.3, 'cm'),
             axis.text.x = element_text(size = 8),
@@ -246,10 +246,10 @@ makeplots <- function(){
       theme(axis.title = element_text(size = 8),
             # plot.title = element_text(size = 22),
             legend.text = element_text(size = 8),
-            legend.title = element_text(size = 10),
+            legend.title = element_text(size = 8),
             plot.caption = element_text(size = 10),
             legend.key.size = unit(0.3, 'cm'),
-            axis.text.x = element_text(size = 8),
+            axis.text.x = element_text(size = 6),
             axis.text.y = element_text(angle = 90, size = 8),
             strip.text = element_text(size = 8),
             plot.margin = margin(t = 2,  # Top margin
@@ -267,7 +267,7 @@ makeplots <- function(){
   ggsave("plots/plot_cohorts_ageatvax_CAperpop_per.tiff", p, height = 5, width = 8.75, dpi = 500)
   totals_per <- plot_overall_CA_cohort(seas = 'perennial')
   # put cases averted per 1000 by age and age at vax next to totals plot 
-  ppp <- cowplot::plot_grid(p, totals_per, rel_widths = c(1, 0.75), labels = 'AUTO')
+  ppp <- cowplot::plot_grid(p, totals_per, rel_widths = c(1, 0.8), labels = 'AUTO')
   ggsave("plots/plot_cohorts_ageatvax_CAperpoptotals_per.tiff", ppp, height = 5, width = 8.75, dpi = 500)
   
   
