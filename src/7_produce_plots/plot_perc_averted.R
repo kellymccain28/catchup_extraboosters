@@ -37,7 +37,7 @@ plot_perc_averted <- function(df){
           legend.key.size = unit(0.3, 'cm'),
           axis.text.x = element_text(size = 8),
           axis.text.y = element_text(angle = 90, size = 8),
-          strip.text = 8,
+          strip.text = element_text(size = 8),
           plot.margin = margin(t = 2,  # Top margin
                                r = 2,  # Right margin
                                b = 2,  # Bottom margin
