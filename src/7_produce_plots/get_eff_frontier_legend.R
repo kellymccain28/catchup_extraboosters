@@ -116,4 +116,4 @@ legend <- cowplot::get_plot_component(
   plt + theme(legend.box.margin = margin(0, 0, 0, 12)),
   'guide-box-right', return_all = TRUE)
 
-ggsave("legend.png", plot = legend, width = 2.3, height = 5.5) 
+ggsave("legend.tiff", plot = legend, width = 2.3, height = 5.5) 

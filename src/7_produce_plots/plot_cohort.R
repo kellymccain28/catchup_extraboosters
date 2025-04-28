@@ -83,15 +83,19 @@ plot_cohort <- function(df,
       facet_wrap(~ pfpr , scales = 'free',
                  labeller = labeller(pfpr = pfpr.labs)) + 
       theme_bw(base_size = 14) +
-      theme(axis.title = element_text(size = 20),
-            axis.text.x = element_text(size = 14),
-            axis.text.y = element_text(size = 14),
-            plot.caption = element_text(size = 14),
-            legend.title = element_text(size = 18),
-            legend.text = element_text(size = 14),
-            legend.key.size = unit(0.8, 'cm'),
-            strip.text.x = element_text(size = 12),
-            strip.text.y = element_text(size = 12))
+      theme(axis.title = element_text(size = 8),
+            # plot.title = element_text(size = 22),
+            legend.text = element_text(size = 8),
+            legend.title = element_text(size = 10),
+            plot.caption = element_text(size = 10),
+            legend.key.size = unit(0.3, 'cm'),
+            axis.text.x = element_text(size = 8),
+            axis.text.y = element_text(angle = 90, size = 8),
+            strip.text = element_text(size = 8),
+            plot.margin = margin(t = 2,  # Top margin
+                                 r = 2,  # Right margin
+                                 b = 2,  # Bottom margin
+                                 l = 2))
   }
   
   makeplots <- function(strat){# PER POP
@@ -102,8 +106,9 @@ plot_cohort <- function(df,
            fill = 'Vaccination strategy',
            color = 'Vaccination strategy')
     
-    ggsave(paste0('plots/cohorts_', strat, '_CA_perpop_', seas, '.pdf'), height = 8, width = 14)
-    ggsave(paste0('plots/cohorts_', strat, '_CA_perpop_', seas, '.png'), height = 8, width = 14, dpi = 1000)
+    ggsave(paste0('plots/cohorts_', strat, '_CA_perpop_', seas, '.tiff'), 
+           height = 5, width = 8.75, dpi = 500)
+    ggsave(paste0('plots/cohorts_', strat, '_CA_perpop_', seas, '.png'), height = 5, width = 8.75, dpi = 500)
     
     sev_cohort <- make_co_plot(var = 'severe_averted_perpop',
                                strat = strat) + 
@@ -112,8 +117,8 @@ plot_cohort <- function(df,
            fill = 'Vaccination strategy',
            color = 'Vaccination strategy')
     
-    ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.pdf'), height = 8, width = 14)
-    ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.png'), height = 8, width = 14, dpi = 1000)
+    ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.tiff'), height = 5, width = 8.75, dpi = 500)
+    ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.png'), height = 5, width = 8.75, dpi = 500)
     
     casesandsevcohort <- cowplot::plot_grid(cases_cohort + theme(legend.position="none"), 
                                             sev_cohort + theme(legend.position="none"), 
@@ -131,7 +136,8 @@ plot_cohort <- function(df,
     casesandsevcohort <- plot_grid(casesandsevcohort, legend, 
                                    ncol = 2, rel_widths = c(3.2, 1.1))
     
-    ggsave(paste0('plots/cohorts_',strat,'_CAandSA_perpop_', seas, '.pdf'), casesandsevcohort, width = 10, height = 8)
+    ggsave(paste0('plots/cohorts_',strat,'_CAandSA_perpop_', seas, '.tiff'), casesandsevcohort, 
+           width = 10, height = 8, dpi = 500)
     
     # OVERALL COUNTS 
     cases_cohort <- make_co_plot(var = 'cases_averted',
@@ -141,7 +147,7 @@ plot_cohort <- function(df,
            fill = 'Vaccination strategy',
            color = 'Vaccination strategy')
     
-    ggsave(paste0('plots/cohorts_',strat, '_CA_overall_', seas, '.pdf'), height = 8, width = 14)
+    ggsave(paste0('plots/cohorts_',strat, '_CA_overall_', seas, '.tiff'), height = 5, width = 8.75, dpi = 500)
     
     sev_cohort <- make_co_plot(var = 'severe_averted',
                                strat = strat) + 
@@ -150,7 +156,7 @@ plot_cohort <- function(df,
            fill = 'Vaccination strategy',
            color = 'Vaccination strategy')
     
-    ggsave(paste0('plots/cohorts_',strat, '_SA_overall_', seas, '.pdf'), height = 8, width = 14)
+    ggsave(paste0('plots/cohorts_',strat, '_SA_overall_', seas, '.tiff'), height = 5, width = 8.75, dpi = 500)
     
     casesandsevcohort <- cowplot::plot_grid(cases_cohort + theme(legend.position="none"), 
                                             sev_cohort + theme(legend.position="none"), 
@@ -168,7 +174,8 @@ plot_cohort <- function(df,
     casesandsevcohort <- plot_grid(casesandsevcohort, legend, 
                                    ncol = 2, rel_widths = c(3.2, 1.1))
     
-    ggsave(paste0('plots/cohorts_',strat, '_CAandSA_overall_', seas, '.pdf'), casesandsevcohort, width = 10, height = 8)
+    ggsave(paste0('plots/cohorts_',strat, '_CAandSA_overall_', seas, '.tiff'), 
+           casesandsevcohort, width = 10, height = 8, dpi = 500)
     
     # PER DOSE
     # cases_cohort <- make_co_plot(var = 'cases_averted_perdose',
@@ -178,7 +185,7 @@ plot_cohort <- function(df,
     #        fill = 'Vaccination strategy',
     #        color = 'Vaccination strategy')
     # 
-    # ggsave(paste0('plots/cohorts_', strat, '_CA_overall_perdose_', seas, '.pdf'), height = 5, width = 10)
+    # ggsave(paste0('plots/cohorts_', strat, '_CA_overall_perdose_', seas, '.tiff'), height = 5, width = 10)
     # 
     # sev_cohort <- make_co_plot(var = 'severe_averted_perdose',
     #                            strat = strat) + 
@@ -187,7 +194,7 @@ plot_cohort <- function(df,
     #        fill = 'Vaccination strategy',
     #        color = 'Vaccination strategy')
     # 
-    # ggsave(paste0('plots/cohorts_', strat, '_SA_overall_perdose_', seas, '.pdf'), height = 5, width = 10)
+    # ggsave(paste0('plots/cohorts_', strat, '_SA_overall_perdose_', seas, '.tiff'), height = 5, width = 10)
     # 
     # casesandsevcohort <- cowplot::plot_grid(cases_cohort + theme(legend.position="none"), 
     #                                         sev_cohort + theme(legend.position="none"), 
@@ -205,7 +212,7 @@ plot_cohort <- function(df,
     # casesandsevcohort <- plot_grid(casesandsevcohort, legend, 
     #                                ncol = 2, rel_widths = c(3.2, 1.1))
     # 
-    # ggsave(paste0('plots/cohorts_', strat, '_CAandSA_overall_perdose_', seas, '.pdf'), casesandsevcohort, width = 10, height = 8)
+    # ggsave(paste0('plots/cohorts_', strat, '_CAandSA_overall_perdose_', seas, '.tiff'), casesandsevcohort, width = 10, height = 8)
   }
   
   makeplots(strat = 'AB')

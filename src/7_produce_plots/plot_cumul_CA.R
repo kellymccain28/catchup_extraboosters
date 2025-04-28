@@ -87,15 +87,19 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
            fill = 'Vaccination strategy'
       ) +
       guides(color = 'none') +
-      theme(axis.title = element_text(size = 20),
-            plot.title = element_text(size = 22),
-            legend.text = element_text(size = 15),
-            strip.text.x = element_text(size = 12),
-            legend.title = element_text(size = 18),
-            plot.caption = element_text(size = 12),
-            legend.key.size = unit(0.8, 'cm'),
-            axis.text.x = element_text(size = 12),
-            axis.text.y = element_text(size = 12)
+      theme(axis.title = element_text(size = 8),
+            # plot.title = element_text(size = 22),
+            legend.text = element_text(size = 10),
+            strip.text.x = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            plot.caption = element_text(size = 10),
+            legend.key.size = unit(0.3, 'cm'),
+            axis.text.x = element_text(size = 8),
+            axis.text.y = element_text(size = 8),
+            plot.margin = margin(t = 2,  # Top margin
+                                 r = 2,  # Right margin
+                                 b = 2,  # Bottom margin
+                                 l = 2)
       )
     
     B <- ggplot(if(strategy == 'catch-up no booster' | strategy == 'catch-up all'){copl} else dfpl) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
@@ -120,15 +124,19 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
            fill = 'Vaccination strategy'
            ) +
       guides(color = 'none') +
-      theme(axis.title = element_text(size = 20),
-            axis.text.x = element_text(size = 14),
-            axis.text.y = element_text(size = 14),
-            plot.caption = element_text(size = 14),
-            legend.title = element_text(size = 18),
-            legend.text = element_text(size = 14),
-            legend.key.size = unit(0.8, 'cm'),
-            strip.text.x = element_text(size = 12),
-            strip.text.y = element_text(size = 12)
+      theme(axis.title = element_text(size = 8),
+            # plot.title = element_text(size = 22),
+            legend.text = element_text(size = 9),
+            strip.text = element_text(size = 8),
+            legend.title = element_text(size = 10),
+            plot.caption = element_text(size = 10),
+            legend.key.size = unit(0.3, 'cm'),
+            axis.text.x = element_text(size = 8),
+            axis.text.y = element_text(size = 8),
+            plot.margin = margin(t = 2,  # Top margin
+                                 r = 2,  # Right margin
+                                 b = 2,  # Bottom margin
+                                 l = 2)
       )
     
     p <- cowplot::plot_grid(A + theme(axis.title = element_text(size = 14), 
@@ -162,7 +170,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                                              compare = '',
                                              variable = 'cases_averted',
                                              seas = seasonalities[s]) 
-    ggsave(paste0("plots/plot_cumulCA_catchupnobooster_none_", seasonalities[s], ".pdf"), 
+    ggsave(paste0("plots/plot_cumulCA_catchupnobooster_none_", seasonalities[s], ".tiff"), 
            plot = CAcatchup_noboost_none[[1]], width = 16, height = 6)
     
     CAAB_none <- plot_cumul_CA2(df_last15, 
@@ -170,7 +178,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                                 compare = '',
                                 variable = 'cases_averted',
                                 seas = seasonalities[s])
-    ggsave(paste0("plots/plot_cumulCA_AB_none_", seasonalities[s], ".pdf"), 
+    ggsave(paste0("plots/plot_cumulCA_AB_none_", seasonalities[s], ".tiff"), 
            plot = CAAB_none[[1]], width = 16, height = 6) 
     
     CAseasonal_routine <- plot_cumul_CA2(df_summ,
@@ -178,7 +186,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                                          compare = '',
                                          variable = 'cases_averted',
                                          seas = seasonalities[s])
-    ggsave(paste0("plots/plot_cumulCA_SVhybrid_none_", seasonalities[s], ".pdf"), 
+    ggsave(paste0("plots/plot_cumulCA_SVhybrid_none_", seasonalities[s], ".tiff"), 
            plot = CAseasonal_routine[[1]], width = 17, height = 6)
     
     # CAcombination <- plot_cumul_CA2(df_summ,
@@ -186,16 +194,16 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     #                                      compare = '',
     #                                      variable = 'cases_averted',
     #                                      seas = seasonalities[s])
-    # ggsave(paste0("plots/plot_cumulCA_combination_none_", seasonalities[s], ".pdf"), 
+    # ggsave(paste0("plots/plot_cumulCA_combination_none_", seasonalities[s], ".tiff"), 
     #        plot = CAcombination[[1]], width = 16, height = 6)
     
     # severe cases
     SAcatchup_noboost_none <- plot_cumul_CA2(df_summ, 
-                                             strategy = 'catch-up no booster',
+                                               strategy = 'catch-up no booster',
                                              compare = '',
                                              variable = 'severe_averted',
                                              seas = seasonalities[s]) 
-    ggsave(paste0("plots/plot_cumulSA_catchupnobooster_none_", seasonalities[s], ".pdf"), 
+    ggsave(paste0("plots/plot_cumulSA_catchupnobooster_none_", seasonalities[s], ".tiff"), 
            plot = SAcatchup_noboost_none[[1]], width = 16, height = 6)
     
     SAAB_none <- plot_cumul_CA2(df_last15, 
@@ -203,7 +211,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                                 compare = '',
                                 variable = 'severe_averted',
                                 seas = seasonalities[s]) 
-    ggsave(paste0("plots/plot_cumulSA_AB_none_", seasonalities[s], ".pdf"), 
+    ggsave(paste0("plots/plot_cumulSA_AB_none_", seasonalities[s], ".tiff"), 
            plot = SAAB_none[[1]], width = 16, height = 6)
     
     SAseasonal_routine <- plot_cumul_CA2(df_summ,
@@ -211,7 +219,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                                          compare = '',
                                          variable = 'severe_averted',
                                          seas = seasonalities[s])
-    ggsave(paste0("plots/plot_cumulSA_SVhybrid_none_", seasonalities[s], ".pdf"), 
+    ggsave(paste0("plots/plot_cumulSA_SVhybrid_none_", seasonalities[s], ".tiff"), 
            plot = SAseasonal_routine[[1]], width = 16, height = 6)
     
     # SAcombination <- plot_cumul_CA2(df_summ,
@@ -219,7 +227,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     #                                 compare = '',
     #                                 variable = 'severe_averted',
     #                                 seas = seasonalities[s])
-    # ggsave(paste0("plots/plot_cumulSA_combination_none_", seasonalities[s], ".pdf"), 
+    # ggsave(paste0("plots/plot_cumulSA_combination_none_", seasonalities[s], ".tiff"), 
     #        plot = SAcombination[[1]], width = 16, height = 6)
     
     # Make plot with both clinical and severe + doses and pop
@@ -237,7 +245,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     # add the legend to the row we made earlier.
     CASAcatchup_noboost_none <- plot_grid(CASAcatchup_noboost_none1, legend, rel_widths = c(4, 0.7))
     
-    ggsave(paste0("plots/plot_cumulCASA_catchupnobooster_none_", seasonalities[s], ".pdf"), CASAcatchup_noboost_none, width = 16, height = 6)
+    ggsave(paste0("plots/plot_cumulCASA_catchupnobooster_none_", seasonalities[s], ".tiff"), CASAcatchup_noboost_none, width = 16, height = 6)
     
     # Age-based
     CASAAB_none1 <- cowplot::plot_grid(CAAB_none[[1]] + theme(legend.position="none"), 
@@ -246,7 +254,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                                        nrow = 2)
     # add the legend to the row we made earlier.
     CASAAB_none <- plot_grid(CASAAB_none1, legend, rel_widths = c(4, 0.7))
-    ggsave(paste0("plots/plot_cumulCASA_AB_none_", seasonalities[s], ".pdf"), CASAcatchup_noboost_none, width = 16, height = 6)
+    ggsave(paste0("plots/plot_cumulCASA_AB_none_", seasonalities[s], ".tiff"), 
+           CASAcatchup_noboost_none, width = 16, height = 6)
     
     # Combination
     # combo1 <- cowplot::plot_grid(CAcombination[[1]] + theme(legend.position="none"), 
@@ -255,7 +264,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     #                                    nrow = 2)
     # # add the legend to the row we made earlier.
     # combo <- plot_grid(combo1, legend, rel_widths = c(4, 0.7))
-    # ggsave(paste0("plots/plot_cumulCASA_combo_none_", seasonalities[s], ".pdf"), combo, width = 16, height = 6)
+    # ggsave(paste0("plots/plot_cumulCASA_combo_none_", seasonalities[s], ".tiff"), combo, width = 16, height = 6)
     
     
     ####### Make plot with clinical and severe just for the per dose for CATCH-UP
@@ -272,8 +281,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     
     # add the legend to the row we made earlier.
     plotCASA_CU <- plot_grid(CASACU, legend, rel_widths = c(4, 0.7))
-    ggsave(paste0("plots/plot_cumulCASA_CU_", seasonalities[s], ".pdf"), 
-           plot = plotCASA_CU, width = 16, height = 6)
+    ggsave(paste0("plots/plot_cumulCASA_CU_", seasonalities[s], ".tiff"),
+           plot = plotCASA_CU, width = 11, height = 4.5, units = 'in', dpi = 400)
     
     ######### Make plot with clinical and severe just for the per dose for AGE-BASED
     CASAAB <- cowplot::plot_grid(CAAB_none[[3]] + theme(axis.title = element_text(size = 14), 
@@ -289,8 +298,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     
     # add the legend to the row we made earlier.
     plotCASA_AB <- plot_grid(CASAAB, legend, rel_widths = c(4, 0.7))
-    ggsave(paste0("plots/plot_cumulCASA_AB_", seasonalities[s], ".pdf"), 
-           plot = plotCASA_AB, width = 16, height = 6)
+    ggsave(paste0("plots/plot_cumulCASA_AB_", seasonalities[s], ".tiff"), 
+           plot = plotCASA_AB, width = 11, height = 4.5, units = 'in', dpi = 400)
     
     ####### Make plot with clinical and severe just for the per dose for COMBO
     # combodose1 <- cowplot::plot_grid(CAcombination[[3]] + theme(axis.title = element_text(size = 14), 
@@ -306,7 +315,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     # 
     # # add the legend to the row we made earlier.
     # plotCASA_combo <- plot_grid(combodose1, legend, rel_widths = c(4, 0.7))
-    # ggsave(paste0("plots/plot_cumulCASA_combo_", seasonalities[s], ".pdf"), 
+    # ggsave(paste0("plots/plot_cumulCASA_combo_", seasonalities[s], ".tiff"), 
     #        plot = combodose1, width = 16, height = 6)
     
     ####### Make plot with clinical and severe just for the per POP for CATCH-UP
@@ -323,8 +332,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     
     # add the legend to the row we made earlier.
     plotCASA_CU <- plot_grid(CASACU, legend, rel_widths = c(4, 0.7))
-    ggsave(paste0("plots/plot_cumulCASAperpop_CU_", seasonalities[s], ".pdf"), 
-           plot = plotCASA_CU, width = 16, height = 6)
+    ggsave(paste0("plots/plot_cumulCASAperpop_CU_", seasonalities[s], ".tiff"), 
+           plot = plotCASA_CU, width = 11, height = 4.5, units = 'in', dpi = 400)
     
     ######### Make plot with clinical and severe just for the per pop for AGE-BASED
     CASAAB <- cowplot::plot_grid(CAAB_none[[2]] + theme(axis.title = element_text(size = 14), 
@@ -340,8 +349,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     
     # add the legend to the row we made earlier.
     plotCASA_AB <- plot_grid(CASAAB, legend, rel_widths = c(4, 0.7))
-    ggsave(paste0("plots/plot_cumulCASAperpop_AB_", seasonalities[s], ".pdf"), 
-           plot = plotCASA_AB, width = 16, height = 6)
+    ggsave(paste0("plots/plot_cumulCASAperpop_AB_", seasonalities[s], ".tiff"), 
+           plot = plotCASA_AB, width = 11, height = 4.5, units = 'in', dpi = 400)
     
     
     ######### Make plot with clinical and severe just for the per pop for COMBO
@@ -358,7 +367,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     # 
     # # add the legend to the row we made earlier.
     # plotCASA_combo <- plot_grid(comboperpop, legend, rel_widths = c(4, 0.7))
-    # ggsave(paste0("plots/plot_cumulCASAperpop_combo_", seasonalities[s], ".pdf"), 
+    # ggsave(paste0("plots/plot_cumulCASAperpop_combo_", seasonalities[s], ".tiff"), 
     #        plot = plotCASA_combo, width = 16, height = 6)
     
     
@@ -408,15 +417,19 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
              fill = 'Vaccination strategy'
         ) +
         guides(color = 'none') +
-        theme(axis.title = element_text(size = 20),
-              plot.title = element_text(size = 22),
-              legend.text = element_text(size = 15),
-              strip.text.x = element_text(size = 12),
-              legend.title = element_text(size = 18),
-              plot.caption = element_text(size = 12),
-              legend.key.size = unit(0.8, 'cm'),
-              axis.text.x = element_text(size = 12),
-              axis.text.y = element_text(size = 12)
+        theme(axis.title = element_text(size = 8),
+              # plot.title = element_text(size = 22),
+              legend.text = element_text(size = 10),
+              strip.text.x = element_text(size = 10),
+              legend.title = element_text(size = 10),
+              plot.caption = element_text(size = 10),
+              legend.key.size = unit(0.3, 'cm'),
+              axis.text.x = element_text(size = 8),
+              axis.text.y = element_text(size = 8),
+              plot.margin = margin(t = 2,  # Top margin
+                                   r = 2,  # Right margin
+                                   b = 2,  # Bottom margin
+                                   l = 2)
         )
       return(A_perfvc)
     }
@@ -427,15 +440,15 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                          strategy = 'catch-up no booster',
                          variable = 'cases_averted',
                          seas = seasonalities[s]) 
-      ggsave(paste0("plots/plot_cumulCA_CU_perFVC", seasonalities[s], ".pdf"), 
-             plot = CACU_fvc, width = 16, height = 6)
+      ggsave(paste0("plots/plot_cumulCA_CU_perFVC", seasonalities[s], ".tiff"), 
+             plot = CACU_fvc, width = 11, height = 4.5, units = 'in', dpi = 400)
       
       CASU_fvc <- perFVC(df_summ, 
                          strategy = 'catch-up no booster',
                          variable = 'severe_averted',
                          seas = seasonalities[s]) 
-      ggsave(paste0("plots/plot_cumulSA_CU_perFVC", seasonalities[s], ".pdf"), 
-             plot = CACU_fvc, width = 16, height = 6)
+      ggsave(paste0("plots/plot_cumulSA_CU_perFVC", seasonalities[s], ".tiff"), 
+             plot = CACU_fvc, width = 11, height = 4.5, units = 'in', dpi = 400)
     }
   }
 }

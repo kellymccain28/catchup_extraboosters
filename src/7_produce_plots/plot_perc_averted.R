@@ -28,16 +28,21 @@ plot_perc_averted <- function(df){
          fill = 'Vaccination strategy',
          color = 'Vaccination strategy') +
     theme_bw(base_size = 14) + 
-    theme(axis.title = element_text(size = 20),
-          axis.text.x = element_text(size = 14),
-          axis.text.y = element_text(angle = 90, size = 14),
-          plot.caption = element_text(size = 14),
-          legend.title = element_text(size = 18),
-          legend.text = element_text(size = 14),
-          legend.key.size = unit(0.8, 'cm'),
-          strip.text.x = element_text(size = 12),
-          strip.text.y = element_text(size = 12))
-  ggsave("plots/plot_perc_uncomplicated_averted.pdf", width = 16, height = 8) 
+    theme(axis.title = element_text(size = 8),
+          # plot.title = element_text(size = 22),
+          legend.text = element_text(size = 10),
+          strip.text.x = element_text(size = 10),
+          legend.title = element_text(size = 10),
+          plot.caption = element_text(size = 10),
+          legend.key.size = unit(0.3, 'cm'),
+          axis.text.x = element_text(size = 8),
+          axis.text.y = element_text(angle = 90, size = 8),
+          strip.text = 8,
+          plot.margin = margin(t = 2,  # Top margin
+                               r = 2,  # Right margin
+                               b = 2,  # Bottom margin
+                               l = 2))
+  ggsave("plots/plot_perc_uncomplicated_averted.tiff", width = 16, height = 8) 
   
   
   # heat <- ggplot(dfpl %>%
@@ -73,14 +78,14 @@ plot_perc_averted <- function(df){
   #         legend.key.size = unit(0.8, 'cm'),
   #         axis.text = element_text(size = 13),
   #         strip.text = element_text(size = 18))
-  # ggsave("plots/heatmap_perc_uncomplicated_averted.pdf", width = 16, height = 12) 
+  # ggsave("plots/heatmap_perc_uncomplicated_averted.tiff", width = 16, height = 12) 
   # coord_fixed()
   
   # leg <- get_legend(plt)
   # 
   # plot <- plot_grid(plt + theme(legend.position = 'none'), leg, rel_widths = c(4, 0.7))
   # plot <- grid.draw(shift_legend(plt))
-  # pdf(plot, filename ="plots/plot_perc_uncomplicated_averted.pdf")
+  # pdf(plot, filename ="plots/plot_perc_uncomplicated_averted.tiff")
   # dev.off()
   #Severe
   # ggplot(dfpl %>%

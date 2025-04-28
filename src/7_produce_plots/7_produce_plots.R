@@ -87,6 +87,11 @@ source('plots_mim_ammnet.R')
 source('insert_blank_rows_latex.R')
 
 dir.create('plots/')
+
+theme_set(theme_bw() + theme(plot.margin = margin(t = 2,  # Top margin
+                                                  r = 2,  # Right margin
+                                                  b = 2,  # Bottom margin
+                                                  l = 2))) # Left margin))
 # Make the plots 
 # Figure 1 and 4, S1 and S3, S4
 plot_cumul_CA(df_summ = df_summ,

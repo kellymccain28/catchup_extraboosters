@@ -36,15 +36,20 @@ plot_age_dist <- function(df,
       scale_fill_manual(values = CUcols) +
       scale_linetype_manual(values = c(6, 6, 1, 1)) +
       scale_x_continuous(breaks = seq(0,25, by = 2)) +
-      theme(axis.title = element_text(size = 20),
-            axis.text.x = element_text(size = 14),
-            axis.text.y = element_text(size = 14),
-            plot.caption = element_text(size = 14),
-            legend.title = element_text(size = 18),
-            legend.text = element_text(size = 14),
-            legend.key.size = unit(0.8, 'cm'),
-            strip.text.x = element_text(size = 12),
-            strip.text.y = element_text(size = 12),
+      theme(axis.title = element_text(size = 8),
+            # plot.title = element_text(size = 22),
+            legend.text = element_text(size = 10),
+            strip.text.x = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            plot.caption = element_text(size = 10),
+            legend.key.size = unit(0.3, 'cm'),
+            axis.text.x = element_text(size = 8),
+            axis.text.y = element_text(angle = 90, size = 8),
+            strip.text = element_text(size = 8),
+            plot.margin = margin(t = 2,  # Top margin
+                                 r = 2,  # Right margin
+                                 b = 2,  # Bottom margin
+                                 l = 2),
             legend.position = 'bottom')
     
     return(plt)
@@ -57,7 +62,7 @@ plot_age_dist <- function(df,
          fill = 'Vaccination strategy',
          linetype = 'Vaccination strategy') 
   
-  ggsave(paste0('plots/Age_dist_casesperperson_CU_', seas_type,'.pdf'), width = 9, height = 4, units = 'in')
+  ggsave(paste0('plots/Age_dist_casesperperson_CU_', seas_type,'.tiff'), width = 9, height = 4, units = 'in')
   
   severe_plt <- plot_ages(var = "sevcases_per1000pop") +
     labs(y = 'Severe cases per 1000 population',
@@ -65,7 +70,7 @@ plot_age_dist <- function(df,
          color = 'Vaccination strategy',
          fill = 'Vaccination strategy',
          linetype = 'Vaccination strategy') 
-  ggsave(paste0('plots/Age_dist_sevcasesperperson_CU_', seas_type,'.pdf'), width = 9, height = 4, units = 'in')
+  ggsave(paste0('plots/Age_dist_sevcasesperperson_CU_', seas_type,'.tiff'), width = 9, height = 4, units = 'in')
   
   agedist <- cowplot::plot_grid(cases_plt + theme(legend.position="none"), 
                                 severe_plt + theme(legend.position="none"), 
@@ -81,6 +86,6 @@ plot_age_dist <- function(df,
   agedist <- plot_grid(agedist, legend, ncol = 1,
                    rel_heights = c(9, 1))
   
-  ggsave(paste0('plots/Age_dist_casesandsev_perperson_CU_', seas_type,'.pdf'),  
+  ggsave(paste0('plots/Age_dist_casesandsev_perperson_CU_', seas_type,'.tiff'),  
          width = 9, height = 7, units = 'in')
 }

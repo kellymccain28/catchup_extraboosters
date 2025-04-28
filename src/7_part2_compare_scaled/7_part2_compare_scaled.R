@@ -193,7 +193,7 @@ CA <- eff_plot(var = 'cases_averted_perpop', eff_var = 'maxCA') +
        shape = 'Strategy type')
 CAleg <- plot_grid(CA, legend_img, rel_widths = c(4,1))
 
-ggsave(paste0('CAbytotaldoses', seas_type, '.pdf'), CAleg, width = 14, height = 8)
+ggsave(paste0('CAbytotaldoses', seas_type, '.tiff'), CAleg, height = 5, width = 8.75, dpi = 500)
 
 SA <- eff_plot(var = 'severe_averted_perpop', eff_var = 'maxSA') + 
   labs(x = 'Doses per 1000 population',
@@ -201,14 +201,14 @@ SA <- eff_plot(var = 'severe_averted_perpop', eff_var = 'maxSA') +
        color = 'Vaccination strategy',
        shape = 'Strategy type')
 SAleg <- plot_grid(SA, legend_img, rel_widths = c(4,1))
-ggsave(paste0('SAbytotaldoses', seas_type,'.pdf'), SAleg, width = 14, height = 8)
+ggsave(paste0('SAbytotaldoses', seas_type,'.pdf'), SAleg, height = 5, width = 8.75, dpi = 500)
 
 averted_plt <- cowplot::plot_grid(CA + theme(legend.position="none"), 
                                   SA + theme(legend.position="none"), 
                                   ncol = 1, labels = 'AUTO')
 avertedwleg <- plot_grid(averted_plt, legend_img, 
                          ncol = 2, rel_widths = c(4,1))
-ggsave(paste0('CASAbytotaldoses', seas_type, '.pdf'), avertedwleg, width = 14, height = 8)
+ggsave(paste0('CASAbytotaldoses', seas_type, '.pdf'), avertedwleg, height = 5, width = 8.75, dpi = 500)
 
 
 
