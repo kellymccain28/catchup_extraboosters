@@ -62,7 +62,7 @@ baseline_seas <- dfu5 %>%
   select(c(p_cases_U5, p_cases_U5_lower, p_cases_U5_upper , 
            p_cases_school, p_cases_school_lower, p_cases_school_upper, 
            p_severe_school, p_severe_school_lower, p_severe_school_upper, seasonality))
-View(baseline_seas) 
+# View(baseline_seas) 
 
 baseline_per <- dfu5 %>% 
   filter(seasonality == 'perennial') %>%
@@ -73,7 +73,7 @@ baseline_per <- dfu5 %>%
   select(c(p_cases_U5, p_cases_U5_lower, p_cases_U5_upper , 
            p_cases_school, p_cases_school_lower, p_cases_school_upper, 
            p_severe_school, p_severe_school_lower, p_severe_school_upper, seasonality)) 
-View(baseline_per) 
+# View(baseline_per) 
 
 # Get percent of cases under 5 after vaccination 
 vac_seas <- dfu5 %>% 

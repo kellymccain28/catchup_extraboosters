@@ -53,14 +53,14 @@ plot_efficiency_frontier <- function(df,
                      y = .data[[var]],
                      shape = category),
                  color = '#e71d1d',#CUcols[1],
-                 size = 4.5) +
+                 size = 2.5) +
       # standalone boosters
       geom_point(data = dfpl1 %>% filter(category == 'Extra booster(s)'),
                  aes(x = dosesper1000,
                      y = .data[[var]],
                      color = EPIextra,
                      shape = category),
-                 size = 4.5,
+                 size = 2.5,
                  position = position_nudge(x = -50)) +
       # standalone catch-up
       geom_point(data = dfpl1 %>% filter(category == 'Catch-up'),
@@ -68,7 +68,7 @@ plot_efficiency_frontier <- function(df,
                      y = .data[[var]],
                      fill = PEVage,
                      shape = category),
-                 size = 4,
+                 size = 2,
                  color = '#ffffff00',
                  position = position_nudge(x = -50)) +
       # combined
@@ -77,14 +77,14 @@ plot_efficiency_frontier <- function(df,
                      y = .data[[var]],
                      color = EPIextra,
                      shape = category),
-                 size = 4.5,
+                 size = 2.5,
                  position = position_nudge(x = -50)) +
       geom_point(data = dfpl1 %>% filter(category == 'Combined') %>% mutate(category = 'Catch-up'),
                  aes(x = dosesper1000,
                      y = .data[[var]],
                      fill = PEVage),
                  color = '#ffffff00',
-                 size = 4,
+                 size = 2,
                  shape = 22,
                  position = position_nudge(x = -140)) +
       
@@ -95,7 +95,7 @@ plot_efficiency_frontier <- function(df,
         values = c("Routine age-based" = 17, "Extra booster(s)" = 18, "Catch-up" = 22)
       ) +
       scale_x_continuous(labels = scales::label_comma(), limits = c(2900,5600)) +
-      scale_y_continuous(labels = scales::label_comma(), ) +
+      scale_y_continuous(labels = scales::label_comma()) +
       # Color and fill scales for booster and catch-up with separate legends
       scale_color_manual(
         name = "Extra booster(s) timing",
@@ -110,7 +110,7 @@ plot_efficiency_frontier <- function(df,
       facet_wrap(~pfpr,
                  scales = 'free',
                  labeller = labeller(pfpr = pfpr.labs)) +
-      theme_bw(base_size = 14) +
+      theme_bw() +
       theme(axis.title = element_text(size = 8),
             # plot.title = element_text(size = 22),
             legend.text = element_text(size = 9),
@@ -118,7 +118,7 @@ plot_efficiency_frontier <- function(df,
             plot.caption = element_text(size = 10),
             legend.key.size = unit(0.3, 'cm'),
             axis.text.x = element_text(size = 8),
-            axis.text.y = element_text(angle = 90, size = 8),
+            axis.text.y = element_text(angle = 90, hjust = 0.5, size = 8),
             strip.text = element_text(size = 8),
             plot.margin = margin(t = 2,  # Top margin
                                  r = 2,  # Right margin
@@ -140,7 +140,8 @@ plot_efficiency_frontier <- function(df,
          shape = 'Strategy type')
   CAleg <- plot_grid(CA, legend_img, rel_widths = c(4,1))
   
-  ggsave(paste0('plots/CAbytotaldoses', seas_type, '.tiff'), CAleg, width = 14, height = 8)
+  ggsave(paste0('plots/CAbytotaldoses', seas_type, '.tiff'), CAleg, width = 7.5, height = 4.5, dpi = 500,            
+         units = 'in', compression = 'lzw')
   
   SA <- eff_plot(var = 'severe_averted_perpop', eff_var = 'maxSA') + 
     labs(x = 'Doses per 1000 population',
@@ -148,7 +149,8 @@ plot_efficiency_frontier <- function(df,
          color = 'Vaccination strategy',
          shape = 'Strategy type')
   SAleg <- plot_grid(SA, legend_img, rel_widths = c(4,1))
-  ggsave(paste0('plots/SAbytotaldoses', seas_type,'.tiff'), SAleg, width = 14, height = 8)
+  ggsave(paste0('plots/SAbytotaldoses', seas_type,'.tiff'), SAleg, width = 7.5, height = 4.5, dpi = 500,            
+         units = 'in', compression = 'lzw')
   
   averted_plt <- cowplot::plot_grid(CA + theme(legend.position="none"), 
                                 SA + theme(legend.position="none"), 
@@ -167,7 +169,8 @@ plot_efficiency_frontier <- function(df,
   #                          ncol = 2, rel_widths = c(3.2, 1.1))
   
   ggsave(paste0('plots/CASAbytotaldoses', seas_type, '.tiff'), avertedwleg,
-         width = 10, height = 6, dpi = 400)
+         width = 7.5, height = 4.5, dpi = 500,            
+         units = 'in', compression = 'lzw')
   
   # Cases and severe cases
   cases <- eff_plot(var = 'cases_perpop', eff_var = 'mincases') + 
@@ -176,7 +179,8 @@ plot_efficiency_frontier <- function(df,
          color = 'Vaccination strategy',
          shape = 'Strategy type')
   casesleg <- plot_grid(cases, legend_img, rel_widths = c(4,1))
-  ggsave(paste0('plots/casesbytotaldoses',seas_type,'.tiff'), casesleg, width = 14, height = 8)
+  ggsave(paste0('plots/casesbytotaldoses',seas_type,'.tiff'), casesleg, width = 7.5, height = 4.5, dpi = 500,            
+         units = 'in', compression = 'lzw')
   
   severe <- eff_plot(var = 'sevcases_perpop', eff_var = 'minsev') + 
     labs(x = 'Doses per 1000 population',
@@ -184,7 +188,8 @@ plot_efficiency_frontier <- function(df,
          color = 'Vaccination strategy',
          shape = 'Strategy type')  
   severeleg <- plot_grid(severe, legend_img, rel_widths = c(4,1))
-  ggsave(paste0('plots/sevcasesbytotaldoses',seas_type,'.tiff'), severeleg, width = 14, height = 8)
+  ggsave(paste0('plots/sevcasesbytotaldoses',seas_type,'.tiff'), severeleg, width = 7.5, height = 4.5, dpi = 500,            
+         units = 'in', compression = 'lzw')
   
   
   # Find efficiency frontier across all strategies an dall settings 
@@ -237,7 +242,7 @@ plot_efficiency_frontier <- function(df,
       geom_point(aes(x = dosesper1000,#totaldoses/n*1000, 
                      y = .data[[var]],#/n*1000, 
                      color = labels, 
-                     shape = PEVstrategy), size = 4) +
+                     shape = PEVstrategy), size = 2.5) +
       geom_text_repel(data = dfpl1,
                       aes(x = dosesper1000,#totaldoses/n*1000,
                           y = .data[[var]],#/n*1000,
@@ -257,7 +262,7 @@ plot_efficiency_frontier <- function(df,
       scale_shape_manual(values = c(17, 16, 15, 18), drop = FALSE) +
       scale_x_continuous(labels = scales::label_comma()) +
       facet_wrap(~seasonality) +
-      theme_bw(base_size = 12) +
+      # theme_bw(base_size = 12) +
       theme(axis.title = element_text(size = 8),
             # plot.title = element_text(size = 22),
             legend.text = element_text(size = 10),
@@ -282,7 +287,8 @@ plot_efficiency_frontier <- function(df,
          color = 'Vaccination strategy',
          shape = 'Strategy type')
   
-  ggsave('plots/CAbytotaldoses_ALLSETTINGS.tiff', CAALL, width = 14, height = 8)
+  ggsave('plots/CAbytotaldoses_ALLSETTINGS.tiff', CAALL, width = 7.5, height = 4.5, dpi = 500,            
+         units = 'in', compression = 'lzw')
   
   
   SAALL <- eff_plot2(var = 'severe_averted_perpop', eff_var = 'maxSA') + 
@@ -291,6 +297,7 @@ plot_efficiency_frontier <- function(df,
          color = 'Vaccination strategy',
          shape = 'Strategy type')
   
-  ggsave('plots/SAbytotaldoses_ALLSETTINGS.tiff', SAALL, width = 14, height = 8)
+  ggsave('plots/SAbytotaldoses_ALLSETTINGS.tiff', SAALL, width = 7.5, height = 4.5, dpi = 500,            
+         units = 'in', compression = 'lzw')
   
 }

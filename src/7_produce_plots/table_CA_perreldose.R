@@ -26,7 +26,7 @@ table_CA_perreldose <- function(df_summ,
   dftbl1 <- dftbl %>%
     filter((EPIextra == '-'  & PEVstrategy == 'catch-up') | (PEVstrategy == 'AB')) %>%
     group_by(pfpr) %>%
-    arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
+    # arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
     select(-c(cases_averted_perdose, cases_averted_perdose_lower, cases_averted_perdose_upper, 
               severe_averted_perdose, severe_averted_perdose_lower, severe_averted_perdose_upper,
               cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,
@@ -96,7 +96,7 @@ table_CA_perreldose <- function(df_summ,
   dftbl3 <- dftbl %>%
     filter(EPIextra != '-'  & PEVstrategy == 'catch-up') %>%
     group_by(pfpr) %>%
-    arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
+    # arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
     select(-c(cases_averted_perdose, cases_averted_perdose_lower, cases_averted_perdose_upper, 
               severe_averted_perdose, severe_averted_perdose_lower, severe_averted_perdose_upper,
               cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,
@@ -153,7 +153,7 @@ table_CA_perreldose <- function(df_summ,
            SA_perFVC = paste0(severe_averted_perFVC, ' (', severe_averted_perFVC_lower, ', ', severe_averted_perFVC_upper, ')')
     ) %>%
     filter(EPIextra != '-'  & PEVstrategy == 'catch-up') %>%
-    arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
+    # arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
     select(-c(cases_averted_perdose, cases_averted_perdose_lower, cases_averted_perdose_upper, 
               severe_averted_perdose, severe_averted_perdose_lower, severe_averted_perdose_upper,
               cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,

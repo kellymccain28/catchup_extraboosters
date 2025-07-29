@@ -131,7 +131,7 @@ makeplots <- function(){
                  mapping = aes(x = as.numeric(age_lower), 
                                y = .data[[var]],
                                group = ageatvax),
-                 size = 2,
+                 size = 1.5,
                  color = 'grey90') + 
       geom_line(data = df %>% 
                   filter(!(ageatvax %in% ageatvaxhighlights)),
@@ -151,7 +151,7 @@ makeplots <- function(){
                      color = ageatvax,
                      group = ageatvax
                  ),
-                 size = 2) +
+                 size = 1.5) +
       geom_line(data = df %>% 
                   filter(ageatvax %in% ageatvaxhighlights),
                   # filter(ageatvax == '0.5-1.5'  |ageatvax == '3.5-4.5' |ageatvax == '7.5-8.5' |
@@ -249,7 +249,7 @@ makeplots <- function(){
             legend.title = element_text(size = 8),
             plot.caption = element_text(size = 10),
             legend.key.size = unit(0.3, 'cm'),
-            axis.text.x = element_text(size = 6),
+            axis.text.x = element_text(angle = 45,size = 6),
             axis.text.y = element_text(angle = 90, size = 8),
             strip.text = element_text(size = 8),
             plot.margin = margin(t = 2,  # Top margin
@@ -264,54 +264,64 @@ makeplots <- function(){
   p <- plot_cohortsageatvax(var = 'cases_averted_perpop',
                             strat = 'catch-up',
                             seas = 'perennial')
-  ggsave("plots/plot_cohorts_ageatvax_CAperpop_per.tiff", p, height = 5, width = 8.75, dpi = 500)
+  ggsave("plots/plot_cohorts_ageatvax_CAperpop_per.tiff", p, height = 4.3, width = 7.5, dpi = 500,
+         units = 'in', compression = 'lzw')
   totals_per <- plot_overall_CA_cohort(seas = 'perennial')
   # put cases averted per 1000 by age and age at vax next to totals plot 
   ppp <- cowplot::plot_grid(p, totals_per, rel_widths = c(1, 0.8), labels = 'AUTO')
-  ggsave("plots/plot_cohorts_ageatvax_CAperpoptotals_per.tiff", ppp, height = 5, width = 8.75, dpi = 500)
+  ggsave("plots/plot_cohorts_ageatvax_CAperpoptotals_per.tiff", ppp, height = 4.3, width = 7.5, dpi = 500,
+         units = 'in', compression = 'lzw')
   
   
   p2 <- plot_cohortsageatvax(var = 'cases_averted',
                              strat = 'catch-up',
                              seas = 'perennial')
-  ggsave("plots/plot_cohorts_ageatvax_CA_per.tiff", p2, height = 5, width = 8.75, dpi = 500)
+  ggsave("plots/plot_cohorts_ageatvax_CA_per.tiff", p2, height = 4.3, width = 7.5, dpi = 500,
+         units = 'in', compression = 'lzw')
   
   p3 <- plot_cohortsageatvax(var = 'cases_per1000pop',
                        strat = 'catch-up',
                        seas = 'perennial')
-  ggsave("plots/plot_cohorts_ageatvax_cases_per.tiff", p3, height = 5, width = 8.75, dpi = 500)
+  ggsave("plots/plot_cohorts_ageatvax_cases_per.tiff", p3, height = 4.3, width = 7.5, dpi = 500,
+         units = 'in', compression = 'lzw')
   
   p4 <- plot_cohortsageatvax(var = 'sevcases_per1000pop',
                        strat = 'catch-up',
                        seas = 'perennial')
-  ggsave("plots/plot_cohorts_ageatvax_sevcases_per.tiff", p4, height = 5, width = 8.75, dpi = 500)
+  ggsave("plots/plot_cohorts_ageatvax_sevcases_per.tiff", p4, height = 4.3, width = 7.5, dpi = 500,
+         units = 'in', compression = 'lzw')
   
   
   
   p <- plot_cohortsageatvax(var = 'cases_averted_perpop',
                             strat = 'catch-up',
                             seas = 'seasonal')
-  ggsave("plots/plot_cohorts_ageatvax_CAperpop_seas.tiff", p, height = 5, width = 8.75, dpi = 500)
+  ggsave("plots/plot_cohorts_ageatvax_CAperpop_seas.tiff", p, height = 4.3, width = 7.5, dpi = 500,
+         units = 'in', compression = 'lzw')
   
   totals_seas <- plot_overall_CA_cohort(seas = 'seasonal')
   # put cases averted per 1000 by age and age at vax next to totals plot 
-  ppp <- cowplot::plot_grid(p, totals_seas, rel_widths = c(1, 0.75), labels = 'AUTO')
-  ggsave("plots/plot_cohorts_ageatvax_CAperpoptotals_seas.tiff", ppp, height = 8, width = 14, dpi = 300)
+  ppp <- cowplot::plot_grid(p, totals_seas, rel_widths = c(1, 0.8), labels = 'AUTO')
+  ggsave("plots/plot_cohorts_ageatvax_CAperpoptotals_seas.tiff", ppp, height = 8, width = 14, dpi = 500,
+         units = 'in', compression = 'lzw')
   
   
   
   p2 <- plot_cohortsageatvax(var = 'cases_averted',
                              strat = 'catch-up',
                              seas = 'seasonal')
-  ggsave("plots/plot_cohorts_ageatvax_CA_seas.tiff", p2, height = 5, width = 8.75, dpi = 500)
+  ggsave("plots/plot_cohorts_ageatvax_CA_seas.tiff", p2, height = 4.3, width = 7.5, dpi = 500,
+         units = 'in', compression = 'lzw')
   
   p3 <- plot_cohortsageatvax(var = 'cases_per1000pop',
                              strat = 'catch-up',
                              seas = 'seasonal')
-  ggsave("plots/plot_cohorts_ageatvax_cases_seas.tiff", p3, height = 5, width = 8.75, dpi = 500)
+  ggsave("plots/plot_cohorts_ageatvax_cases_seas.tiff", p3, height = 4.3, width = 7.5, dpi = 500,
+         units = 'in', compression = 'lzw')
   
   p4 <- plot_cohortsageatvax(var = 'sevcases_per1000pop',
                              strat = 'catch-up',
                              seas = 'seasonal')
-  ggsave("plots/plot_cohorts_ageatvax_sevcases_seas.tiff", p4, height = 5, width = 8.75, dpi = 500)
+  ggsave("plots/plot_cohorts_ageatvax_sevcases_seas.tiff", p4, height = 4.3, width = 7.5, dpi = 500,
+         units = 'in', compression = 'lzw')
 } 

@@ -66,15 +66,18 @@ plot_cohort <- function(df,
     #   filter(seasonality == seas & PEVstrategy != 'none' & pfpr != 0.01 & pfpr != 0.03) 
     
     ggplot(data = cohorts_plot) +
-      geom_ribbon(aes(x = age_lower, 
-                      ymin = .data[[paste0(var,'_lower')]], 
-                      ymax = .data[[paste0(var,'_upper')]], 
-                      fill = labels),
-                  alpha = 0.15) +
+      # geom_ribbon(aes(x = age_lower, 
+      #                 ymin = .data[[paste0(var,'_lower')]], 
+      #                 ymax = .data[[paste0(var,'_upper')]], 
+      #                 fill = labels),
+      #             alpha = 0.15) +
+      geom_line(aes(x = age_lower, 
+                    y = .data[[var]], 
+                    color = labels)) +
       geom_line(aes(x = age_lower, 
                     y = .data[[var]], 
                     color = labels), 
-                linewidth = 1.2) +
+                linewidth = 1) +
       scale_color_manual(values = if(strat == 'AB') {cohortcols} else if(strat == 'catch-up'){colsCU}) +
       scale_fill_manual(values = if(strat == 'AB') {cohortcols} else if(strat == 'catch-up'){colsCU}) +
       scale_x_continuous(breaks = seq(0,30,2)) +
@@ -107,8 +110,10 @@ plot_cohort <- function(df,
            color = 'Vaccination strategy')
     
     ggsave(paste0('plots/cohorts_', strat, '_CA_perpop_', seas, '.tiff'), 
-           height = 5, width = 8.75, dpi = 500)
-    ggsave(paste0('plots/cohorts_', strat, '_CA_perpop_', seas, '.png'), height = 5, width = 8.75, dpi = 500)
+           height = 4.3, width = 7.5, dpi = 500,          
+           units = 'in', compression = 'lzw')
+    # ggsave(paste0('plots/cohorts_', strat, '_CA_perpop_', seas, '.png'), height = 4.3, width = 7.5, dpi = 500,
+    #        units = 'in')
     
     sev_cohort <- make_co_plot(var = 'severe_averted_perpop',
                                strat = strat) + 
@@ -117,8 +122,10 @@ plot_cohort <- function(df,
            fill = 'Vaccination strategy',
            color = 'Vaccination strategy')
     
-    ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.tiff'), height = 5, width = 8.75, dpi = 500)
-    ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.png'), height = 5, width = 8.75, dpi = 500)
+    ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.tiff'), height = 4.3, width = 7.5, dpi = 500,          
+           units = 'in', compression = 'lzw')
+    # ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.png'), height = 4.3, width = 7.5, dpi = 500,          
+    #        units = 'in')
     
     casesandsevcohort <- cowplot::plot_grid(cases_cohort + theme(legend.position="none"), 
                                             sev_cohort + theme(legend.position="none"), 
@@ -147,7 +154,8 @@ plot_cohort <- function(df,
            fill = 'Vaccination strategy',
            color = 'Vaccination strategy')
     
-    ggsave(paste0('plots/cohorts_',strat, '_CA_overall_', seas, '.tiff'), height = 5, width = 8.75, dpi = 500)
+    ggsave(paste0('plots/cohorts_',strat, '_CA_overall_', seas, '.tiff'), height = 4.3, width = 7.5, dpi = 500,          
+           units = 'in', compression = 'lzw')
     
     sev_cohort <- make_co_plot(var = 'severe_averted',
                                strat = strat) + 
@@ -156,7 +164,8 @@ plot_cohort <- function(df,
            fill = 'Vaccination strategy',
            color = 'Vaccination strategy')
     
-    ggsave(paste0('plots/cohorts_',strat, '_SA_overall_', seas, '.tiff'), height = 5, width = 8.75, dpi = 500)
+    ggsave(paste0('plots/cohorts_',strat, '_SA_overall_', seas, '.tiff'), height = 4.3, width = 7.5, dpi = 500,          
+           units = 'in', compression = 'lzw')
     
     casesandsevcohort <- cowplot::plot_grid(cases_cohort + theme(legend.position="none"), 
                                             sev_cohort + theme(legend.position="none"), 
