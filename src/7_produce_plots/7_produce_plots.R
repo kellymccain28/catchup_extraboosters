@@ -45,7 +45,8 @@ orderly_resource(
     'get_perc_U5.R',
     'add_labels.R',
     'legend.png',
-    'insert_blank_rows_latex.R'
+    'insert_blank_rows_latex.R',
+    'get_eff_frontier_legend.R' # this is just run once to produce legend.png
   )
 )
 source('add_labels.R')

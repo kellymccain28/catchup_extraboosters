@@ -6,7 +6,7 @@ plot_cohort <- function(df,
   # Make labels for facets
   pfpr.labs <- c("5%", "25%", '45%', '65%')
   names(pfpr.labs) <- c("0.05","0.25", "0.45", "0.65")
-  cohortcols <- c('#B03A2E','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db')
+  cohortcols <- CUcols1[1:8]#c('#B03A2E','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db')
   make_co_plot <- function(var,
                            strat){
     

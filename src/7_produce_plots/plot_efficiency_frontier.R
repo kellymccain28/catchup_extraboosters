@@ -30,9 +30,11 @@ plot_efficiency_frontier <- function(df,
   
   
   ## can think about setting ylim minimum to 0 for these plots 
-  eff_plot <- function(var, eff_var){
+  eff_plot <- function(var, eff_var, dosevar = 'dosesper1000'){
+    
     dfpl1 <- df_plot %>% filter(.data[[eff_var]] == 1) %>%
-      mutate(dosesper1000 = totaldoses / n *1000)
+      mutate(dosesper1000 = totaldoses / n *1000,
+             additionalper1000 = additional_doses / n * 1000)
     # dfpl2 <- df_plot %>% filter(.data[[eff_var]] == 0) %>%
     #   mutate(dosesper1000 = totaldoses / n *1000)
     
@@ -42,21 +44,21 @@ plot_efficiency_frontier <- function(df,
 
     plt <- ggplot(dfpl1) +
       geom_line(data = dfpl1, 
-                aes(x = dosesper1000,
+                aes(x = .data[[dosevar]],
                     y = .data[[var]]),
                 linewidth = 0.7) +
       
       ############ With non-dominated scenarios
       # Plot standalone routine interventions
       geom_point(data = dfpl1 %>% filter(category =='Routine age-based'),
-                 aes(x = dosesper1000,
+                 aes(x = .data[[dosevar]],
                      y = .data[[var]],
                      shape = category),
                  color = '#e71d1d',#CUcols[1],
                  size = 2.5) +
       # standalone boosters
       geom_point(data = dfpl1 %>% filter(category == 'Extra booster(s)'),
-                 aes(x = dosesper1000,
+                 aes(x = .data[[dosevar]],
                      y = .data[[var]],
                      color = EPIextra,
                      shape = category),
@@ -64,7 +66,7 @@ plot_efficiency_frontier <- function(df,
                  position = position_nudge(x = -50)) +
       # standalone catch-up
       geom_point(data = dfpl1 %>% filter(category == 'Catch-up'),
-                 aes(x = dosesper1000,
+                 aes(x = .data[[dosevar]],
                      y = .data[[var]],
                      fill = PEVage,
                      shape = category),
@@ -73,14 +75,14 @@ plot_efficiency_frontier <- function(df,
                  position = position_nudge(x = -50)) +
       # combined
       geom_point(data = dfpl1 %>% filter(category == 'Combined')%>% mutate(category = 'Extra booster(s)'),
-                 aes(x = dosesper1000,
+                 aes(x = .data[[dosevar]],
                      y = .data[[var]],
                      color = EPIextra,
                      shape = category),
                  size = 2.5,
                  position = position_nudge(x = -50)) +
       geom_point(data = dfpl1 %>% filter(category == 'Combined') %>% mutate(category = 'Catch-up'),
-                 aes(x = dosesper1000,
+                 aes(x = .data[[dosevar]],
                      y = .data[[var]],
                      fill = PEVage),
                  color = '#ffffff00',
@@ -133,7 +135,8 @@ plot_efficiency_frontier <- function(df,
   legend_img <- grid::rasterGrob(readPNG("legend.png"), interpolate=TRUE)
   
   #Make plots 
-  CA <- eff_plot(var = 'cases_averted_perpop', eff_var = 'maxCA') + 
+  CA <- eff_plot(var = 'cases_averted_perpop', eff_var = 'maxCA',
+                 dosevar = 'dosesper1000') + 
     labs(x = 'Doses per 1000 population',
          y = 'Cumulative clinical cases\naverted per 1000 population',
          color = 'Vaccination strategy',
@@ -143,7 +146,8 @@ plot_efficiency_frontier <- function(df,
   ggsave(paste0('plots/CAbytotaldoses', seas_type, '.tiff'), CAleg, width = 7.5, height = 4.5, dpi = 500,            
          units = 'in', compression = 'lzw')
   
-  SA <- eff_plot(var = 'severe_averted_perpop', eff_var = 'maxSA') + 
+  SA <- eff_plot(var = 'severe_averted_perpop', eff_var = 'maxSA',
+                 dosevar = 'dosesper1000') + 
     labs(x = 'Doses per 1000 population',
          y = 'Cumulative severe cases\naverted per 1000 population',
          color = 'Vaccination strategy',
@@ -169,6 +173,37 @@ plot_efficiency_frontier <- function(df,
   #                          ncol = 2, rel_widths = c(3.2, 1.1))
   
   ggsave(paste0('plots/CASAbytotaldoses', seas_type, '.tiff'), avertedwleg,
+         width = 7.5, height = 4.5, dpi = 500,            
+         units = 'in', compression = 'lzw')
+  
+  # per 1000 additional doses
+  CAadd <- eff_plot(var = 'cases_averted_perpop', eff_var = 'maxCA',
+                 dosevar = 'additionalper1000') + 
+    labs(x = 'Additional doses per 1000 population',
+         y = 'Cumulative clinical cases\naverted per 1000 population',
+         color = 'Vaccination strategy',
+         shape = 'Strategy type')
+  CAlegadd <- plot_grid(CAdd, legend_img, rel_widths = c(4,1))
+  
+  ggsave(paste0('plots/CAbyadditionaldoses', seas_type, '.tiff'), CAlegadd, width = 7.5, height = 4.5, dpi = 500,            
+         units = 'in', compression = 'lzw')
+  
+  SAadd <- eff_plot(var = 'severe_averted_perpop', eff_var = 'maxSA',
+                 dosevar = 'additionalper1000') + 
+    labs(x = 'Additional doses per 1000 population',
+         y = 'Cumulative severe cases\naverted per 1000 population',
+         color = 'Vaccination strategy',
+         shape = 'Strategy type')
+  SAlegadd <- plot_grid(SAadd, legend_img, rel_widths = c(4,1))
+  ggsave(paste0('plots/SAbyadditionaldoses', seas_type,'.tiff'), SAlegadd, width = 7.5, height = 4.5, dpi = 500,            
+         units = 'in', compression = 'lzw')
+  
+  averted_pltadd <- cowplot::plot_grid(CAadd + theme(legend.position="none"), 
+                                    SAadd + theme(legend.position="none"), 
+                                    ncol = 1, labels = 'AUTO')
+  avertedwlegadd <- plot_grid(averted_pltadd, legend_img, 
+                           ncol = 2, rel_widths = c(4,1))
+  ggsave(paste0('plots/CASAbyadditionaldoses', seas_type, '.tiff'), avertedwlegadd,
          width = 7.5, height = 4.5, dpi = 500,            
          units = 'in', compression = 'lzw')
   
