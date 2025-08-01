@@ -101,6 +101,6 @@ outcomes_averted <- function(df){
     mutate(p_CA = cases_averted / cases_baseline,
            p_SA = severe_averted / severe_baseline,
            p_clin_diff = clinical_diff / clinical_baseline) %>%
-    select(-contains('baseline'), -ends_with('routine'))
+    select(-contains('baseline'), -cases_routine, -severe_routine, -deaths_routine)
     
 }
