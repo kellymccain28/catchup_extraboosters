@@ -250,8 +250,9 @@ allcohorts_draws <- cohorts_rawdraws2 %>%
          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
          # labels, label_int, strategytype, EPIextra_labels, scen_labels,
          cases, sevcases, deaths, 
-         epiprimary, epibooster, mass, n, totaldoses,
-         cases_averted, deaths_averted, severe_averted) %>%
+         epiprimary, epibooster, mass, n, totaldoses, additional_doses,
+         cases_averted, deaths_averted, severe_averted,
+         cases_averted_routine, deaths_averted_routine, severe_averted_routine) %>%
   # Get sum of n in each cohort over all ages in cohort (i.e. 6m-2y would have multiple age groups that we want to sum up)
   group_by(halfyear, ID, drawID, strategy, 
            int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
@@ -279,8 +280,10 @@ allcohorts_draws <- cohorts_rawdraws2 %>%
          totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
   mutate(cases_averted_perpop = cases_averted / n * 1000,
          cases_averted_perdose= cases_averted / totaldoses * 1000,
+         cases_averted_routine_peradddose = cases_averted_routine / additional_doses * 1000,
          severe_averted_perpop = severe_averted / n * 1000,
-         severe_averted_perdose = severe_averted / totaldoses * 1000) %>%
+         severe_averted_perdose = severe_averted / totaldoses * 1000,
+         severe_avertd_routine_peradddose = cases_averted_routine / additional_doses * 1000) %>%
   # Get cases per population
   mutate(cases_per1000pop = cases / n * 1000,
          sevcases_per1000pop = sevcases / n * 1000) %>%
