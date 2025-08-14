@@ -19,7 +19,7 @@ find_frontiers <- function(df){
            maxCA = ifelse(cases_averted == maxCA, 1, 0),
            maxSA = ifelse(severe_averted == maxSA, 1, 0)) %>%
     # now do it for additional doses 
-    # group_by(pfpr, seasonality, age_grp) %>%
+    group_by(pfpr, seasonality, age_grp) %>%
     arrange(additional_doses, .by_group = TRUE) %>%
     mutate(maxCA_routine = cummax(cases_averted_routine),
            maxSA_routine = cummax(severe_averted_routine),
