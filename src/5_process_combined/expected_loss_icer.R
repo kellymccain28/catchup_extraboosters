@@ -16,7 +16,7 @@ expected_loss_icer <- function(df, seas, pfprval){
     mutate(idstrategy = paste0(PEVstrategy, "  ", PEVage, ", ", EPIextra))
   
   params <- data.frame(
-    placeholder = seq(1,50,1 ) # the function requires parameters
+    placeholder = seq(1,50,1 ) # the function to convert to the PSA object requires parameters
   )
   
   effects <- df2 %>% 
@@ -44,7 +44,8 @@ expected_loss_icer <- function(df, seas, pfprval){
   psaplot <- plot(psa_obj) + 
     theme_classic() +
     theme(legend.position = 'none') +
-    ggtitle(str_glue(""))
+    ggtitle(str_glue("")) + 
+    labs(caption = str_glue("Seasonality: {seas}, PfPR: {pfprval}"))
   
   psa_sum <- summary(psa_obj,
                      calc_sds = TRUE)
@@ -54,7 +55,8 @@ expected_loss_icer <- function(df, seas, pfprval){
   icers <- calculate_icers(cost = psa_sum$meanCost,
                            effect = psa_sum$meanEffect,
                            strategies = psa_sum$Strategy)
-  icersplot <- plot_icers(icers) 
+  icersplot <- plot_icers(icers)  + 
+    labs(caption = str_glue("Seasonality: {seas}, PfPR: {pfprval}"))
   
   exploss_obj <- calc_exp_loss(wtp = seq(1e3, 2e4, 1e2),#seq(1e4, 5e5, 5e3),
                                psa = psa_obj) %>%
@@ -70,7 +72,23 @@ expected_loss_icer <- function(df, seas, pfprval){
                     str_replace_all("\\.", ", ")       # convert remaining . to -
     )) %>%
     mutate(pfpr = pfprval, 
-           seasonality = seas)
+           seasonality = seas) %>%
+    group_by(WTP) %>%
+    arrange(Expected_Loss, .by_group = TRUE) %>%
+    mutate(rank = rank(Expected_Loss)) 
+  
+  saveRDS(exploss_obj, 'exploss.rds')
+  
+  ranking <- ggplot(exploss_obj %>%
+           filter(rank < 11)) + 
+    geom_line(aes(x = WTP, y = as.integer(rank), color = Strategy)) + 
+    geom_label(data = exploss_obj %>% filter(rank < 11 & WTP == 10000), 
+               aes(x = WTP, y = rank, color = Strategy, label = Strategy))  +
+    scale_y_continuous(breaks = seq(1,10,1)) + 
+    labs(y = 'Expected loss rank (1 best)',
+         caption = str_glue("Seasonality: {seas}, PfPR: {pfprval}")) +
+    theme(legend.position = 'none') 
+    
   # plot(exploss_obj) + 
   #   theme(legend.position = 'none')
   #
@@ -84,23 +102,25 @@ expected_loss_icer <- function(df, seas, pfprval){
     #       label = paste0(PEVage, ', ', EPIextra))) +
     scale_y_log10() + 
     theme_bw() + 
-    labs(x = 'Willingness to Pay\n(1000 doses per 1000 people / cases averted per 1000 people)',
-         y = 'Expected loss (doses per 1000)')
+    labs(x = 'Willingness to Pay\n(incremental doses per case averted (thousands))',
+         y = 'Expected loss (doses per 1000 people)',
+         caption = str_glue("Seasonality: {seas}, PfPR: {pfprval}"))
   
   ggsave(filename = paste0('psasum_', seas, '_', pfprval, '.png'), plot = psaplot)
   ggsave(filename = paste0('icers_', seas, "_", pfprval, '.png'), plot = icersplot)
   ggsave(filename = paste0('exploss_', seas, '_', pfprval, '.png'), plot = explossplot)
+  ggsave(filename = paste0('explossranking_', seas, '_', pfprval, '.png'), plot = ranking)
   
   return(exploss_obj)
 }
 
-pfpr_vec <- c(0.05, 0.25, 0.45, 0.65)
+pfpr_vec <- c(0.01, 0.03, 0.05, 0.25, 0.45, 0.65)
 seas_vec <- c('perennial','seasonal')
 
-# Create all combinations
+# Create all combinations of pfpr and sesaonalities 
 combinations <- expand.grid(pfpr = pfpr_vec, seas = seas_vec)
 
-# Use map2 from purrr or lapply
+# Use map2 from purrr or lapply to apply the analysis function to each of these pfpr and seasonalities 
 expectedlosses <- map2(combinations$seas, combinations$pfpr, 
                        ~expected_loss_icer(df, .x, .y))
 
