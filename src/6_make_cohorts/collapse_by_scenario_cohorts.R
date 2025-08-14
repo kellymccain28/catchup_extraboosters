@@ -26,7 +26,7 @@ collapse_by_scenario_cohorts <- function(df,
                # labels, label_int, strategytype, EPIextra_labels, scen_labels
                ) %>%
       summarize(across(c(n, cases, sevcases, deaths, 
-                         contains('averted'), totaldoses,
+                         contains('averted'), totaldoses, additional_doses_cohort,
                          cases_per1000pop, sevcases_per1000pop),
                        list(lower = ~quantile(.x, 0.025, na.rm = TRUE),
                             median = ~quantile(.x, 0.5, na.rm = TRUE),

@@ -14,56 +14,7 @@ plot_cohort <- function(df,
     cohorts_plot <- cohorts_byage %>%
       mutate(age_lower = as.numeric(age_lower)) %>%
       filter(PEVstrategy == strat) |>
-      filter(seasonality == seas & PEVstrategy != 'none' & pfpr != 0.01 & pfpr != 0.03) #%>%
-    
-    # Take median of the 30 age-based cohorts 
-    # if(strat == 'AB'){
-    #   cohorts_plot <- cohorts_plot %>%
-    #     group_by(pfpr, labels, age_lower) %>%
-    #     summarize(cases_per1000pop = median(cases_per1000pop),
-    #               cases_averted_perpop  = median(cases_averted_perpop),
-    #               severe_averted_perpop = median(severe_averted_perpop),
-    #               cases_averted = median(cases_averted),
-    #               severe_averted = median(severe_averted),
-    #               # cases_averted_perdose = median(cases_averted_perdose),
-    #               # severe_averted_perdose = median(severe_averted_perdose),
-    #               
-    #               cases_per1000pop_lower = median(cases_per1000pop_lower),
-    #               cases_averted_perpop_lower  = median(cases_averted_perpop_lower),
-    #               severe_averted_perpop_lower = median(severe_averted_perpop_lower),
-    #               cases_averted_lower = median(cases_averted_lower),
-    #               severe_averted_lower = median(severe_averted_lower),
-    #               # cases_averted_perdose_lower = median(cases_averted_perdose_lower),
-    #               # severe_averted_perdose_lower = median(severe_averted_perdose_lower),
-    #               
-    #               cases_per1000pop_upper = median(cases_per1000pop_upper),
-    #               cases_averted_perpop_upper  = median(cases_averted_perpop_upper),
-    #               severe_averted_perpop_upper = median(severe_averted_perpop_upper),
-    #               cases_averted_upper = median(cases_averted_upper),
-    #               severe_averted_upper = median(severe_averted_upper))#,
-    #               # cases_averted_perdose_upper = median(cases_averted_perdose_upper),
-    #               # severe_averted_perdose_upper = median(severe_averted_perdose_upper))
-    # }
-    # group_by(floor(age_lower), age_grp, int_ID, labels, label_int, PEV, PEVcov, PEVstrategy, PEVage, 
-    #          EPIextra, pfpr, seasonality) %>%
-    # summarize(cases = sum(cases),
-    #           n = sum(n),
-    #           cases_averted = sum(cases_averted),
-    #           cases_averted_perpop  = cases_averted / n * 1000)#%>%
-    # group_by(age_lower, int_ID, labels, label_int, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
-    #          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality) %>%
-    # summarize(cases_averted_perpop_med = median(cases_averted_perpop),
-    #           cases_averted_med = median(cases_averted),
-    #           cases_averted_perdose_med = median(cases_averted_perdose),
-    # 
-    #           severe_averted_perpop_med = median(severe_averted_perpop),
-    #           severe_averted_med = median(severe_averted),
-    #           severe_averted_perdose_med = median(severe_averted_perdose))
-    
-    # cohorts_plot <- cohorts_ageatvaxandage %>%
-    #   filter(ageatvax == '0.5-1' | ageatvax == '1-1.5') %>%
-    #   filter(PEVstrategy == strategy | PEVstrategy == 'none') |>
-    #   filter(seasonality == seas & PEVstrategy != 'none' & pfpr != 0.01 & pfpr != 0.03) 
+      filter(seasonality == seas & PEVstrategy != 'none' & pfpr != 0.01 & pfpr != 0.03) 
     
     ggplot(data = cohorts_plot) +
       # geom_ribbon(aes(x = age_lower, 
@@ -186,42 +137,7 @@ plot_cohort <- function(df,
     ggsave(paste0('plots/cohorts_',strat, '_CAandSA_overall_', seas, '.tiff'), 
            casesandsevcohort, width = 10, height = 8, dpi = 500)
     
-    # PER DOSE
-    # cases_cohort <- make_co_plot(var = 'cases_averted_perdose',
-    #                              strat = strat) + 
-    #   labs(y = 'Uncomplicated cases averted per 1000 doses',
-    #        x = 'Age (years)',
-    #        fill = 'Vaccination strategy',
-    #        color = 'Vaccination strategy')
-    # 
-    # ggsave(paste0('plots/cohorts_', strat, '_CA_overall_perdose_', seas, '.tiff'), height = 5, width = 10)
-    # 
-    # sev_cohort <- make_co_plot(var = 'severe_averted_perdose',
-    #                            strat = strat) + 
-    #   labs(y = 'Severe cases averted per 1000 doses',
-    #        x = 'Age (years)',
-    #        fill = 'Vaccination strategy',
-    #        color = 'Vaccination strategy')
-    # 
-    # ggsave(paste0('plots/cohorts_', strat, '_SA_overall_perdose_', seas, '.tiff'), height = 5, width = 10)
-    # 
-    # casesandsevcohort <- cowplot::plot_grid(cases_cohort + theme(legend.position="none"), 
-    #                                         sev_cohort + theme(legend.position="none"), 
-    #                                         ncol = 1, labels = 'AUTO')
-    # 
-    # # extract the legend from one of the plots
-    # legend <- cowplot::get_plot_component(
-    #   # create some space to the left of the legend
-    #   cases_cohort + theme(legend.box.margin = margin(0, 0, 0, 8)),
-    #   'guide-box-right', return_all = TRUE
-    # )
     
-    # add the legend to the row we made earlier. Give it one-third of 
-    # the width of one plot (via rel_widths).
-    # casesandsevcohort <- plot_grid(casesandsevcohort, legend, 
-    #                                ncol = 2, rel_widths = c(3.2, 1.1))
-    # 
-    # ggsave(paste0('plots/cohorts_', strat, '_CAandSA_overall_perdose_', seas, '.tiff'), casesandsevcohort, width = 10, height = 8)
   }
   
   makeplots(strat = 'AB')

@@ -17,8 +17,8 @@ table_CA_perreldose <- function(df_summ,
     # format the lower, median, and upper values 
     mutate(CA_perpop = paste0(cases_averted_perpop, ' (', cases_averted_perpop_lower, ', ', cases_averted_perpop_upper, ')'),
            SA_perpop = paste0(severe_averted_perpop, ' (', severe_averted_perpop_lower, ', ', severe_averted_perpop_upper, ')'),
-           CA_perdose = paste0(cases_averted_perdose, ' (', cases_averted_perdose_lower, ', ', cases_averted_perdose_upper, ')'),
-           SA_perdose = paste0(severe_averted_perdose, ' (', severe_averted_perdose_lower, ', ', severe_averted_perdose_upper, ')'),
+           CA_peradddose = paste0(cases_averted_routine_peradddose, ' (', cases_averted_routine_peradddose_lower, ', ', cases_averted_routine_peradddose_upper, ')'),
+           SA_peradddose = paste0(severe_averted_routine_peradddose, ' (', severe_averted_routine_peradddose_lower, ', ', severe_averted_routine_peradddose_upper, ')'),
            CA_perFVC = paste0(cases_averted_perFVC, ' (', cases_averted_perFVC_lower, ', ', cases_averted_perFVC_upper, ')'),
            SA_perFVC = paste0(severe_averted_perFVC, ' (', severe_averted_perFVC_lower, ', ', severe_averted_perFVC_upper, ')')
     ) 
@@ -27,8 +27,8 @@ table_CA_perreldose <- function(df_summ,
     filter((EPIextra == '-'  & PEVstrategy == 'catch-up') | (PEVstrategy == 'AB')) %>%
     group_by(pfpr) %>%
     # arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
-    select(-c(cases_averted_perdose, cases_averted_perdose_lower, cases_averted_perdose_upper, 
-              severe_averted_perdose, severe_averted_perdose_lower, severe_averted_perdose_upper,
+    select(-c(cases_averted_peradddose, cases_averted_peradddose_lower, cases_averted_peradddose_upper, 
+              severe_averted_peradddose, severe_averted_peradddose_lower, severe_averted_peradddose_upper,
               cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,
               severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
               cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
@@ -69,8 +69,8 @@ table_CA_perreldose <- function(df_summ,
     rename(Strategy = labels, 
            `Cases averted per 1000 pop` = CA_perpop,
            `Severe cases averted per 1000 pop` = SA_perpop,
-           `Cases averted per 1000 doses` = CA_perdose,
-           `Severe cases averted per 1000 doses` = SA_perdose,
+           `Cases averted per 1000 additional doses` = CA_peradddose,
+           `Severe cases averted per 1000 additional doses` = SA_peradddose,
            `Cases averted per 1000 FVC` = CA_perFVC,
            `Severe cases averted per 1000 FVC` = SA_perFVC)
   # dftbl2[nrow(dftbl2)+1,] <- rep('',8)#colnames(dftbl2)
@@ -83,8 +83,8 @@ table_CA_perreldose <- function(df_summ,
                      Strategy = labels, 
                      `Cases averted\nper 1000 pop` = CA_perpop,
                      `Severe cases averted\nper 1000 pop` = SA_perpop,
-                     `Cases averted\nper 1000 doses` = CA_perdose,
-                     `Severe cases averted\nper 1000 doses` = SA_perdose,
+                     `Cases averted\nper 1000 additional doses` = CA_peradddose,
+                     `Severe cases averted\nper 1000 additional doses` = SA_peradddose,
                      `Cases averted\nper 1000 FVC` = CA_perFVC,
                      `Severe cases averted\nper 1000 FVC` = SA_perFVC), 
             paste0('plots/outcomes_averted_CUorAB_', seas_name, '.csv'), row.names = FALSE)
@@ -97,8 +97,8 @@ table_CA_perreldose <- function(df_summ,
     filter(EPIextra != '-'  & PEVstrategy == 'catch-up') %>%
     group_by(pfpr) %>%
     # arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
-    select(-c(cases_averted_perdose, cases_averted_perdose_lower, cases_averted_perdose_upper, 
-              severe_averted_perdose, severe_averted_perdose_lower, severe_averted_perdose_upper,
+    select(-c(cases_averted_routine_peradddose, cases_averted_routine_peradddose_lower, cases_averted_routine_peradddose_upper, 
+              severe_averted_routine_peradddose, severe_averted_routine_peradddose_lower, severe_averted_routine_peradddose_upper,
               cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,
               severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
               cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
@@ -125,8 +125,8 @@ table_CA_perreldose <- function(df_summ,
                      Strategy = labels,
                      `Cases averted\nper 1,000 pop` = CA_perpop,
                      `Severe cases averted\nper 1,000 pop` = SA_perpop,
-                     `Cases averted\nper 1,000 doses` = CA_perdose,
-                     `Severe cases averted\nper 1,000 doses` = SA_perdose,
+                     `Cases averted\nper 1,000 additional doses` = CA_peradddose,
+                     `Severe cases averted\nper 1,000 additional doses` = SA_peradddose,
                      `Cases averted\nper 1,000 FVC` = CA_perFVC,
                      `Severe cases averted\nper 1,000 FVC` = SA_perFVC), 
             file = paste0('plots/outcomes_averted_combinedstrategies_', seas_name, '.csv'), row.names = FALSE)
@@ -147,15 +147,15 @@ table_CA_perreldose <- function(df_summ,
     # format the lower, median, and upper values 
     mutate(CA_perpop = paste0(cases_averted_perpop, ' (', cases_averted_perpop_lower, ', ', cases_averted_perpop_upper, ')'),
            SA_perpop = paste0(severe_averted_perpop, ' (', severe_averted_perpop_lower, ', ', severe_averted_perpop_upper, ')'),
-           CA_perdose = paste0(cases_averted_perdose, ' (', cases_averted_perdose_lower, ', ', cases_averted_perdose_upper, ')'),
-           SA_perdose = paste0(severe_averted_perdose, ' (', severe_averted_perdose_lower, ', ', severe_averted_perdose_upper, ')'),
+           CA_peradddose = paste0(cases_averted_routine_peradddose, ' (', cases_averted_routine_peradddose_lower, ', ', cases_averted_routine_peradddose_upper, ')'),
+           SA_peradddose = paste0(severe_averted_routine_peradddose, ' (', severe_averted_routine_peradddose_lower, ', ', severe_averted_routine_peradddose_upper, ')'),
            CA_perFVC = paste0(cases_averted_perFVC, ' (', cases_averted_perFVC_lower, ', ', cases_averted_perFVC_upper, ')'),
            SA_perFVC = paste0(severe_averted_perFVC, ' (', severe_averted_perFVC_lower, ', ', severe_averted_perFVC_upper, ')')
     ) %>%
     filter(EPIextra != '-'  & PEVstrategy == 'catch-up') %>%
     # arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
-    select(-c(cases_averted_perdose, cases_averted_perdose_lower, cases_averted_perdose_upper, 
-              severe_averted_perdose, severe_averted_perdose_lower, severe_averted_perdose_upper,
+    select(-c(cases_averted_routine_peradddose, cases_averted_routine_peradddose_lower, cases_averted_routine_peradddose_upper, 
+              severe_averted_routine_peradddose, severe_averted_routine_peradddose_lower, severe_averted_routine_peradddose_upper,
               cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,
               severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
               cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
@@ -182,8 +182,8 @@ table_CA_perreldose <- function(df_summ,
                      Strategy = labels, 
                      `Cases averted\nper 1,000 pop` = CA_perpop,
                      `Severe cases averted\nper 1,000 pop` = SA_perpop,
-                     `Cases averted\nper 1,000 doses` = CA_perdose,
-                     `Severe cases averted\nper 1,000 doses` = SA_perdose,
+                     `Cases averted\nper 1,000 additional doses` = CA_peradddose,
+                     `Severe cases averted\nper 1,000 additional doses` = SA_peradddose,
                      `Cases averted\nper 1,000 FVC` = CA_perFVC,
                      `Severe cases averted\nper 1,000 FVC` = SA_perFVC), 'plots/outcomes_averted_combinedstrategies_perandseas_sorted.csv', row.names = FALSE)
   write.table(dftbl6, file = paste0('plots/outcomes_averted_combinedstrategies__perandseas_sorted_forlatex.csv'), 

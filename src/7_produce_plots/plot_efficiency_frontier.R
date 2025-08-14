@@ -28,9 +28,16 @@ plot_efficiency_frontier <- function(df,
   catch_up_colors <- c("6m-2y" = "#90b260", "6m-4y" = "#efc642", "6m-9y" = "#fd7270", "6m-14y" = "#ce5800",
                        "5-9y" = "#991010", "5-14y" = "#65612c")
   
-  
   ## can think about setting ylim minimum to 0 for these plots 
   eff_plot <- function(var, eff_var, dosevar = 'dosesper1000'){
+    
+    if(dosevar == 'dosesper1000'){
+      minx = 2900
+      maxx = 5600
+    } else {
+      minx = 0
+      maxx = 2300
+    }
     
     dfpl1 <- df_plot %>% filter(.data[[eff_var]] == 1) %>%
       mutate(dosesper1000 = totaldoses / n *1000,
@@ -96,7 +103,7 @@ plot_efficiency_frontier <- function(df,
         name = "Vaccination strategy",
         values = c("Routine age-based" = 17, "Extra booster(s)" = 18, "Catch-up" = 22)
       ) +
-      scale_x_continuous(labels = scales::label_comma(), limits = c(2900,5600)) +
+      scale_x_continuous(labels = scales::label_comma(), limits = c(minx,maxx)) +
       scale_y_continuous(labels = scales::label_comma()) +
       # Color and fill scales for booster and catch-up with separate legends
       scale_color_manual(
@@ -177,21 +184,21 @@ plot_efficiency_frontier <- function(df,
          units = 'in', compression = 'lzw')
   
   # per 1000 additional doses
-  CAadd <- eff_plot(var = 'cases_averted_perpop', eff_var = 'maxCA',
+  CAadd <- eff_plot(var = 'cases_averted_routine_perpop', eff_var = 'maxCA_routine',
                  dosevar = 'additionalper1000') + 
     labs(x = 'Additional doses per 1000 population',
-         y = 'Cumulative clinical cases\naverted per 1000 population',
+         y = 'Cumulative additional clinical cases\naverted per 1000 population',
          color = 'Vaccination strategy',
          shape = 'Strategy type')
-  CAlegadd <- plot_grid(CAdd, legend_img, rel_widths = c(4,1))
+  CAlegadd <- plot_grid(CAadd, legend_img, rel_widths = c(4,1))
   
   ggsave(paste0('plots/CAbyadditionaldoses', seas_type, '.tiff'), CAlegadd, width = 7.5, height = 4.5, dpi = 500,            
          units = 'in', compression = 'lzw')
   
-  SAadd <- eff_plot(var = 'severe_averted_perpop', eff_var = 'maxSA',
+  SAadd <- eff_plot(var = 'severe_averted_routine_perpop', eff_var = 'maxSA_routine',
                  dosevar = 'additionalper1000') + 
     labs(x = 'Additional doses per 1000 population',
-         y = 'Cumulative severe cases\naverted per 1000 population',
+         y = 'Cumulative additional severe cases\naverted per 1000 population',
          color = 'Vaccination strategy',
          shape = 'Strategy type')
   SAlegadd <- plot_grid(SAadd, legend_img, rel_widths = c(4,1))

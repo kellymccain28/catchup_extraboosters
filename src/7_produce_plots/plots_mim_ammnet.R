@@ -1,7 +1,7 @@
 # figures for AMMnet and MIM  
 # source('R:/Kelly/catchupR21/src/6_produce_plots/plot_themes.R')
-CUcols <- c('#B03A2E','#B9770E','#1F618D','#148F77','#6C3483','#239B56', 'tan','#283747','#85929E')
-CUcols_ <- c('black','#B9770E','#1F618D','#148F77','#6C3483','#239B56', 'tan','#283747','#85929E')
+# CUcols <- c('#B03A2E','#B9770E','#1F618D','#148F77','#6C3483','#239B56', 'tan','#283747','#85929E')
+# CUcols_ <- c('black','#B9770E','#1F618D','#148F77','#6C3483','#239B56', 'tan','#283747','#85929E')
 # library(stringr)
 # library(ggplot2)
 # library(dplyr)
@@ -49,10 +49,7 @@ makeplots <- function(){
                         strat = 'catch-up',
                         seas = 'seasonal')
   ggsave("plots/cohorts_CU_CAperpop_AMMnetMIM_seas.tiff", pp, width = 14, height = 8, dpi = 300)
-  # ppp <- plot_cohortsage(var = 'cases_averted_perdose',
-  #                        strat = 'catch-up',
-  #                        seas = 'seasonal')
-  # ggsave("plots/cohorts_CU_CAperdose_AMMnetMIM_seas.tiff", ppp, width = 10, height = 6)
+  
   pppp <- plot_cohortsage(var = 'cases_per1000pop',
                          strat = 'catch-up',
                          seas = 'seasonal')
@@ -62,10 +59,7 @@ makeplots <- function(){
                         strat = 'AB',
                         seas = 'seasonal')
   ggsave("plots/cohorts_AB_CAperpop_AMMnetMIM_seas.tiff", pp, width = 14, height = 8, dpi = 300)
-  # ppp <- plot_cohortsage(var = 'cases_averted_perdose',
-  #                        strat = 'AB',
-  #                        seas = 'seasonal')
-  # ggsave("plots/cohorts_AB_CAperdose_AMMnetMIM_seas.tiff", ppp, width = 10, height = 6)
+  
   pppp <- plot_cohortsage(var = 'cases_per1000pop',
                           strat = 'AB',
                           seas = 'seasonal')
@@ -76,10 +70,7 @@ makeplots <- function(){
                         strat = 'catch-up',
                         seas = 'perennial')
   ggsave("plots/cohorts_CU_CAperpop_AMMnetMIM_per.tiff", pp, width = 14, height = 8, dpi = 300)
-  # ppp <- plot_cohortsage(var = 'cases_averted_perdose',
-  #                        strat = 'catch-up',
-  #                        seas = 'perennial')
-  # ggsave("plots/cohorts_CU_CAperdose_AMMnetMIM_per.tiff", ppp, width = 10, height = 6)
+  
   pppp <- plot_cohortsage(var = 'cases_per1000pop',
                           strat = 'catch-up',
                           seas = 'perennial')
@@ -89,10 +80,7 @@ makeplots <- function(){
                         strat = 'AB',
                         seas = 'perennial')
   ggsave("plots/cohorts_AB_CAperpop_AMMnetMIM_per.tiff", pp, width = 14, height = 8, dpi = 300)
-  # ppp <- plot_cohortsage(var = 'cases_averted_perdose',
-  #                        strat = 'AB',
-  #                        seas = 'perennial')
-  # ggsave("plots/cohorts_AB_CAperdose_AMMnetMIM_per.tiff", ppp, width = 10, height = 6)
+  
   pppp <- plot_cohortsage(var = 'cases_per1000pop',
                           strat = 'AB',
                           seas = 'perennial')
@@ -110,15 +98,7 @@ makeplots <- function(){
              PEVstrategy == strat,
              PEVage == '6m-14y',
              seasonality == seas,
-             pfpr %in% c(0.05, 0.25, 0.45)) #%>%
-      # mutate(ageatvax = factor(ageatvax, 
-      #                          levels = c('0.5-1','0.5-1.5', '1.5-2.5', '2.5-3.5','2.5-3',
-      #                                     '3.5-4.5', '4.5-5.5', '4.5-5','5-5.5',
-      #                                     '5.5-6.5', '6.5-7.5', '7.5-8.5','8.5-9.5','9.5-10.5','9.5-10',
-      #                                     '10.5-11.5', '11.5-12.5', '12.5-13.5', '13.5-14.5', '14.5-15')))#c('0.5-1','1-1.5','1.5-2','2-2.5','2.5-3','3-3.5','3.5-4','4-4.5',
-                                          # '4.5-5','5-5.5','5.5-6','6-6.5','6.5-7','7-7.5','7.5-8','8-8.5',
-                                          # '8.5-9','9-9.5','9.5-10','10-10.5','10.5-11','11-11.5','11.5-12',
-                                          # '12-12.5','12.5-13','13-13.5','13.5-14','14-14.5','14.5-15','no vax')))
+             pfpr %in% c(0.05, 0.25, 0.45)) 
 
     pfpr.labs <- c("5%", "25%", '45%')
     names(pfpr.labs) <- c("0.05","0.25", "0.45")
@@ -126,8 +106,6 @@ makeplots <- function(){
     ggplot() + 
       geom_point(data = df %>%
                    filter(!(ageatvax %in% ageatvaxhighlights)),
-                   # filter(ageatvax != '0.5-1.5'  &ageatvax != '3.5-4.5' &ageatvax != '7.5-8.5' &
-                   #          ageatvax != '12.5-13.5'), 
                  mapping = aes(x = as.numeric(age_lower), 
                                y = .data[[var]],
                                group = ageatvax),
@@ -135,8 +113,6 @@ makeplots <- function(){
                  color = 'grey90') + 
       geom_line(data = df %>% 
                   filter(!(ageatvax %in% ageatvaxhighlights)),
-                  # filter(ageatvax != '0.5-1.5'  &ageatvax != '3.5-4.5' &ageatvax != '7.5-8.5' &
-                  #          ageatvax != '12.5-13.5'),
                 aes(x = as.numeric(age_lower), 
                     y = .data[[var]],
                     group = ageatvax),
@@ -144,8 +120,6 @@ makeplots <- function(){
       
       geom_point(data = df %>%
                    filter(ageatvax %in% ageatvaxhighlights),
-                   # filter(ageatvax == '0.5-1.5'  |ageatvax == '3.5-4.5' |ageatvax == '7.5-8.5' |
-                   #          ageatvax == '12.5-13.5'), 
                  aes(x = as.numeric(age_lower), 
                      y = .data[[var]], 
                      color = ageatvax,
@@ -154,8 +128,6 @@ makeplots <- function(){
                  size = 1.5) +
       geom_line(data = df %>% 
                   filter(ageatvax %in% ageatvaxhighlights),
-                  # filter(ageatvax == '0.5-1.5'  |ageatvax == '3.5-4.5' |ageatvax == '7.5-8.5' |
-                  #          ageatvax == '12.5-13.5'),
                 aes(x = as.numeric(age_lower), 
                     y = .data[[var]], 
                     color = ageatvax,
@@ -212,15 +184,7 @@ makeplots <- function(){
              ageatvax!='14.5-15') %>%
       select(c(pfpr, seasonality, PEVage, PEVstrategy, EPIextra, 
                cases_averted_perpop_lower, cases_averted_perpop, cases_averted_perpop_upper)) %>%
-      mutate(#ageatvax = factor(ageatvax, levels = 
-                               #   c('0.5-1','0.5-1.5', '1.5-2.5', '2.5-3.5','2.5-3',
-                               # '3.5-4.5', '4.5-5.5', '4.5-5','5-5.5',
-                               # '5.5-6.5', '6.5-7.5', '7.5-8.5','8.5-9.5','9.5-10.5','9.5-10',
-                               # '10.5-11.5', '11.5-12.5', '12.5-13.5', '13.5-14.5', '14.5-15')),
-             # c('0.5-1', '1-1.5', '1.5-2', '2-2.5', '2.5-3', '3-3.5', '3.5-4', '4-4.5', '4.5-5', '5-5.5', '5.5-6', 
-                                                    # '6-6.5', '6.5-7', '7-7.5', '7.5-8', '8-8.5', '8.5-9', '9-9.5', '9.5-10', '10-10.5', '10.5-11', '11-11.5', 
-                                                    # '11.5-12', '12-12.5', '12.5-13', '13-13.5', '13.5-14', '14-14.5', '14.5-15')),
-             ageatvaxhighlight = ifelse(ageatvax %in% ageatvaxhighlights, as.character(ageatvax), NA),
+      mutate(ageatvaxhighlight = ifelse(ageatvax %in% ageatvaxhighlights, as.character(ageatvax), NA),
              ageatvaxhighlight = factor(ageatvaxhighlight, levels = ageatvaxhighlights))
     pfpr.labs <- c("5%", "25%", '45%')
     names(pfpr.labs) <- c("0.05","0.25", "0.45")

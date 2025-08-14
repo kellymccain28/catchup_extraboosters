@@ -156,7 +156,7 @@ cohorts_rawdraws <- rbind(CU6m14y, CU6m2y, CU6m4y, CU6m9y, CU5y9y, CU5y14y, ABco
   distinct() %>%
   select(-starts_with('p_'),
          -contains('diff'),-clinical, -severe, -mortality,
-         -contains('pop'), - contains('FVC'),#-yll, -yld, -daly, 
+         -contains('pop'), - contains('FVC'),#-yll, -yld, -daly,
          -contains('prevalence'),#prevalence_2_10, -prevalence_0_100, #-prop_n,
          -ends_with('perdose')
          ) %>%
@@ -164,7 +164,7 @@ cohorts_rawdraws <- rbind(CU6m14y, CU6m2y, CU6m4y, CU6m9y, CU5y9y, CU5y14y, ABco
 
 
 saveRDS(cohorts_rawdraws, "cohorts_rawdraws.rds")
-# cohorts_rawdraws <- readRDS('R:/Kelly/catchup_extraboosters/archive/6_make_cohorts/20241019-135953-3faba4fe/cohorts_rawdraws.rds')
+# cohorts_rawdraws <- readRDS('R:/Kelly/catchup_extraboosters/draft/6_make_cohorts/20250801-093257-4bbfa4ad/cohorts_rawdraws.rds')
 # saveRDS(cohorts_rawdraws, 'cohorts_rawdraws.rds')
 # function to get EPi doses for a cohort
 # for each timestep (which is in half years)
@@ -230,6 +230,14 @@ ab_condensed <- cohorts_rawdraws %>%
            .keep_all = TRUE)
 saveRDS(ab_condensed, 'ab_condensed.rds')
 
+abbaseline <- ab_condensed %>%
+  filter(PEVstrategy == 'AB' & EPIextra == '-') %>%
+  rename(epiprimary_baseline = epiprimary,
+         epibooster_baseline = epibooster,
+         mass_baseline = mass) %>% ungroup() %>%
+  select(c('halfyear','age_lower','age_upper','drawID','pfpr','seasonality',
+           'epiprimary_baseline','epibooster_baseline','mass_baseline'))
+
 # Now for CU cohorts
 CU_only <- cohorts_rawdraws %>%
   get_mass() %>%
@@ -237,7 +245,8 @@ CU_only <- cohorts_rawdraws %>%
   # Filter to just CU
   filter(PEVstrategy == 'catch-up')
 
-cohorts_rawdraws2 <- rbind(CU_only, ab_condensed)
+cohorts_rawdraws2 <- rbind(CU_only, ab_condensed) %>%
+  left_join(abbaseline, by = c('halfyear','age_lower','age_upper','drawID','pfpr','seasonality'))
 
 
 # cohorts_rawdraws2 <- readRDS("R:/Kelly/catchupR21-lite2/archive/6_make_cohorts/20240714-165510-95d42754/cohorts_rawdraws2.rds")
@@ -245,12 +254,14 @@ cohorts_rawdraws2 <- rbind(CU_only, ab_condensed)
 ##########################################################
 # get overall values for cohorts
 allcohorts_draws <- cohorts_rawdraws2 %>%
+  
   select(halfyear, ID, drawID, strategy,
          int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
          # labels, label_int, strategytype, EPIextra_labels, scen_labels,
          cases, sevcases, deaths, 
          epiprimary, epibooster, mass, n, totaldoses, additional_doses,
+         epiprimary_baseline, epibooster_baseline, mass_baseline,
          cases_averted, deaths_averted, severe_averted,
          cases_averted_routine, deaths_averted_routine, severe_averted_routine) %>%
   # Get sum of n in each cohort over all ages in cohort (i.e. 6m-2y would have multiple age groups that we want to sum up)
@@ -260,7 +271,8 @@ allcohorts_draws <- cohorts_rawdraws2 %>%
            # labels, label_int, strategytype, EPIextra_labels, scen_labels
            ) %>%
   summarize_at(vars(cases, sevcases, deaths,
-                 epiprimary, epibooster, mass, n,
+                 epiprimary, epibooster, mass, n, additional_doses,
+                 epiprimary_baseline, epibooster_baseline, mass_baseline,
                  contains('averted')), 
             sum, na.rm = TRUE) %>% ungroup() %>%
   # get overall values by grouping by strategy only
@@ -271,19 +283,22 @@ allcohorts_draws <- cohorts_rawdraws2 %>%
            ) %>%
   mutate_at(vars(cases, sevcases, deaths,
                  epiprimary, epibooster, mass,
+                 epiprimary_baseline, epibooster_baseline, mass_baseline,
                  contains('averted')),
             sum, na.rm = TRUE) %>%
   # get mean population over all time periods, grouped by strategy
   mutate(n = mean(n)) %>%
   rowwise() %>%
   mutate(halfyear = 'overall',
-         totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
+         totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE),
+         totalbaselinedoses = sum(epiprimary_baseline, epibooster_baseline, mass_baseline, na.rm = TRUE),
+         additional_doses_cohort = totaldoses - totalbaselinedoses) %>%
   mutate(cases_averted_perpop = cases_averted / n * 1000,
          cases_averted_perdose= cases_averted / totaldoses * 1000,
-         cases_averted_routine_peradddose = cases_averted_routine / additional_doses * 1000,
+         cases_averted_routine_peradddose = cases_averted_routine / additional_doses_cohort * 1000,
          severe_averted_perpop = severe_averted / n * 1000,
          severe_averted_perdose = severe_averted / totaldoses * 1000,
-         severe_avertd_routine_peradddose = cases_averted_routine / additional_doses * 1000) %>%
+         severe_avertd_routine_peradddose = cases_averted_routine / additional_doses_cohort * 1000) %>%
   # Get cases per population
   mutate(cases_per1000pop = cases / n * 1000,
          sevcases_per1000pop = sevcases / n * 1000) %>%
@@ -371,7 +386,8 @@ saveRDS(cohorts_byage, "cohorts_byage.rds")
 # now we summarize, grouping by age at vaccination
 cohorts_ageatvax_draws <- cohorts_rawdraws2 %>%
   rowwise() %>%
-  mutate(totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
+  mutate(totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE),
+         additional_doses_cohort = sum(epiprimary_baseline, epibooster_baseline, mass_baseline, na.rm = TRUE)) %>%
   # Before creating 1 year age at vaccination, have to summarized over age groups by half year age at vaccination 
   # Group by ageatvax (and strategy) only to get total over whole cohort life course  
   group_by(ID, drawID, ageatvax, strategy,
@@ -380,7 +396,8 @@ cohorts_ageatvax_draws <- cohorts_rawdraws2 %>%
            # labels, label_int, strategytype, EPIextra_labels, scen_labels
            ) %>%
   mutate_at(vars(cases, sevcases, deaths,
-                 totaldoses, contains('averted')),
+                 totaldoses, additional_doses_cohort,
+                 contains('averted')),
             sum, na.rm = TRUE) %>%
   mutate(n = mean(n)) %>%
   mutate(ageatvax_lower = as.numeric(stringr::str_split_fixed(ageatvax, "-", 2)[, 1]),
@@ -396,7 +413,7 @@ cohorts_ageatvax_draws <- cohorts_rawdraws2 %>%
          int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
          # labels, label_int, strategytype, EPIextra_labels, scen_labels,
-         cases, sevcases, deaths, n, totaldoses,
+         cases, sevcases, deaths, n, totaldoses, additional_doses_cohort,
          cases_averted, deaths_averted, severe_averted) %>%
   # Group by 1 year ageatvax (and strategy) only to get total over whole cohort life course  
   group_by(ID, drawID, ageatvax, strategy,
@@ -405,7 +422,8 @@ cohorts_ageatvax_draws <- cohorts_rawdraws2 %>%
            # labels, label_int, strategytype, EPIextra_labels, scen_labels
            ) %>%
   mutate_at(vars(cases, sevcases, deaths, n,
-                 totaldoses, contains('averted')),
+                 totaldoses, additional_doses_cohort,
+                 contains('averted')),
             sum, na.rm = TRUE) %>%
   ungroup() %>%
   mutate(halfyear = 'overall') %>%
@@ -413,9 +431,9 @@ cohorts_ageatvax_draws <- cohorts_rawdraws2 %>%
   rowwise() %>%
   # Calculate cases averted per population and per doses
   mutate(cases_averted_perpop = cases_averted / n * 1000,
-         # cases_averted_perdose= cases_averted / totaldoses * 1000,
+         cases_averted_peradddose= cases_averted / additional_doses_cohort * 1000,
          severe_averted_perpop = severe_averted / n * 1000,
-         # severe_averted_perdose = severe_averted / totaldoses * 1000
+         severe_averted_peradddose = severe_averted / additional_doses_cohort * 1000
          ) %>%
   # Get cases per 1000 people
   mutate(cases_per1000pop = cases / n * 1000,
@@ -436,7 +454,8 @@ saveRDS(cohorts_ageatvax, "cohorts_ageatvax.rds")
 # Cohorts for CU grouped by ageatvax and age
 cohorts_ageatvaxandage_draws <- cohorts_rawdraws2 %>%
   # group by 1 year timesteps
-  mutate(totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE)) %>%
+  mutate(totaldoses = sum(epiprimary, epibooster, mass, na.rm = TRUE),,
+         additional_doses_cohort = sum(epiprimary_baseline, epibooster_baseline, mass_baseline, na.rm = TRUE)) %>%
   ungroup() %>%
   mutate(age_lower_group = ifelse(age_lower != '0.5', floor(age_lower), age_lower)) %>%
   group_by(age_lower_group) %>%
@@ -459,7 +478,7 @@ cohorts_ageatvaxandage_draws <- cohorts_rawdraws2 %>%
          int_ID, PEV, PEVcov, PEVstrategy, PEVage, PEVrounds,
          EPIbooster, EPIextra, massbooster_rep, MDA, pfpr, seasonality,
          # labels, label_int, strategytype, EPIextra_labels, scen_labels,
-         cases, sevcases, deaths, n, totaldoses,
+         cases, sevcases, deaths, n, totaldoses, additional_doses_cohort,
          cases_averted, deaths_averted, severe_averted) %>%
   # Because have now combined 2 half-year age groups into new 1 year age groups, need to get sum of everything over these 2 age groups
   # First summarize by 6 month age group/scenario (not t)
@@ -472,7 +491,7 @@ cohorts_ageatvaxandage_draws <- cohorts_rawdraws2 %>%
            ) %>%
   # sum of all variables per new 1 year age group and 1 year age at vaccination
   summarize_at(vars(cases, sevcases, deaths,
-                 totaldoses, n,
+                 totaldoses, n, additional_doses_cohort,
                  contains('averted')),
             sum, na.rm = TRUE) %>%
   # Now, summarizing by 1 year age group and 1 year age at vax (not age_lower, age_upper -- which are by 6m)
@@ -483,7 +502,7 @@ cohorts_ageatvaxandage_draws <- cohorts_rawdraws2 %>%
            ) %>%
   # sum of all variables per new 1 year age group and 1 year age at vaccination
   summarize_at(vars(cases, sevcases, deaths,
-                 totaldoses, n,
+                 totaldoses, n, additional_doses_cohort,
                  contains('averted')),
             sum, na.rm = TRUE) %>%
   distinct() %>%
@@ -492,7 +511,7 @@ cohorts_ageatvaxandage_draws <- cohorts_rawdraws2 %>%
   mutate(age_lower = str_split_fixed(age_grp, "-", 2)[, 1],
          age_upper = str_split_fixed(age_grp, "-", 2)[, 2]) %>%
   rowwise() %>%
-  # Calculate cases averted per population and per doses
+  # Calculate cases averted per population 
   mutate(cases_averted_perpop = cases_averted / n * 1000,
          severe_averted_perpop = severe_averted / n * 1000) %>%
   # Get cases per population

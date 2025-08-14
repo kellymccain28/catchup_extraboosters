@@ -22,3 +22,132 @@ colscombo <- c('#B03A2E', '#4A235A', '#6C3483', '#A569BD', '#D2B4DE',
                 '#154360', '#1F618D', '#2980B9', '#7FB3D5',
                 '#7E5109', '#B9770E', '#F39C12', '#F8C471',
                 '#78281F','#B03A2E', '#E74C3C', '#F1948A')
+
+CUcols1 <- c('#B03A2E','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
+CUcols_ <- c('black','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
+
+# CUcols1 <- c(
+#   '#440154',  # Dark purple
+#   '#482777',  # Purple
+#   '#3F4A8A',  # Blue-purple
+#   '#31678E',  # Blue
+#   '#26838F',  # Blue-green
+#   '#1F9D8A',  # Teal
+#   '#6CCE5A',  # Green
+#   '#B6DE2B',  # Yellow-green
+#   '#FEE825',  # Yellow
+#   '#283747',  # Black
+#   '#808080'   # Gray
+# )
+# CUcols_ <- c(
+#   '#000000',  # Dark purple
+#   '#482777',  # Purple
+#   '#3F4A8A',  # Blue-purple
+#   '#31678E',  # Blue
+#   '#26838F',  # Blue-green
+#   '#1F9D8A',  # Teal
+#   '#6CCE5A',  # Green
+#   '#B6DE2B',  # Yellow-green
+#   '#FEE825',  # Yellow
+#   '#283747',  # Black
+#   '#808080'   # Gray
+# )
+# 
+# CUcols1 <- c(
+#   '#FEE825',  # Yellow
+#   '#B6DE2B',  # Yellow-green
+#   '#6CCE5A',  # Green
+#   '#1F9D8A',  # Teal
+#   '#31678E',  # Blue
+#   '#482777',  # Purple
+#   '#440154',   # Dark purple
+#   '#283747'
+# )
+# CUcols_ <- c(
+#   '#000000',  # Yellow
+#   '#B6DE2B',  # Yellow-green
+#   '#6CCE5A',  # Green
+#   '#1F9D8A',  # Teal
+#   '#31678E',  # Blue
+#   '#482777',  # Purple
+#   '#440154',   # Dark purple
+#   '#283747'
+# )
+
+
+# CUcols1 <- c(
+#   '#E31A1C',  # Bright red (was dark red)
+#   '#6A3D9A',  # Purple (adjusted for better contrast)
+#   '#1F78B4',  # Blue (slightly adjusted)
+#   '#33A02C',  # Green (more distinct from blue)
+#   '#FFFF33',  # Bright yellow (was light orange - now more distinct)
+#   '#FF7F00',  # Orange (more distinct)
+#   '#8B4513',  # Brown (was light green - now very different from yellow)
+#   '#A6CEE3',  # Light blue (more distinct from dark blue)
+#   '#FB9A99',  # Light pink (was tan)
+#   '#283747',  # Black (was dark gray)
+#   '#999999'   # Medium gray (better contrast)
+# )
+# CUcols_ <- c(
+#   '#000000',  # Bright red (was dark red)
+#   '#6A3D9A',  # Purple (adjusted for better contrast)
+#   '#1F78B4',  # Blue (slightly adjusted)
+#   '#33A02C',  # Green (more distinct from blue)
+#   '#FFFF33',  # Bright yellow (was light orange - now more distinct)
+#   '#FF7F00',  # Orange (more distinct)
+#   '#8B4513',  # Brown (was light green - now very different from yellow)
+#   '#A6CEE3',  # Light blue (more distinct from dark blue)
+#   '#FB9A99',  # Light pink (was tan)
+#   '#283747',  # Black (was dark gray)
+#   '#999999'   # Medium gray (better contrast)
+# )
+# 
+# 
+# CUcols1 <- c(
+#   '#a6cee3',
+#   '#1f78b4',
+#   '#b2df8a',
+#   '#33a02c',
+#   '#fb9a99',
+#   '#e31a1c',
+#   '#fdbf6f',
+#   '#ff7f00',
+#   '#cab2d6',
+#   '#6a3d9a',
+#   '#ffff99'
+# )
+# CUcols_ <- c(
+#   '#000000',
+#   '#1f78b4',
+#   '#b2df8a',
+#   '#33a02c',
+#   '#fb9a99',
+#   '#e31a1c',
+#   '#fdbf6f',
+#   '#ff7f00',
+#   '#cab2d6',
+#   '#283747',
+#   '#ffff99'
+# )
+CUcols1 <- c(
+  # '#ffffd9',
+  '#edf8b1',
+  '#c7e9b4',
+  '#7fcdbb',
+  '#41b6c4',
+  '#1d91c0',
+  '#225ea8',
+  '#253494',
+  '#081d58'
+)
+CUcols_ <- c(
+  # '',
+  '#000000',
+  '#c7e9b4',
+  '#7fcdbb',
+  '#41b6c4',
+  '#1d91c0',
+  '#225ea8',
+  '#253494',
+  '#081d58'
+)
