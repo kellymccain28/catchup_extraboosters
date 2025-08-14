@@ -88,7 +88,13 @@ outcomes_averted <- function(df){
            across(severe_averted_routine, 
                   ~ .x / additional_doses * 1000, .names = "{.col}_peradddose"),
            across(deaths_averted_routine, 
-                  ~ .x / additional_doses * 1000, .names = "{.col}_peradddose")) |>
+                  ~ .x / additional_doses * 1000, .names = "{.col}_peradddose"),
+           across(cases_averted_routine, 
+                  ~ .x / n * 1000, .names = "{.col}_perpop"),
+           across(severe_averted_routine, 
+                  ~ .x / n * 1000, .names = "{.col}_perpop"),
+           across(deaths_averted_routine, 
+                  ~ .x / n * 1000, .names = "{.col}_perpop")) |>
     # Below is the same as clinical, severe, mortality 
     mutate(across(c(cases, sevcases, deaths),
                   ~ .x / n, .names = "{.col}_perpop")) |> # per person
