@@ -54,7 +54,7 @@ task_status(bundle4)
 
 # done4 <- completed_reports(report_name = '4_combine_runs')
 
-# Task 5 - process + bind togethe
+# Task 5 - process + bind together
 task5 <- task_create_expr(orderly2::orderly_run(name = '5_process_combined',
                                                  parameters = list(analysis = 'catch-up',
                                                                    age_scaling = 1)))
@@ -77,7 +77,8 @@ task7 <- task_create_expr(orderly2::orderly_run(name = '7_produce_plots',
 task_log_show(task7)
 task_status(task7)
 
-
+task7part2 <- task_create_expr(orderly2::orderly_run(name = '7_part2_compare_scaled'))
+task_log_show(task7part2)
 #############################################################
 #############################################################
 #############################################################
@@ -122,8 +123,8 @@ hipercow_bundle_status(bundle4_scaled)
 task_log_show(bundle4_scaled$ids[3])
 task_status(bundle4)
 
-done4 <- completed_reports(report_name = '4_combine_runs')
-recentdone4 <- done4 %>% filter(date_time > 20250211000000)
+# done4 <- completed_reports(report_name = '4_combine_runs')
+# recentdone4 <- done4 %>% filter(date_time > 20250211000000)
 
 # Task 5 - process + bind together
 task5_scaled_withfolders <- task_create_expr(orderly2::orderly_run(name = '5_process_combined',

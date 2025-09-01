@@ -2,7 +2,7 @@
 install.packages('pacman')
 pacman::p_load(dplyr,data.table, janitor,purrr,tidyr,retry,zoo,ggplot2,
                cowplot,ggrepel,stringr,tidyverse,viridis,png,grid,
-               Rcpp, rlang, glue, fs, devtools)
+               Rcpp, rlang, glue, fs, devtools, dampack)
 
 install.packages(
   c("orderly2"),#, "malariasimulation"
