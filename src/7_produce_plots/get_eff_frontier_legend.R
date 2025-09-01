@@ -12,7 +12,8 @@ df_plot <- df %>%
                                   ifelse(PEVage == '-' & EPIextra == '-', "Routine age-based", 'Combined'))),
          EPIextra = factor(EPIextra, levels = c('2y','5y','10y','2y+5y','2y+10y','5y+10y','2y+5y+10y','-')),
          PEVage = ifelse(PEVage == '5-9','5-9y', ifelse(PEVage == '5-14','5-14y', PEVage)),
-         PEVage = factor(as.factor(PEVage), levels = c('6m-2y','6m-4y','6m-9y','6m-14y','5-9y','5-14y','-')))
+         PEVage = factor(as.factor(PEVage), levels = c('6m-2y','6m-4y','6m-9y','6m-14y','5-9y','5-14y','-'))) %>%
+  filter(category !='Routine age-based')
 
 dfpl1 <- df_plot%>%
     mutate(dosesper1000 = totaldoses / n *1000)
@@ -116,4 +117,4 @@ legend <- cowplot::get_plot_component(
   plt + theme(legend.box.margin = margin(0, 0, 0, 12)),
   'guide-box-right', return_all = TRUE)
 
-ggsave("legend.tiff", plot = legend, width = 2.3, height = 5.5, dpi = 400) 
+ggsave("legend2.png", plot = legend, width = 2.3, height = 5.5, dpi = 400) 

@@ -15,6 +15,7 @@ library(viridis)
 library(scales)
 library(grid)
 library(png)
+library(dampack)
 
 orderly_strict_mode()
 orderly2::orderly_description('Make figures for manuscript')
@@ -44,12 +45,15 @@ orderly_resource(
     'get_perc_dominated.R',
     'get_perc_U5.R',
     'add_labels.R',
-    'legend.png',
+    'legend2.png',
     'insert_blank_rows_latex.R',
     'get_eff_frontier_legend.R' # this is just run once to produce legend.png
   )
 )
 source('add_labels.R')
+
+orderly_shared_resource('get_icers.R')
+source('get_icers.R')
 
 df_summ <- readRDS("summarized_overall.rds") %>% 
   add_labels()
@@ -115,8 +119,8 @@ plot_cohort(df = cohorts_byage,
 
 
 # Figure 6
-plot_efficiency_frontier(df = df_summ)
-plot_efficiency_frontier(df = df_summ,
+plot_efficiency_frontier(df = df_summ_draws)
+plot_efficiency_frontier(df = df_summ_draws,
                          seas_type= 'perennial')
 
 # Table 

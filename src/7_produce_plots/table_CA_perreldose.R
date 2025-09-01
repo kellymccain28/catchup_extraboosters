@@ -26,14 +26,15 @@ table_CA_perreldose <- function(df_summ,
   dftbl1 <- dftbl %>%
     filter((EPIextra == '-'  & PEVstrategy == 'catch-up') | (PEVstrategy == 'AB')) %>%
     group_by(pfpr) %>%
+    arrange(labels, .by_group = TRUE) #%>%
     # arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
-    select(-c(cases_averted_peradddose, cases_averted_peradddose_lower, cases_averted_peradddose_upper, 
-              severe_averted_peradddose, severe_averted_peradddose_lower, severe_averted_peradddose_upper,
-              cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,
-              severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
-              cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
-              severe_averted_perFVC, severe_averted_perFVC_lower, severe_averted_perFVC_upper,
-              seasonality, PEVstrategy, EPIextra)) 
+    # select(-c(cases_averted_routine_peradddose, cases_averted_routine_peradddose_lower, cases_averted_routine_peradddose_upper, 
+    #           severe_averted_routine_peradddose, severe_averted_routine_peradddose_lower, severe_averted_routine_peradddose_upper,
+    #           cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,
+    #           severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
+    #           cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
+    #           severe_averted_perFVC, severe_averted_perFVC_lower, severe_averted_perFVC_upper,
+    #           seasonality, PEVstrategy, EPIextra)) 
   
 
   dftbl2 <- dftbl1 %>%
@@ -66,13 +67,17 @@ table_CA_perreldose <- function(df_summ,
   })
   
   dftbl2 <- dftbl2 %>%
+    mutate(labels = factor(labels, levels = c('Routine age-based','6m-2y','6m-4y','6m-9y','6m-14y','5-9y','5-14y',
+                                              '2y booster','5y booster','10y booster',
+                                              '2y, 5y boosters','2y, 10y boosters',
+                                              '5y, 10y boosters','2y, 5y, 10y boosters'))) %>%
     rename(Strategy = labels, 
            `Cases averted per 1000 pop` = CA_perpop,
            `Severe cases averted per 1000 pop` = SA_perpop,
            `Cases averted per 1000 additional doses` = CA_peradddose,
            `Severe cases averted per 1000 additional doses` = SA_peradddose,
            `Cases averted per 1000 FVC` = CA_perFVC,
-           `Severe cases averted per 1000 FVC` = SA_perFVC)
+           `Severe cases averted per 1000 FVC` = SA_perFVC) 
   # dftbl2[nrow(dftbl2)+1,] <- rep('',8)#colnames(dftbl2)
   # emptyrow <- dftbl2[46,]
   
@@ -96,14 +101,15 @@ table_CA_perreldose <- function(df_summ,
   dftbl3 <- dftbl %>%
     filter(EPIextra != '-'  & PEVstrategy == 'catch-up') %>%
     group_by(pfpr) %>%
-    # arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
-    select(-c(cases_averted_routine_peradddose, cases_averted_routine_peradddose_lower, cases_averted_routine_peradddose_upper, 
-              severe_averted_routine_peradddose, severe_averted_routine_peradddose_lower, severe_averted_routine_peradddose_upper,
-              cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,
-              severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
-              cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
-              severe_averted_perFVC, severe_averted_perFVC_lower, severe_averted_perFVC_upper,
-              seasonality, PEVstrategy, EPIextra)) 
+    arrange(labels, .by_group = TRUE)
+    # # arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
+    # select(-c(cases_averted_routine_peradddose, cases_averted_routine_peradddose_lower, cases_averted_routine_peradddose_upper, 
+    #           severe_averted_routine_peradddose, severe_averted_routine_peradddose_lower, severe_averted_routine_peradddose_upper,
+    #           cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,
+    #           severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
+    #           cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
+    #           severe_averted_perFVC, severe_averted_perFVC_lower, severe_averted_perFVC_upper,
+    #           seasonality, PEVstrategy, EPIextra)) 
   
   dftbl4 <- dftbl3 %>%
     filter(pfpr != 0.01 & pfpr != 0.65) %>%
@@ -152,15 +158,15 @@ table_CA_perreldose <- function(df_summ,
            CA_perFVC = paste0(cases_averted_perFVC, ' (', cases_averted_perFVC_lower, ', ', cases_averted_perFVC_upper, ')'),
            SA_perFVC = paste0(severe_averted_perFVC, ' (', severe_averted_perFVC_lower, ', ', severe_averted_perFVC_upper, ')')
     ) %>%
-    filter(EPIextra != '-'  & PEVstrategy == 'catch-up') %>%
+    filter(EPIextra != '-'  & PEVstrategy == 'catch-up') #%>%
     # arrange(desc(cases_averted_perdose), .by_group = TRUE) %>%
-    select(-c(cases_averted_routine_peradddose, cases_averted_routine_peradddose_lower, cases_averted_routine_peradddose_upper, 
-              severe_averted_routine_peradddose, severe_averted_routine_peradddose_lower, severe_averted_routine_peradddose_upper,
-              cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,
-              severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
-              cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
-              severe_averted_perFVC, severe_averted_perFVC_lower, severe_averted_perFVC_upper,
-              seasonality, PEVstrategy, EPIextra)) 
+    # select(-c(cases_averted_routine_peradddose, cases_averted_routine_peradddose_lower, cases_averted_routine_peradddose_upper, 
+    #           severe_averted_routine_peradddose, severe_averted_routine_peradddose_lower, severe_averted_routine_peradddose_upper,
+    #           cases_averted_perpop, cases_averted_perpop_lower, cases_averted_perpop_upper,
+    #           severe_averted_perpop, severe_averted_perpop_lower, severe_averted_perpop_upper,
+    #           cases_averted_perFVC, cases_averted_perFVC_lower, cases_averted_perFVC_upper,
+    #           severe_averted_perFVC, severe_averted_perFVC_lower, severe_averted_perFVC_upper,
+    #           seasonality, PEVstrategy, EPIextra)) 
   
   dftbl6 <- dftbl5 %>%
     filter(pfpr != 0.01 & pfpr != 0.65) %>%

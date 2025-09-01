@@ -11,7 +11,7 @@ colsSVhybrid <- c('#283747', '#85929E')
 colors <- c(col514, col59, col6m14y, col6m2y, col6m4y, col6m9y, colsAB, colsSVhybrid, 'black')
 colors_effpl <- c(colsAB, col6m2y, col6m4y, col6m9y, col6m14y, col59, col514)
 
-CUcols <- c('#B03A2E','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db')#,'tan')
+CUcols <- c('#B03A2E','#6C3483','#2471a3','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db')#,'tan')
 ABcols <- c('#B03A2E', '#ec407a', '#6a1b9a', '#5c6bc0', '#0288d1','#00796b','#689f38','#ef6c00','#fbc02d')
 
 colsCU <- c(col514[2],col59[3],col6m14y[2],col6m2y[2],col6m4y[2],col6m9y[2])
@@ -22,9 +22,9 @@ colscombo <- c('#B03A2E', '#4A235A', '#6C3483', '#A569BD', '#D2B4DE',
                 '#154360', '#1F618D', '#2980B9', '#7FB3D5',
                 '#7E5109', '#B9770E', '#F39C12', '#F8C471',
                 '#78281F','#B03A2E', '#E74C3C', '#F1948A')
-
-CUcols1 <- c('#B03A2E','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
-CUcols_ <- c('black','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
+# 
+# CUcols1 <- c('#B03A2E','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
+# CUcols_ <- c('black','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
 
 # CUcols1 <- c(
 #   '#440154',  # Dark purple
@@ -63,6 +63,7 @@ CUcols_ <- c('black','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38'
 #   '#440154',   # Dark purple
 #   '#283747'
 # )
+
 # CUcols_ <- c(
 #   '#000000',  # Yellow
 #   '#B6DE2B',  # Yellow-green
@@ -73,6 +74,26 @@ CUcols_ <- c('black','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38'
 #   '#440154',   # Dark purple
 #   '#283747'
 # )
+CUcols1 <- c(
+  "#FDE725", # yellow
+  "#B5DE2B", # yellow-green
+  "#6CCE59", # green
+  "#35B779", # light teal
+  "#1F9E89", # teal
+  "#31688E", # blue
+  "#443983", # violet
+  "#440154"  # dark purple
+)
+CUcols_ <- c(
+  "black", 
+  "#B5DE2B", # yellow-green
+  "#6CCE59", # green
+  "#35B779", # light teal
+  "#1F9E89", # teal
+  "#31688E", # blue
+  "#443983", # violet
+  "#440154"  # dark purple
+)
 
 
 # CUcols1 <- c(
@@ -129,25 +150,46 @@ CUcols_ <- c('black','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38'
 #   '#283747',
 #   '#ffff99'
 # )
-CUcols1 <- c(
-  # '#ffffd9',
-  '#edf8b1',
-  '#c7e9b4',
-  '#7fcdbb',
-  '#41b6c4',
-  '#1d91c0',
-  '#225ea8',
-  '#253494',
-  '#081d58'
-)
-CUcols_ <- c(
-  # '',
-  '#000000',
-  '#c7e9b4',
-  '#7fcdbb',
-  '#41b6c4',
-  '#1d91c0',
-  '#225ea8',
-  '#253494',
-  '#081d58'
-)
+# CUcols1 <- c(
+#   "#E69F00", # orange
+#   "#56B4E9", # sky blue
+#   "#009E73", # bluish green
+#   "#F0E442", # yellow
+#   "#0072B2", # blue
+#   "#D55E00", # vermillion
+#   "#CC79A7", # reddish purple
+#   "#00CED1"  # dark turquoise (extra vivid)
+# )
+
+# CUcols1 <- c(
+#   '#d9f0a3', # darker, easier to see
+#   '#c7e9b4',
+#   '#7fcdbb',
+#   '#41b6c4',
+#   '#1d91c0',
+#   '#225ea8',
+#   '#253494',
+#   '#081d58'
+# )
+# CUcols1 <- c(
+#   # '#ffffd9',
+#   '#edf8b1',
+#   '#c7e9b4',
+#   '#7fcdbb',
+#   '#41b6c4',
+#   '#1d91c0',
+#   '#225ea8',
+#   '#253494',
+#   '#081d58'
+# )
+# CUcols_ <- c(
+#   # '',
+#   '#000000',
+#   '#c7e9b4',
+#   '#7fcdbb',
+#   '#41b6c4',
+#   '#1d91c0',
+#   '#225ea8',
+#   '#253494',
+#   '#081d58'
+# )

@@ -298,7 +298,7 @@ allcohorts_draws <- cohorts_rawdraws2 %>%
          cases_averted_routine_peradddose = cases_averted_routine / additional_doses_cohort * 1000,
          severe_averted_perpop = severe_averted / n * 1000,
          severe_averted_perdose = severe_averted / totaldoses * 1000,
-         severe_avertd_routine_peradddose = cases_averted_routine / additional_doses_cohort * 1000) %>%
+         severe_averted_routine_peradddose = cases_averted_routine / additional_doses_cohort * 1000) %>%
   # Get cases per population
   mutate(cases_per1000pop = cases / n * 1000,
          sevcases_per1000pop = sevcases / n * 1000) %>%

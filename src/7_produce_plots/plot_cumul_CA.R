@@ -21,7 +21,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     
     plottheme <- theme(axis.title = element_text(size = 8),
           # plot.title = element_text(size = 22),
-          legend.text = element_text(size = 8),
+          legend.text = element_text(size = 7),
           strip.text.x = element_text(size = 8),
           legend.title = element_text(size = 8),
           plot.caption = element_text(size = 10),
@@ -213,6 +213,12 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     ggsave(paste0("plots/plot_cumulCA_catchupnobooster_routine_", seasonalities[s], ".tiff"), 
            plot = CAcatchup_noboost_none[[5]], width = 7.5, height = 2.83, dpi = 500,
            units = 'in')
+    ggsave(paste0("plots/plot_cumulCA_catchupnobooster_none_", seasonalities[s], ".pdf"), 
+           plot = CAcatchup_noboost_none[[1]], width = 7.5, height = 2.83, dpi = 500,
+           units = 'in')
+    ggsave(paste0("plots/plot_cumulCA_catchupnobooster_routine_", seasonalities[s], ".pdf"), 
+           plot = CAcatchup_noboost_none[[5]], width = 7.5, height = 2.83, dpi = 500,
+           units = 'in')
     
     CAAB_none <- plot_cumul_CA2(df_last15, 
                                 strategy = 'age-based',
@@ -223,6 +229,10 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
            plot = CAAB_none[[1]], width = 7.5, height = 2.83, dpi = 500, units = 'in' ) 
     ggsave(paste0("plots/plot_cumulCA_AB_routine_", seasonalities[s], ".tiff"), 
            plot = CAAB_none[[5]], width = 7.5, height = 2.83, dpi = 500, units = 'in' ) 
+    ggsave(paste0("plots/plot_cumulCA_AB_none_", seasonalities[s], ".pdf"), 
+           plot = CAAB_none[[1]], width = 7.5, height = 2.83, dpi = 500, units = 'in' ) 
+    ggsave(paste0("plots/plot_cumulCA_AB_routine_", seasonalities[s], ".pdf"), 
+           plot = CAAB_none[[5]], width = 7.5, height = 2.83, dpi = 500, units = 'in' ) 
     
 
     CAseasonal_routine <- plot_cumul_CA2(df_summ,
@@ -231,7 +241,10 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                                          variable = 'cases_averted',
                                          seas = seasonalities[s])
     ggsave(paste0("plots/plot_cumulCA_SVhybrid_none_", seasonalities[s], ".tiff"), 
-           plot = CAseasonal_routine[[1]], width = 7.5, height = 2.83, dpi = 500,            
+           plot = CAseasonal_routine[[1]], width = 7.6, height = 2.83, dpi = 500,            
+           units = 'in')
+    ggsave(paste0("plots/plot_cumulCA_SVhybrid_none_", seasonalities[s], ".pdf"), 
+           plot = CAseasonal_routine[[1]], width = 7.6, height = 2.83, dpi = 500,            
            units = 'in' )
     
     # CAcombination <- plot_cumul_CA2(df_summ,
@@ -252,6 +265,12 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
            plot = SAcatchup_noboost_none[[1]], width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
     ggsave(paste0("plots/plot_cumulSA_catchupnobooster_routine_", seasonalities[s], ".tiff"), 
            plot = SAcatchup_noboost_none[[5]], width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
+    ggsave(paste0("plots/plot_cumulSA_catchupnobooster_none_", seasonalities[s], ".pdf"), 
+           plot = SAcatchup_noboost_none[[1]], width = 7.5, height = 2.83, dpi = 500,            
+           units = 'in')
+    ggsave(paste0("plots/plot_cumulSA_catchupnobooster_routine_", seasonalities[s], ".pdf"), 
+           plot = SAcatchup_noboost_none[[5]], width = 7.5, height = 2.83, dpi = 500,            
+           units = 'in')
     
     SAAB_none <- plot_cumul_CA2(df_last15, 
                                 strategy = 'age-based',
@@ -262,6 +281,10 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
            plot = SAAB_none[[1]], width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
     ggsave(paste0("plots/plot_cumulSA_AB_routine_", seasonalities[s], ".tiff"), 
            plot = SAAB_none[[5]], width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
+    ggsave(paste0("plots/plot_cumulSA_AB_none_", seasonalities[s], ".pdf"), 
+           plot = SAAB_none[[1]], width = 7.5, height = 2.83, dpi = 500,            units = 'in')
+    ggsave(paste0("plots/plot_cumulSA_AB_routine_", seasonalities[s], ".pdf"), 
+           plot = SAAB_none[[5]], width = 7.5, height = 2.83, dpi = 500,            units = 'in')
     
     SAseasonal_routine <- plot_cumul_CA2(df_summ,
                                          strategy = 'seasonal routine',
@@ -269,6 +292,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                                          variable = 'severe_averted',
                                          seas = seasonalities[s])
     ggsave(paste0("plots/plot_cumulSA_SVhybrid_none_", seasonalities[s], ".tiff"), 
+           plot = SAseasonal_routine[[1]], width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
+    ggsave(paste0("plots/plot_cumulSA_SVhybrid_none_", seasonalities[s], ".pdf"), 
            plot = SAseasonal_routine[[1]], width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
     
     
@@ -303,6 +328,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     plotCASA_AB <- plot_grid(CASAAB, legend, rel_widths = c(3, 0.63))
     ggsave(paste0("plots/plot_cumulCASA_AB_", seasonalities[s], ".tiff"), 
            plot = plotCASA_AB, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
+    ggsave(paste0("plots/plot_cumulCASA_AB_", seasonalities[s], ".pdf"), 
+           plot = plotCASA_AB, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
     
     
     
@@ -320,6 +347,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     plotCASA_CU <- plot_grid(CASACU, legend, rel_widths = c(3, 0.63))
     ggsave(paste0("plots/plot_cumulCASAperpop_CU_", seasonalities[s], ".tiff"), 
            plot = plotCASA_CU, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
+    ggsave(paste0("plots/plot_cumulCASAperpop_CU_", seasonalities[s], ".pdf"), 
+           plot = plotCASA_CU, width = 7.5, height = 2.83, dpi = 500,            units = 'in')
     
     ######### Make plot with clinical and severe just for the per pop for AGE-BASED
     CASAAB <- cowplot::plot_grid(CAAB_none[[2]] + theme(legend.position="none"), 
@@ -334,6 +363,8 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     # add the legend to the row we made earlier.
     plotCASA_AB <- plot_grid(CASAAB, legend, rel_widths = c(3, 0.63))
     ggsave(paste0("plots/plot_cumulCASAperpop_AB_", seasonalities[s], ".tiff"), 
+           plot = plotCASA_AB, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
+    ggsave(paste0("plots/plot_cumulCASAperpop_AB_", seasonalities[s], ".pdf"), 
            plot = plotCASA_AB, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
     
     
@@ -353,6 +384,9 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     ggsave(paste0("plots/plot_cumulCASA_CU_ADDDOSE", seasonalities[s], ".tiff"),
            plot = plotCASA_CU, width = 7.5, height = 2.83, dpi = 500,            
            units = 'in' )
+    ggsave(paste0("plots/plot_cumulCASA_CU_ADDDOSE", seasonalities[s], ".pdf"),
+           plot = plotCASA_CU, width = 7.5, height = 2.83, dpi = 500,            
+           units = 'in')
     
     
     ######### Make plot with clinical and severe just for the per ADDITIONAL DOSE for AGE-BASED
@@ -369,7 +403,9 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
     plotCASA_AB <- plot_grid(CASAAB, legend, rel_widths = c(3, 0.63))
     ggsave(paste0("plots/plot_cumulCASA_AB_ADDDOSE", seasonalities[s], ".tiff"), 
            plot = plotCASA_AB, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
-     
+    ggsave(paste0("plots/plot_cumulCASA_AB_ADDDOSE", seasonalities[s], ".pdf"), 
+           plot = plotCASA_AB, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
+    
     # Check on outcomes averted per FVC
     perFVC <- function(df,
                        strategy,
@@ -441,12 +477,16 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                          seas = seasonalities[s]) 
       ggsave(paste0("plots/plot_cumulCA_CU_perFVC", seasonalities[s], ".tiff"), 
              plot = CACU_fvc, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
+      ggsave(paste0("plots/plot_cumulCA_CU_perFVC", seasonalities[s], ".pdf"), 
+             plot = CACU_fvc, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
       
       CASU_fvc <- perFVC(df_summ, 
                          strategy = 'catch-up no booster',
                          variable = 'severe_averted',
                          seas = seasonalities[s]) 
       ggsave(paste0("plots/plot_cumulSA_CU_perFVC", seasonalities[s], ".tiff"), 
+             plot = CACU_fvc, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
+      ggsave(paste0("plots/plot_cumulSA_CU_perFVC", seasonalities[s], ".pdf"), 
              plot = CACU_fvc, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
     }
   }
