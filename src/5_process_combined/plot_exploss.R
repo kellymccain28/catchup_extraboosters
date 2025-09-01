@@ -1,0 +1,101 @@
+# PLotting function modified from dampack github page : https://github.com/DARTH-git/dampack/blob/master/R/exp.loss.R
+
+
+#' Plot of Expected Loss Curves (ELC)
+#'
+#' @param x object of class \code{exp_loss}, produced by function
+#'  \code{\link{calc_exp_loss}}
+#' @param currency string with currency used in the cost-effectiveness analysis (CEA).
+#'  Default: $, but it could be any currency symbol or word (e.g., £, €, peso)
+#' @param effect_units units of effectiveness. Default: QALY
+#' @param log_y take the base 10 log of the y axis
+#' @param frontier indicate the frontier (also the expected value of perfect information).
+#' To only plot the EVPI see \code{\link{calc_evpi}}.
+#' @param points whether to plot points on the curve (TRUE) or not (FALSE)
+#' @param lsize line size. defaults to 1.
+#' @inheritParams add_common_aes
+#'
+#' @return A \code{ggplot2} object with the expected loss
+#' @import ggplot2
+#' @importFrom rlang !!
+#' @importFrom rlang sym
+#' @importFrom scales comma
+#' @export
+plot_exp_loss <- function(x,
+                          log_y = TRUE,
+                          frontier = TRUE,
+                          points = TRUE,
+                          lsize = 1,
+                          txtsize = 12,
+                          currency = "$",
+                          effect_units = "QALY",
+                          n_y_ticks = 8,
+                          n_x_ticks = 20,
+                          xbreaks = NULL,
+                          ybreaks = NULL,
+                          xlim = c(0, NA),
+                          ylim = NULL,
+                          col = c("full", "bw"),
+                          ...) {
+  On_Frontier <- NULL
+  wtp_name <- "WTP_thou"
+  loss_name <- "Expected_Loss"
+  strat_name <- "Strategy"
+  x[, wtp_name] <- x$WTP / 1000
+  
+  # split into on frontier and not on frontier
+  nofront <- x
+  front <- x[x$On_Frontier, ]
+  
+  # Drop unused levels from strategy names
+  nofront$Strategy <- droplevels(nofront$Strategy)
+  front$Strategy <- droplevels(front$Strategy)
+  # formatting if logging the y axis
+  if (log_y) {
+    tr <- "log10"
+  } else {
+    tr <- "identity"
+  }
+  
+  p <- ggplot(data = nofront, aes(x = !!sym(wtp_name),
+                                  y = !!sym(loss_name))) +
+    xlab(paste0("Willingness to Pay\n(Thousand ", currency, "/", effect_units, ")")) +
+    ylab(paste0("Expected Loss (", currency, ")"))
+  
+  # color
+  col <- match.arg(col)
+  ## change linetype too if color is black and white
+  if (col == "full") {
+    if (points) {
+      p <- p + geom_point(aes(color = !!sym(strat_name)))
+    }
+    p <- p +
+      geom_line(linewidth = lsize, aes(color = !!sym(strat_name)))
+    
+  }
+  if (col == "bw") {
+    if (points) {
+      p <- p + geom_point()
+    }
+    p <- p +
+      geom_line(aes(linetype = !!sym(strat_name)))
+  }
+  
+  p <- add_common_aes(p, txtsize, col = col, col_aes = c("color", "line"),
+                      continuous = c("x", "y"),
+                      n_x_ticks = n_x_ticks, n_y_ticks = n_y_ticks,
+                      xbreaks = xbreaks, ybreaks = ybreaks,
+                      xlim = xlim, ylim = ylim,
+                      ytrans = tr)
+  if (frontier) {
+    p <- p + geom_point(data = front, aes(x = !!sym(wtp_name),
+                                          y = !!sym(loss_name),
+                                          shape = On_Frontier),
+                        size = 3, stroke = 1, color = "black") +
+      scale_shape_manual(name = NULL, values = 0, labels = "Frontier & EVPI") +
+      guides(color = guide_legend(order = 1),
+             linetype = guide_legend(order = 1),
+             shape = guide_legend(order = 2))
+  }
+  return(p)
+}

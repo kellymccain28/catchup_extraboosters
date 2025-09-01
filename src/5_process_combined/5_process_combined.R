@@ -26,40 +26,56 @@ pars <- readRDS("parameters_torun_R21.rds")
 
 
 output_overall <- data.frame()
-# output_ageyr <- data.frame()
 output_ageyrto50 <- data.frame()
 output_last15 <- data.frame()
 
-# using files that started 
-# output_overall <- readRDS('R:/Kelly/catchup_extraboosters/archive/5_process_combined/20241018-170856-c8607bb1/output_overall_intermediate.rds')
-# output_ageyr <- readRDS('R:/Kelly/catchup_extraboosters/draft/5_process_combined/20241018-083359-49de9d8f/output_ageyr_intermediate.rds')
-# output_ageyrto50 <- readRDS('R:/Kelly/catchup_extraboosters/archive/5_process_combined/20241018-170856-c8607bb1/output_ageyr_toage50_intermediate.rds') 
-# output_last15 <- readRDS('R:/Kelly/catchup_extraboosters/archive/5_process_combined/20241018-170856-c8607bb1/output_last15_intermediate.rds')
-# 
-# saveRDS(output_overall, 'output_overall_intermediate.rds')
-# saveRDS(output_ageyr, 'output_ageyr_intermediate.rds')
-# saveRDS(output_ageyrto50, 'output_ageyr_toage50_intermediate.rds')
-# saveRDS(output_last15, 'output_last15_intermediate.rds')
-
-# output_ageyrto50 <- output_ageyr %>%
-#   filter(age_lower < 50 & # keep only 0.5 year age groups up to age 50
-#            !(age_lower == 0 & age_upper == 5) &
-#            !(age_lower == 0 & age_upper == 100) &
-#            !(age_lower == 5 & age_upper == 10) &
-#            !(age_lower == 10 & age_upper == 15))
 
 # done4 <- completed_reports(report_name = '4_combine_runs')
 # donerecent <- done4 %>% filter(date_time > 20250311000000)
 # donerecent <- donerecent %>% arrange(n500, date_time) %>%
 #   group_by(n500, age_scaling) %>% slice_max(date_time)
-# saveRDS(donerecent, 'pars_folders.rds')
+# # saveRDS(donerecent, 'pars_folders.rds')
+
+# report_name = '4_combine_runs'
+# meta <- orderly2::orderly_metadata_extract(name = report_name, extract = c('time', 'parameters'), 
+#                                            options = orderly2::orderly_search_options(allow_remote = TRUE))
+# 
+# meta2 <- meta
+# meta_orig <- meta
+# meta2$age_scaling <- sapply(meta2$parameters, function(x) {
+#   if(is.null(x$age_scaling)) NA else x$age_scaling
+# })
+# meta2$n500 <- sapply(meta2$parameters, function(x) {
+#   if(is.null(x$n500)) NA else x$n500
+# })
+# meta2$to <- sapply(meta2$parameters, function(x) {
+#   if(is.null(x$to)) NA else x$to
+# })
+# 
+# meta2<- meta2 |>
+#   mutate(directory_name = id) |>
+#   tidyr::separate(col = id, into = c('date', 'time'), sep = '-')|>
+#   mutate(date= as.numeric(date)) |>
+#   mutate(date_time = as.numeric(paste0(date, time))) %>%
+#   filter(!is.na(age_scaling))
+# 
+# meta21 <- meta2 %>%
+#   group_by(age_scaling, n500, to) %>%
+#   mutate(keep = ifelse(date_time == max(date_time, na.rm = TRUE),1,0)) %>%
+#   filter(keep == 1) %>% ungroup()
+# 
+# table(meta21$age_scaling)
+# saveRDS(meta21, 'pars_folders.rds')
 orderly_resource('pars_folders.rds')
-pars_folders <- readRDS('pars_folders.rds')
+pars_foldersraw <- readRDS('pars_folders.rds')
+
+pars_folders <- pars_foldersraw %>%
+  filter(age_scaling_par == age_scaling)
 
 # Add each set of processed runs to dataset
 for(i in as.integer(c(seq(1, max(pars$scenarioID)-500, by = 500), 34501))){ #seq(0.5, 18, by = 0.5), (removing this bc just adding to orignals for now)
   message(i)
-  
+
   folder <- pars_folders[pars_folders$n500 == i,]$directory_name
   # orderly2::orderly_dependency("4_combine_runs",
   #                              "latest(parameter:analysis == this:analysis
@@ -103,9 +119,17 @@ for(i in as.integer(c(seq(1, max(pars$scenarioID)-500, by = 500), 34501))){ #seq
 
   message(paste0(Sys.time(), ' saved datasets'))
 }
-# output_overall <- readRDS("R:/Kelly/catchup_extraboosters/draft/5_process_combined/20250220-144148-c744e235/output_overall_intermediate.rds")
-# output_last15 <- readRDS("R:/Kelly/catchup_extraboosters/draft/5_process_combined/20250220-144148-c744e235/output_last15_intermediate.rds")
-# output_ageyr_toage50_intermediate <- readRDS("R:/Kelly/catchup_extraboosters/draft/5_process_combined/20250220-144148-c744e235/output_ageyr_toage50_intermediate.rds")
+# # for normal assumptions age_scaling = 1
+# if (age_scaling == 1){
+#   output_overall <- readRDS("R:/Kelly/catchup_extraboosters/archive/5_process_combined/20250225-111021-3d02a447/output_overall_intermediate.rds")
+#   output_last15 <- readRDS("R:/Kelly/catchup_extraboosters/archive/5_process_combined/20250225-111021-3d02a447/output_last15_intermediate.rds")
+#   output_ageyr_toage50_intermediate <- readRDS("R:/Kelly/catchup_extraboosters/archive/5_process_combined/20250225-111021-3d02a447/output_ageyr_toage50_intermediate.rds")
+# } else if (age_scaling == 0.64){
+#   # for 0.64 assumption
+#   output_overall <- readRDS("R:/Kelly/catchup_extraboosters/archive/5_process_combined/20250324-203431-4d4ab63a/output_overall_intermediate.rds")
+#   output_last15 <- readRDS("R:/Kelly/catchup_extraboosters/archive/5_process_combined/20250324-203431-4d4ab63a/output_last15_intermediate.rds")
+#   output_ageyr_toage50_intermediate <- readRDS("R:/Kelly/catchup_extraboosters/archive/5_process_combined/20250324-203431-4d4ab63a/output_ageyr_toage50_intermediate.rds")
+# }
 
 # saveRDS(output_overall, 'output_overall_intermediate.rds')
 # saveRDS(output_ageyr_toage50_intermediate, 'output_ageyr_toage50_intermediate.rds')
