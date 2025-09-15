@@ -30,7 +30,7 @@ expected_loss_icer <- function(df, seas, pfprval){
   )
   
   effects <- df2 %>% 
-    mutate(cases_averted_routine_perpop = cases_averted_routine / n * 1000) %>%
+    mutate(cases_averted_routine_perpop = cases_averted_routine / n) %>%
     select(drawID, idstrategy, cases_averted_routine_perpop) %>%
     pivot_wider(names_from = idstrategy, 
                 values_from = cases_averted_routine_perpop) %>%
@@ -72,10 +72,11 @@ expected_loss_icer <- function(df, seas, pfprval){
                            strategies = psa_sum$Strategy)
   icersplot <- plot_icers(icers)  + 
     labs(caption = str_glue("Seasonality: {seas}, PfPR: {pfprval}"),
-         x = 'Effect (additional cases averted per 1000 people)',
+         x = 'Effect (additional cases averted per person)',
          y = 'Cost (additional doses per person)') + theme_bw(base_size = 14)
   
-  exploss_obj <- calc_exp_loss(wtp = seq(0.01, 3, .03),#seq(1e3, 2e4, 1e2),#seq(1e4, 5e5, 5e3),
+  wtps <- seq(5,200,10)#seq(0.01, 3, .03)
+  exploss_obj <- calc_exp_loss(wtp = wtps,#seq(1e3, 2e4, 1e2),#seq(1e4, 5e5, 5e3),
                                psa = psa_obj) %>%
     separate(Strategy,
              into = c("PEVstrategy", "PEVage", "EPIextra"),
@@ -92,16 +93,23 @@ expected_loss_icer <- function(df, seas, pfprval){
            seasonality = seas) %>%
     group_by(WTP) %>%
     arrange(Expected_Loss, .by_group = TRUE) %>%
-    mutate(rank = rank(Expected_Loss)) 
+    mutate(rank = rank(Expected_Loss)) %>%
+    mutate(label_val = ifelse(PEVage != '' & EPIextra!='', paste0(PEVage, ', ', EPIextra),
+                              ifelse(PEVage == '' & EPIextra !='', EPIextra,
+                                     ifelse(EPIextra == '' & PEVage != '', PEVage, NA))))
   
-  saveRDS(exploss_obj, 'exploss.rds')
+  saveRDS(exploss_obj, paste0('exploss',pfprval,'.rds'))
   
   ranking <- ggplot(exploss_obj %>%
-           filter(rank < 11)) + 
+           filter(rank < 10)) + 
     geom_line(aes(x = WTP, y = as.integer(rank), color = Strategy), linewidth = 0.8) + 
-    geom_label(data = exploss_obj %>% filter(rank < 11 & WTP == 1), 
-               aes(x = WTP, y = rank, color = Strategy, label = paste0(PEVage, ', ', EPIextra)))  +
-    scale_y_continuous(breaks = seq(1,10,1)) + xlim(c(0,1.5))+
+    geom_point(aes(x = WTP, y = as.integer(rank), color = Strategy)) + 
+    geom_label(data = exploss_obj %>% filter(rank < 10 & WTP == 135), 
+               aes(x = WTP, y = as.integer(rank), color = Strategy, label = label_val))  +
+    geom_label(data = exploss_obj %>% filter(rank < 10 & WTP == 5), 
+               aes(x = WTP - 35, y = as.integer(rank), color = Strategy, label = label_val))  +
+    scale_x_continuous(breaks = seq(0,200,50),
+                       limits = c(-55,200)) + #xlim(c(0,200))+
     labs(y = 'Expected loss rank (1 best)',
          x = 'WTP',#\n(additional doses per additional cases averted (thousands))',
          caption = str_glue("Seasonality: {seas}, PfPR: {pfprval}")) +
@@ -113,14 +121,16 @@ expected_loss_icer <- function(df, seas, pfprval){
   #
   # exploss_obj %>% filter(On_Frontier) %>% janitor::tabyl(Strategy)
   
-  explossplot <- ggplot(exploss_obj) +
+  explossplot <- ggplot(exploss_obj %>% 
+                          mutate(Expected_Loss = ifelse(Expected_Loss == 0, Expected_Loss+0.0001, Expected_Loss))) +
     geom_line(aes(x = WTP, y = Expected_Loss,
                   color = PEVage, linetype = EPIextra), linewidth = 0.7) + 
     # geom_text_repel(data = exploss_obj %>% filter(On_Frontier), 
     #   aes(x = WTP / 1000, y = Expected_Loss,
     #       label = paste0(PEVage, ', ', EPIextra))) +
-    scale_y_log10() + #xlim(c(0,200))+
+    scale_y_log10(labels = scales::label_comma()) + #xlim(c(0,200))+
     theme_bw(base_size = 14) + 
+    # scale_y_continuous(labels = scales::label_comma()) +
     labs(x = 'Willingness to Pay',#\n(additional doses per additional cases averted (thousands))',
          y = 'Expected loss',#\n(additional doses per 1000 people)',
          caption = str_glue("Seasonality: {seas}, PfPR: {pfprval}"))

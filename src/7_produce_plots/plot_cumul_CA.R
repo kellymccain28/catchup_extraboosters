@@ -492,7 +492,7 @@ plot_cumul_CA <- function(df_summ, cohorts){#df_last15
                       -starts_with('AB'), contains('peradddose'))) %>%
       mutate(pfpr = factor(paste0(pfpr * 100, '%'), levels = c('1%','3%','5%','25%','45%','65%')))
     
-    routine_clin <- ggplot(dfpl %>% filter(labels == 'Routine age-based')) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+    routine_clin <- ggplot(dfpl %>% filter((PEVstrategy == 'SV' | PEVstrategy == 'hybrid' | PEVstrategy == 'AB') & EPIextra=='-') ) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
       geom_col(aes(x = as.factor(pfpr), 
                    y = cases_averted_perdose, 
                    fill = labels, color = labels), 
@@ -514,7 +514,7 @@ plot_cumul_CA <- function(df_summ, cohorts){#df_last15
       ) +
       guides(color = 'none') +
       plottheme
-    routine_sev <- ggplot(dfpl %>% filter(labels == 'Routine age-based')) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+    routine_sev <- ggplot(dfpl %>% filter((PEVstrategy == 'SV' | PEVstrategy == 'hybrid' | PEVstrategy == 'AB') & EPIextra=='-') ) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
       geom_col(aes(x = as.factor(pfpr), 
                    y = severe_averted_perdose, 
                    fill = labels, color = labels), 

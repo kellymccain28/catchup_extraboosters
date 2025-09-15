@@ -77,6 +77,7 @@ task7 <- task_create_expr(orderly2::orderly_run(name = '7_produce_plots',
 task_log_show(task7)
 task_status(task7)
 
+# Comparison of assumptions 
 task7part2 <- task_create_expr(orderly2::orderly_run(name = '7_part2_compare_scaled'))
 task_log_show(task7part2)
 #############################################################
