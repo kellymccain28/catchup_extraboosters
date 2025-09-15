@@ -1,7 +1,23 @@
 
 # Function to loop over all options to make this plot 
 
-plot_cumul_CA <- function(df_last15, df_summ, cohorts){
+plot_cumul_CA <- function(df_summ, cohorts){#df_last15
+  
+  plottheme <- theme(axis.title = element_text(size = 8),
+                     # plot.title = element_text(size = 22),
+                     legend.text = element_text(size = 7),
+                     strip.text.x = element_text(size = 8),
+                     legend.title = element_text(size = 8),
+                     plot.caption = element_text(size = 10),
+                     legend.key.size = unit(0.3, 'cm'),
+                     axis.text.x = element_text(size = 8),
+                     axis.text.y = element_text(size = 8),
+                     plot.margin = margin(t = 2,  # Top margin
+                                          r = 2,  # Right margin
+                                          b = 2,  # Bottom margin
+                                          l = 2)
+  )
+  
   # variable can be either 'cases_averted' or 'severe_averted'
   # Function to make a plot of cumulative cases and severe cases averted
   
@@ -18,22 +34,6 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
                              seas) {
     # CUcols1 <- c('#B03A2E','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
     # CUcols_ <- c('black','#6C3483','#1F618D','#00796b','#fbc02d','#CA6F1E','#689f38', '#3498db','tan','#283747','#85929E')
-    
-    plottheme <- theme(axis.title = element_text(size = 8),
-          # plot.title = element_text(size = 22),
-          legend.text = element_text(size = 7),
-          strip.text.x = element_text(size = 8),
-          legend.title = element_text(size = 8),
-          plot.caption = element_text(size = 10),
-          legend.key.size = unit(0.3, 'cm'),
-          axis.text.x = element_text(size = 8),
-          axis.text.y = element_text(size = 8),
-          plot.margin = margin(t = 2,  # Top margin
-                               r = 2,  # Right margin
-                               b = 2,  # Bottom margin
-                               l = 2)
-    )
-    
     cohortspl <- cohorts %>%
       filter(pfpr != 0.03) %>%
       filter(seasonality == seas) %>%
@@ -134,7 +134,20 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
       guides(color = 'none') +
       plottheme
     
-    C <- ggplot(dfpl %>% filter(labels !='Routine age-based')) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+    C <- ggplot(dfpl %>% 
+                  mutate(cases_averted_routine_peradddose = ifelse(labels == 'Routine age-based',
+                                                                   cases_averted_perdose, cases_averted_routine_peradddose),
+                         severe_averted_routine_peradddose = ifelse(labels == 'Routine age-based',
+                                                                    severe_averted_perdose, severe_averted_routine_peradddose),
+                         cases_averted_routine_peradddose_lower = ifelse(labels == 'Routine age-based',
+                                                                   cases_averted_perdose_lower, cases_averted_routine_peradddose_lower),
+                         severe_averted_routine_peradddose_lower = ifelse(labels == 'Routine age-based',
+                                                                    severe_averted_perdose_lower, severe_averted_routine_peradddose_lower),
+                         cases_averted_routine_peradddose_upper = ifelse(labels == 'Routine age-based',
+                                                                   cases_averted_perdose_upper, cases_averted_routine_peradddose_upper),
+                         severe_averted_routine_peradddose_upper = ifelse(labels == 'Routine age-based',
+                                                                    severe_averted_perdose_upper, severe_averted_routine_peradddose_upper))) +
+                         # filter(labels !='Routine age-based')) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
       geom_col(aes(x = as.factor(pfpr), 
                    y = .data[[paste0(variable, "_routine_peradddose")]], 
                    fill = labels, color = labels), 
@@ -220,7 +233,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
            plot = CAcatchup_noboost_none[[5]], width = 7.5, height = 2.83, dpi = 500,
            units = 'in')
     
-    CAAB_none <- plot_cumul_CA2(df_last15, 
+    CAAB_none <- plot_cumul_CA2(df_summ, 
                                 strategy = 'age-based',
                                 compare = '',
                                 variable = 'cases_averted',
@@ -272,7 +285,7 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
            plot = SAcatchup_noboost_none[[5]], width = 7.5, height = 2.83, dpi = 500,            
            units = 'in')
     
-    SAAB_none <- plot_cumul_CA2(df_last15, 
+    SAAB_none <- plot_cumul_CA2(df_summ, 
                                 strategy = 'age-based',
                                 compare = '',
                                 variable = 'severe_averted',
@@ -405,6 +418,186 @@ plot_cumul_CA <- function(df_last15, df_summ, cohorts){
            plot = plotCASA_AB, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
     ggsave(paste0("plots/plot_cumulCASA_AB_ADDDOSE", seasonalities[s], ".pdf"), 
            plot = plotCASA_AB, width = 7.5, height = 2.83, dpi = 500,            units = 'in' )
+    
+    
+    # Make separate plot like plot B for just the routine age-based outcomes 
+    dfpl <- df_summ %>%
+      filter(age_grp == '0-100') %>%
+      filter(pfpr != 0.03) %>%
+      filter(seasonality == 'perennial') %>%
+      dplyr::select(c(pfpr, labels, PEVstrategy, EPIextra, 
+                      contains('relevant'), contains('perpop'), contains('perdose'), 
+                      -starts_with('AB'), contains('peradddose'))) %>%
+      mutate(pfpr = factor(paste0(pfpr * 100, '%'), levels = c('1%','3%','5%','25%','45%','65%')))
+    
+    routine_clin <- ggplot(dfpl %>% filter(labels == 'Routine age-based')) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+      geom_col(aes(x = as.factor(pfpr), 
+                   y = cases_averted_perdose, 
+                   fill = labels, color = labels), 
+               position ='dodge', 
+               alpha = 0.7) + 
+      geom_errorbar(aes(x = as.factor(pfpr), 
+                        ymin = cases_averted_perdose_lower, 
+                        ymax = cases_averted_perdose_upper, 
+                        color = labels),
+                    position = position_dodge(width = 0.9), 
+                    width = 0.4, 
+                    linewidth = 0.38) +
+      theme_bw() +
+      scale_fill_manual(values = CUcols1) +
+      scale_color_manual(values = CUcols_) +
+      labs(y = 'Cumulative clinical cases averted\nper 1000 doses',
+           x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+           fill = 'Vaccination strategy'
+      ) +
+      guides(color = 'none') +
+      plottheme
+    routine_sev <- ggplot(dfpl %>% filter(labels == 'Routine age-based')) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+      geom_col(aes(x = as.factor(pfpr), 
+                   y = severe_averted_perdose, 
+                   fill = labels, color = labels), 
+               position ='dodge', 
+               alpha = 0.7) + 
+      geom_errorbar(aes(x = as.factor(pfpr), 
+                        ymin = severe_averted_perdose_lower, 
+                        ymax = severe_averted_perdose_upper, 
+                        color = labels),
+                    position = position_dodge(width = 0.9), 
+                    width = 0.4, 
+                    linewidth = 0.38) +
+      theme_bw() +
+      scale_fill_manual(values = CUcols1) +
+      scale_color_manual(values = CUcols_) +
+      labs(y = 'Cumulative severe cases averted\nper 1000 doses',
+           x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+           fill = 'Vaccination strategy'
+      ) +
+      guides(color = 'none') +
+      plottheme
+    routine_clinsev <- cowplot::plot_grid(routine_clin + theme(legend.position="none"), routine_sev + theme(legend.position="none"), labels = 'AUTO')
+    
+    # add the legend to the row we made earlier.
+    ggsave(paste0("plots/plot_cumul_routine_clinsev_per.tiff"), 
+           plot = routine_clinsev, width = 7.5, height = 2.83, dpi = 500, units = 'in' )
+    ggsave(paste0("plots/plot_cumul_routine_clinsev_per.pdf"), 
+           plot = routine_clinsev, width = 7.5, height = 2.83, dpi = 500, units = 'in' )
+    
+    # Make separate plot like plot B for just the routine age-based outcomes - seasonal
+    dfpl <- df_summ %>%
+      filter(age_grp == '0-100') %>%
+      filter(pfpr != 0.03) %>%
+      filter(seasonality == 'seasonal') %>%
+      dplyr::select(c(pfpr, labels, PEVstrategy, EPIextra, 
+                      contains('relevant'), contains('perpop'), contains('perdose'), 
+                      -starts_with('AB'), contains('peradddose'))) %>%
+      mutate(pfpr = factor(paste0(pfpr * 100, '%'), levels = c('1%','3%','5%','25%','45%','65%')))
+    
+    routine_clin <- ggplot(dfpl %>% filter(labels == 'Routine age-based')) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+      geom_col(aes(x = as.factor(pfpr), 
+                   y = cases_averted_perdose, 
+                   fill = labels, color = labels), 
+               position ='dodge', 
+               alpha = 0.7) + 
+      geom_errorbar(aes(x = as.factor(pfpr), 
+                        ymin = cases_averted_perdose_lower, 
+                        ymax = cases_averted_perdose_upper, 
+                        color = labels),
+                    position = position_dodge(width = 0.9), 
+                    width = 0.4, 
+                    linewidth = 0.38) +
+      theme_bw() +
+      scale_fill_manual(values = CUcols1) +
+      scale_color_manual(values = CUcols_) +
+      labs(y = 'Cumulative clinical cases averted\nper 1000 doses',
+           x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+           fill = 'Vaccination strategy'
+      ) +
+      guides(color = 'none') +
+      plottheme
+    routine_sev <- ggplot(dfpl %>% filter(labels == 'Routine age-based')) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+      geom_col(aes(x = as.factor(pfpr), 
+                   y = severe_averted_perdose, 
+                   fill = labels, color = labels), 
+               position ='dodge', 
+               alpha = 0.7) + 
+      geom_errorbar(aes(x = as.factor(pfpr), 
+                        ymin = severe_averted_perdose_lower, 
+                        ymax = severe_averted_perdose_upper, 
+                        color = labels),
+                    position = position_dodge(width = 0.9), 
+                    width = 0.4, 
+                    linewidth = 0.38) +
+      theme_bw() +
+      scale_fill_manual(values = CUcols1) +
+      scale_color_manual(values = CUcols_) +
+      labs(y = 'Cumulative severe cases averted\nper 1000 doses',
+           x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+           fill = 'Vaccination strategy'
+      ) +
+      guides(color = 'none') +
+      plottheme
+    routine_clinsev <- cowplot::plot_grid(routine_clin + theme(legend.position="none"), routine_sev + theme(legend.position="none"), labels = 'AUTO')
+    
+    # add the legend to the row we made earlier.
+    ggsave(paste0("plots/plot_cumul_routine_clinsev_seas.tiff"), 
+           plot = routine_clinsev, width = 7.5, height = 2.83, dpi = 500, units = 'in' )
+    ggsave(paste0("plots/plot_cumul_routine_clinsev_seas.pdf"), 
+           plot = routine_clinsev, width = 7.5, height = 2.83, dpi = 500, units = 'in' )
+    
+    # same thing but for per ppopulation 
+    routine_clinperpop <- ggplot(dfpl %>% filter(labels == 'Routine age-based')) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+      geom_col(aes(x = as.factor(pfpr), 
+                   y = cases_averted_perpop, 
+                   fill = labels, color = labels), 
+               position ='dodge', 
+               alpha = 0.7) + 
+      geom_errorbar(aes(x = as.factor(pfpr), 
+                        ymin = cases_averted_perpop_lower, 
+                        ymax = cases_averted_perpop_upper, 
+                        color = labels),
+                    position = position_dodge(width = 0.9), 
+                    width = 0.4, 
+                    linewidth = 0.38) +
+      theme_bw() +
+      scale_fill_manual(values = CUcols1) +
+      scale_color_manual(values = CUcols_) +
+      labs(y = 'Cumulative clinical cases averted\nper 1000 population',
+           x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+           fill = 'Vaccination strategy'
+      ) +
+      guides(color = 'none') +
+      plottheme
+    routine_sevperpop <- ggplot(dfpl %>% filter(labels == 'Routine age-based')) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+      geom_col(aes(x = as.factor(pfpr), 
+                   y = severe_averted_perpop, 
+                   fill = labels, color = labels), 
+               position ='dodge', 
+               alpha = 0.7) + 
+      geom_errorbar(aes(x = as.factor(pfpr), 
+                        ymin = severe_averted_perpop_lower, 
+                        ymax = severe_averted_perpop_upper, 
+                        color = labels),
+                    position = position_dodge(width = 0.9), 
+                    width = 0.4, 
+                    linewidth = 0.38) +
+      theme_bw() +
+      scale_fill_manual(values = CUcols1) +
+      scale_color_manual(values = CUcols_) +
+      labs(y = 'Cumulative severe cases averted\nper 1000 population',
+           x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+           fill = 'Vaccination strategy'
+      ) +
+      guides(color = 'none') +
+      plottheme
+    routine_clinsevperpop <- cowplot::plot_grid(routine_clinperpop + theme(legend.position="none"), 
+                                          routine_sevperpop + theme(legend.position="none"), labels = 'AUTO')
+    
+    # add the legend to the row we made earlier.
+    ggsave(paste0("plots/plot_cumul_routineperpop_clinsev_per.tiff"), 
+           plot = routine_clinsevperpop, width = 7.5, height = 2.83, dpi = 500, units = 'in' )
+    ggsave(paste0("plots/plot_cumul_routineperpop_clinsev_per.pdf"), 
+           plot = routine_clinsevperpop, width = 7.5, height = 2.83, dpi = 500, units = 'in' )
+    
     
     # Check on outcomes averted per FVC
     perFVC <- function(df,
