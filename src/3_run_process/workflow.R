@@ -1,5 +1,5 @@
 # Workflow to send simulation/processing runs to the cluster 
-send_report3 <- function(pars, x, queue_hold, age_scaling){ #x is the rows in pars df that we want to run 
+send_report3 <- function(pars, x, queue_hold, age_scaling){ #x is a vector of the rows in pars df that we want to run 
   if(queue_hold !='none'){
     res <- hipercow_resources(hold_until = queue_hold)
   } else {
@@ -28,7 +28,3 @@ send_report3 <- function(pars, x, queue_hold, age_scaling){ #x is the rows in pa
   
   return(bundle3)
 }
-# hipercow_bundle_wait(bundle3)
-# hipercow_bundle_log_value(bundle4)[1]
-# hipercow_bundle_result(bundle3)
-# hipercow_bundle_status(bundle3)

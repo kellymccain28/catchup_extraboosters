@@ -13,7 +13,8 @@ send_report4 <- function(queue_hold, age_scaling){
                                                               to = to, 
                                                               age_scaling = age_scaling)),
     nlist,
-    resources = res
+    resources = res,
+    environment = 'malsimruns3'
   )
   
   return(bundle4)

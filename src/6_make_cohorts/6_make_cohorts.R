@@ -2,7 +2,7 @@
 
 # Set up task  ------------------------------------------------------------
 library(dplyr)
-library(orderly2)
+library(orderly)
 library(data.table)
 library(janitor)
 library(purrr)
@@ -10,17 +10,17 @@ library(tidyr)
 library(stringr)
 
 orderly_strict_mode()
-orderly2::orderly_description('Create cohorts from processed ageyr dataset')
+orderly::orderly_description('Create cohorts from processed ageyr dataset')
 
 # Set parameters for task
 orderly_parameters(analysis = NULL,
                    age_scaling = NULL)
 
-orderly2::orderly_dependency("5_process_combined",
-                             "latest(parameter:age_scaling == this:age_scaling)",
-                             c(output_ageyr_toage50_intermediate.rds = 'output_ageyr_toage50_intermediate.rds'#,
-                               # summarized_ageyr_draws.rds = "summarized_ageyr_draws.rds"
-                               ))
+# orderly::orderly_dependency("5_process_combined",
+#                              "latest(parameter:age_scaling == this:age_scaling)",
+#                              c(output_ageyr_toage50_intermediate.rds = 'output_ageyr_toage50_intermediate.rds'#,
+#                                # summarized_ageyr_draws.rds = "summarized_ageyr_draws.rds"
+#                                ))
 
 # Outputs for task
 orderly_artefact(
@@ -54,7 +54,7 @@ source('outcomes_averted.R')
 source('add_agegrps.R')
 
 
-ageyr <- readRDS('output_ageyr_toage50_intermediate.rds') %>%
+ageyr <- readRDS('R:/Kelly/catchup_extraboosters/draft/5_process_combined/20260204-105328-922091c3/output_ageyr_toage50_intermediate.rds') %>% #readRDS('output_ageyr_toage50_intermediate.rds') %>%
   mutate(totaldoses = rowSums(across(starts_with('dose'))),
          massdoses = rowSums(across(starts_with('n_pev_mass'))),
          EPIdoses = rowSums(across(starts_with('n_pev_epi'))))
@@ -73,22 +73,36 @@ yrs <- seq(min(ageyr$halfyear), max(ageyr$halfyear))
 
 # initialize empty data frame for age-based
 ABcohorts <- data.frame()
-
-for (i in yrs){
-  ABcohort <- get_cohort(df = ageyr %>% filter(PEVstrategy == 'AB' | PEVstrategy == 'none') %>%
-                           filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10)),
-                         time1 = i,
-                         minage = 0.5,
-                         maxage = 1) %>%
-    mutate(strategy = ifelse(PEVstrategy == 'AB' & EPIextra == '-', 'AB',
-                             ifelse(PEVstrategy == 'AB' & EPIextra == '5y', 'AB - 5y',
-                                    ifelse(PEVstrategy == 'AB' & EPIextra == '10y', 'AB - 10y',
-                                           ifelse(PEVstrategy == 'AB' & EPIextra == '5y+10y', 'AB - 5y+10y','noneAB'))))) %>%
+abageyr <- ageyr %>% filter(PEVstrategy == 'AB' | PEVstrategy == 'none') %>%
+  filter(!(age_lower == 0 & age_upper == 5) & !(age_lower == 5 & age_upper == 10))
+# for (i in yrs){
+#   ABcohort <- get_cohort(df = abageyr,
+#                          time1 = i,
+#                          minage = 0.5,
+#                          maxage = 1) %>%
+#     mutate(strategy = ifelse(PEVstrategy == 'AB' & EPIextra == '-', 'AB',
+#                              ifelse(PEVstrategy == 'AB' & EPIextra == '5y', 'AB - 5y',
+#                                     ifelse(PEVstrategy == 'AB' & EPIextra == '10y', 'AB - 10y',
+#                                            ifelse(PEVstrategy == 'AB' & EPIextra == '5y+10y', 'AB - 5y+10y','noneAB'))))) %>%
+#     outcomes_averted() %>%
+#     filter(PEVstrategy != 'none')
+#   ABcohorts <- rbind(ABcohorts, ABcohort)
+#   message(paste0('finished', i))
+# }
+ABcohorts <- map_dfr(yrs, function(i) {
+  get_cohort(df = abageyr, 
+             time1 = i, 
+             minage = 0.5, 
+             maxage = 1) %>%
+    mutate(strategy = case_when(
+      PEVstrategy == 'AB' & EPIextra == '-' ~ 'AB',
+      PEVstrategy == 'AB' & EPIextra == '5y' ~ 'AB - 5y',
+      PEVstrategy == 'AB' & EPIextra == '10y' ~ 'AB - 10y',
+      PEVstrategy == 'AB' & EPIextra == '5y+10y' ~ 'AB - 5y+10y',
+      TRUE ~ 'noneAB')) %>%
     outcomes_averted() %>%
     filter(PEVstrategy != 'none')
-  ABcohorts <- rbind(ABcohorts, ABcohort)
-  message(paste0('finished', i))
-}
+})
 message('finished ABcohort')
 
 CU6m2y <- get_cohort(df = ageyr %>% filter((PEVage == '6m-2y' & EPIextra == '-') | PEVstrategy == 'none') %>%

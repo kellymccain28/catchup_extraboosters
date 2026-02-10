@@ -48,50 +48,50 @@ makeplots <- function(){
   pp <- plot_cohortsage(var = 'cases_averted_perpop',
                         strat = 'catch-up',
                         seas = 'seasonal')
-  ggsave("plots/cohorts_CU_CAperpop_AMMnetMIM_seas.tiff", pp, width = 14, height = 8, dpi = 500)
+  ggsave("plots/cohorts_CU_CAperpop_AMMnetMIM_seas.svg", pp, width = 14, height = 8, dpi = 500)
   ggsave("plots/cohorts_CU_CAperpop_AMMnetMIM_seas.pdf", pp, width = 14, height = 8, dpi = 500)
   
   pppp <- plot_cohortsage(var = 'cases_per1000pop',
                          strat = 'catch-up',
                          seas = 'seasonal')
-  ggsave("plots/cohorts_CU_casesperpop_AMMnetMIM_seas.tiff", pppp, width = 14, height = 8, dpi = 500)
+  ggsave("plots/cohorts_CU_casesperpop_AMMnetMIM_seas.svg", pppp, width = 14, height = 8, dpi = 500)
   ggsave("plots/cohorts_CU_casesperpop_AMMnetMIM_seas.pdf", pppp, width = 14, height = 8, dpi = 500)
   
   pp <- plot_cohortsage(var = 'cases_averted_perpop',
                         strat = 'AB',
                         seas = 'seasonal')
-  ggsave("plots/cohorts_AB_CAperpop_AMMnetMIM_seas.tiff", pp, width = 14, height = 8, dpi = 500)
+  ggsave("plots/cohorts_AB_CAperpop_AMMnetMIM_seas.svg", pp, width = 14, height = 8, dpi = 500)
   ggsave("plots/cohorts_AB_CAperpop_AMMnetMIM_seas.pdf", pp, width = 14, height = 8, dpi = 500)
   
   pppp <- plot_cohortsage(var = 'cases_per1000pop',
                           strat = 'AB',
                           seas = 'seasonal')
-  ggsave("plots/cohorts_AB_casesperpop_AMMnetMIM_seas.tiff", pppp, width = 14, height = 8, dpi = 500)
+  ggsave("plots/cohorts_AB_casesperpop_AMMnetMIM_seas.svg", pppp, width = 14, height = 8, dpi = 500)
   ggsave("plots/cohorts_AB_casesperpop_AMMnetMIM_seas.pdf", pppp, width = 14, height = 8, dpi = 500)
   
   #perennial
   pp <- plot_cohortsage(var = 'cases_averted_perpop',
                         strat = 'catch-up',
                         seas = 'perennial')
-  ggsave("plots/cohorts_CU_CAperpop_AMMnetMIM_per.tiff", pp, width = 14, height = 8, dpi = 500)
+  ggsave("plots/cohorts_CU_CAperpop_AMMnetMIM_per.svg", pp, width = 14, height = 8, dpi = 500)
   ggsave("plots/cohorts_CU_CAperpop_AMMnetMIM_per.pdf", pp, width = 14, height = 8, dpi = 500)
   
   pppp <- plot_cohortsage(var = 'cases_per1000pop',
                           strat = 'catch-up',
                           seas = 'perennial')
-  ggsave("plots/cohorts_CU_casesperpop_AMMnetMIM_per.tiff", pppp, width = 14, height = 8, dpi = 500)
+  ggsave("plots/cohorts_CU_casesperpop_AMMnetMIM_per.svg", pppp, width = 14, height = 8, dpi = 500)
   ggsave("plots/cohorts_CU_casesperpop_AMMnetMIM_per.pdf", pppp, width = 14, height = 8, dpi = 500)
   
   pp <- plot_cohortsage(var = 'cases_averted_perpop',
                         strat = 'AB',
                         seas = 'perennial')
-  ggsave("plots/cohorts_AB_CAperpop_AMMnetMIM_per.tiff", pp, width = 14, height = 8, dpi = 500)
+  ggsave("plots/cohorts_AB_CAperpop_AMMnetMIM_per.svg", pp, width = 14, height = 8, dpi = 500)
   ggsave("plots/cohorts_AB_CAperpop_AMMnetMIM_per.pdf", pp, width = 14, height = 8, dpi = 500)
   
   pppp <- plot_cohortsage(var = 'cases_per1000pop',
                           strat = 'AB',
                           seas = 'perennial')
-  ggsave("plots/cohorts_AB_casesperpop_AMMnetMIM_per.tiff", pppp, width = 14, height = 8, dpi = 500)
+  ggsave("plots/cohorts_AB_casesperpop_AMMnetMIM_per.svg", pppp, width = 14, height = 8, dpi = 500)
   ggsave("plots/cohorts_AB_casesperpop_AMMnetMIM_per.pdf", pppp, width = 14, height = 8, dpi = 500)
   
   
@@ -234,14 +234,14 @@ makeplots <- function(){
   p <- plot_cohortsageatvax(var = 'cases_averted_perpop',
                             strat = 'catch-up',
                             seas = 'perennial')
-  ggsave("plots/plot_cohorts_ageatvax_CAperpop_per.tiff", p, height = 4.3, width = 7.5, dpi = 500,
+  ggsave("plots/plot_cohorts_ageatvax_CAperpop_per.svg", p, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
   ggsave("plots/plot_cohorts_ageatvax_CAperpop_per.pdf", p, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
   totals_per <- plot_overall_CA_cohort(seas = 'perennial')
   # put cases averted per 1000 by age and age at vax next to totals plot 
   ppp <- cowplot::plot_grid(p, totals_per, rel_widths = c(1, 0.8), labels = 'AUTO')
-  ggsave("plots/plot_cohorts_ageatvax_CAperpoptotals_per.tiff", ppp, height = 4.3, width = 7.5, dpi = 500,
+  ggsave("plots/plot_cohorts_ageatvax_CAperpoptotals_per.svg", ppp, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
   ggsave("plots/plot_cohorts_ageatvax_CAperpoptotals_per.pdf", ppp, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
@@ -250,7 +250,7 @@ makeplots <- function(){
   p2 <- plot_cohortsageatvax(var = 'cases_averted',
                              strat = 'catch-up',
                              seas = 'perennial')
-  ggsave("plots/plot_cohorts_ageatvax_CA_per.tiff", p2, height = 4.3, width = 7.5, dpi = 500,
+  ggsave("plots/plot_cohorts_ageatvax_CA_per.svg", p2, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
   ggsave("plots/plot_cohorts_ageatvax_CA_per.pdf", p2, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
@@ -258,7 +258,7 @@ makeplots <- function(){
   p3 <- plot_cohortsageatvax(var = 'cases_per1000pop',
                        strat = 'catch-up',
                        seas = 'perennial')
-  ggsave("plots/plot_cohorts_ageatvax_cases_per.tiff", p3, height = 4.3, width = 7.5, dpi = 500,
+  ggsave("plots/plot_cohorts_ageatvax_cases_per.svg", p3, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
   ggsave("plots/plot_cohorts_ageatvax_cases_per.pdf", p3, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
@@ -266,7 +266,7 @@ makeplots <- function(){
   p4 <- plot_cohortsageatvax(var = 'sevcases_per1000pop',
                        strat = 'catch-up',
                        seas = 'perennial')
-  ggsave("plots/plot_cohorts_ageatvax_sevcases_per.tiff", p4, height = 4.3, width = 7.5, dpi = 500,
+  ggsave("plots/plot_cohorts_ageatvax_sevcases_per.svg", p4, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
   ggsave("plots/plot_cohorts_ageatvax_sevcases_per.pdf", p4, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
@@ -276,7 +276,7 @@ makeplots <- function(){
   p <- plot_cohortsageatvax(var = 'cases_averted_perpop',
                             strat = 'catch-up',
                             seas = 'seasonal')
-  ggsave("plots/plot_cohorts_ageatvax_CAperpop_seas.tiff", p, height = 4.3, width = 7.5, dpi = 500,
+  ggsave("plots/plot_cohorts_ageatvax_CAperpop_seas.svg", p, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
   ggsave("plots/plot_cohorts_ageatvax_CAperpop_seas.pdf", p, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
@@ -284,7 +284,7 @@ makeplots <- function(){
   totals_seas <- plot_overall_CA_cohort(seas = 'seasonal')
   # put cases averted per 1000 by age and age at vax next to totals plot 
   ppp <- cowplot::plot_grid(p, totals_seas, rel_widths = c(1, 0.8), labels = 'AUTO')
-  ggsave("plots/plot_cohorts_ageatvax_CAperpoptotals_seas.tiff", ppp, height = 8, width = 14, dpi = 500,
+  ggsave("plots/plot_cohorts_ageatvax_CAperpoptotals_seas.svg", ppp, height = 8, width = 14, dpi = 500,
          units = 'in')
   ggsave("plots/plot_cohorts_ageatvax_CAperpoptotals_seas.pdf", ppp, height = 8, width = 14, dpi = 500,
          units = 'in')
@@ -294,7 +294,7 @@ makeplots <- function(){
   p2 <- plot_cohortsageatvax(var = 'cases_averted',
                              strat = 'catch-up',
                              seas = 'seasonal')
-  ggsave("plots/plot_cohorts_ageatvax_CA_seas.tiff", p2, height = 4.3, width = 7.5, dpi = 500,
+  ggsave("plots/plot_cohorts_ageatvax_CA_seas.svg", p2, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
   ggsave("plots/plot_cohorts_ageatvax_CA_seas.pdf", p2, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
@@ -302,7 +302,7 @@ makeplots <- function(){
   p3 <- plot_cohortsageatvax(var = 'cases_per1000pop',
                              strat = 'catch-up',
                              seas = 'seasonal')
-  ggsave("plots/plot_cohorts_ageatvax_cases_seas.tiff", p3, height = 4.3, width = 7.5, dpi = 500,
+  ggsave("plots/plot_cohorts_ageatvax_cases_seas.svg", p3, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
   ggsave("plots/plot_cohorts_ageatvax_cases_seas.pdf", p3, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
@@ -310,7 +310,7 @@ makeplots <- function(){
   p4 <- plot_cohortsageatvax(var = 'sevcases_per1000pop',
                              strat = 'catch-up',
                              seas = 'seasonal')
-  ggsave("plots/plot_cohorts_ageatvax_sevcases_seas.tiff", p4, height = 4.3, width = 7.5, dpi = 500,
+  ggsave("plots/plot_cohorts_ageatvax_sevcases_seas.svg", p4, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')
   ggsave("plots/plot_cohorts_ageatvax_sevcases_seas.pdf", p4, height = 4.3, width = 7.5, dpi = 500,
          units = 'in')

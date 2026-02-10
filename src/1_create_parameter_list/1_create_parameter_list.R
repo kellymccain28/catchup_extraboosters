@@ -2,7 +2,7 @@
 
 # Set up task  ------------------------------------------------------------
 library(dplyr)
-library(orderly2)
+library(orderly)
 library(data.table)
 library(janitor)
 library(purrr)
@@ -240,7 +240,7 @@ drawID <- c(942,  40, 541, 497, 877, 697, 400, 450, 806, #0,
 
 # SITE set-up ----
 # parasite prevalence 2-10 year olds
-pfpr <- c(0.01, 0.03, 0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65) # same profiles as Penny et al. 
+pfpr <- c(0.01, 0.05, 0.25, 0.45, 0.65) #c(0.01, 0.03, 0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65) # same profiles as Penny et al. 
 
 # seasonal profiles: c(g0, g[1], g[2], g[3], h[1], h[2], h[3])
 # drawn from mlgts: https://github.com/mrc-ide/mlgts/tree/master/data

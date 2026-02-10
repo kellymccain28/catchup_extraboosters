@@ -2,7 +2,7 @@
 
 # Set up task  ------------------------------------------------------------
 library(dplyr)
-library(orderly2)
+library(orderly)
 library(data.table)
 library(janitor)
 library(purrr)
@@ -15,10 +15,10 @@ library(zoo)
 # library(beers) #devtools::install_github("mrc-ide/beers")
 
 orderly_strict_mode()
-orderly2::orderly_description('Process raw malariasimulation runs overall and by half year/age')
+orderly::orderly_description('Process raw malariasimulation runs overall and by half year/age')
 
 # Set parameters for task 
-orderly_parameters(analysis = NULL, # parameter to say it is a catch-up or mass vaccination parameter set (catch-up or mass)
+orderlyparams <- orderly_parameters(analysis = NULL, # parameter to say it is a catch-up or mass vaccination parameter set (catch-up or mass)
                    drawID = NULL, 
                    pfpr = NULL,
                    seas_name = NULL,
@@ -32,13 +32,28 @@ orderly_parameters(analysis = NULL, # parameter to say it is a catch-up or mass 
                    MDA = NULL,
                    par_index = NULL,
                    age_scaling = NULL)
+analysis <- orderlyparams$analysis 
+drawID <- orderlyparams$drawID
+pfpr <- orderlyparams$pfpr
+seas_name <- orderlyparams$seas_name
+PEV <- orderlyparams$PEV
+PEVstrategy <- orderlyparams$PEVstrategy
+PEVage <- orderlyparams$PEVage
+PEVrounds <- orderlyparams$PEVrounds
+EPIbooster <- orderlyparams$EPIbooster
+EPIextra <- orderlyparams$EPIextra
+massbooster_rep <- orderlyparams$massbooster_rep
+MDA <- orderlyparams$MDA
+par_index <- orderlyparams$par_index
+age_scaling <- orderlyparams$age_scaling
 
 # Set dependencies
-orderly2::orderly_dependency("1_create_parameter_list",
-                             "latest(parameter:analysis == this:analysis
-                             && parameter:age_scaling == this:age_scaling)",
-                             c(parameters_torun_R21.rds = "parameters_torun_R21.rds"))
-param_df <- readRDS('parameters_torun_R21.rds')
+# orderly::orderly_dependency("1_create_parameter_list",
+#                              "latest(parameter:analysis == this:analysis
+#                              && parameter:age_scaling == this:age_scaling)",
+#                              c(parameters_torun_R21.rds = "parameters_torun_R21.rds"))
+param_df <- readRDS('R:/Kelly/catchup_extraboosters/archive/1_create_parameter_list/20260130-112115-4cdd8b1f/parameters_torun_R21.rds') # for 40% age scaling of over 5s
+# readRDS('parameters_torun_R21.rds')
 
 # Outputs for task 
 orderly_artefact(

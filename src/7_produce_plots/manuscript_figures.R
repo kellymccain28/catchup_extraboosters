@@ -2,18 +2,18 @@
 dir.create('manuscript_figures/')
 
 # Figure 1: CA and SA for CU strategies 
-file.copy(from = 'plots/plot_cumulCASA_CU_ADDDOSEperennial.tiff',
-          to = str_glue('manuscript_figures/1_plot_cumulCASA_CU_additionaldoseperennial_', age_scaling, '.tiff'))
+file.copy(from = 'plots/plot_cumulCASA_CU_ADDDOSEperennial.svg',
+          to = str_glue('manuscript_figures/1_plot_cumulCASA_CU_additionaldoseperennial_', age_scaling, '.svg'))
 
 # Figure 2: Cases averted per 1000 people by age at vaccination and age (perennial) - from plots_mim_ammnet.R
-# file.copy(from = 'plots/plot_cohorts_ageatvax_CAperpop_per.tiff', 
-#           to = 'manuscript_figures/2_plot_cohorts_ageatvax_CAperpop_per.tiff')plot_cohorts_ageatvax_CAperpoptotals_per.tiff
-file.copy(from = 'plots/plot_cohorts_ageatvax_CAperpoptotals_per.tiff', 
-                    to = str_glue('manuscript_figures/2_plot_cohorts_ageatvax_CAperpoptotals_per_', age_scaling, '.tiff'))
+# file.copy(from = 'plots/plot_cohorts_ageatvax_CAperpop_per.svg', 
+#           to = 'manuscript_figures/2_plot_cohorts_ageatvax_CAperpop_per.svg')plot_cohorts_ageatvax_CAperpoptotals_per.svg
+file.copy(from = 'plots/plot_cohorts_ageatvax_CAperpoptotals_per.svg', 
+                    to = str_glue('manuscript_figures/2_plot_cohorts_ageatvax_CAperpoptotals_per_', age_scaling, '.svg'))
 
 # Figure 3: CA and SA for AB strategies 
-file.copy(from = 'plots/plot_cumulCASA_AB_ADDDOSEperennial.tiff',
-          to = str_glue('manuscript_figures/3_plot_cumulCASA_AB_additionaldoseperennial_', age_scaling, '.tiff'))
+file.copy(from = 'plots/plot_cumulCASA_AB_ADDDOSEperennial.svg',
+          to = str_glue('manuscript_figures/3_plot_cumulCASA_AB_additionaldoseperennial_', age_scaling, '.svg'))
 
 # Table 2:
 file.copy(from = 'plots/outcomes_averted_CUorAB_perennial.csv',
@@ -24,12 +24,12 @@ file.copy(from = 'plots/outcomes_averted_combinedstrategies_perennial.csv',
           to = str_glue('manuscript_figures/TableS5_outcomes_averted_combinedstrategies_perennial_', age_scaling, '.csv'))
 
 # Figure 4: Cohort view of cases averted per 1000 people AB
-file.copy(from = 'plots/cohorts_AB_CA_perpop_perennial.tiff',
-          to = str_glue('manuscript_figures/4_cohorts_AB_CA_perpop_perennial_', age_scaling, '.tiff'))
+file.copy(from = 'plots/cohorts_AB_CA_perpop_perennial.svg',
+          to = str_glue('manuscript_figures/4_cohorts_AB_CA_perpop_perennial_', age_scaling, '.svg'))
 
 # Figure 5: Efficiency frontier
-file.copy(from = 'plots/CASAbyadditionaldosesperennial.tiff',
-          to = str_glue('manuscript_figures/5_CASAbyadditionaldosesperennial_', age_scaling, '.tiff'))
+file.copy(from = 'plots/CASAbyadditionaldosesperennial.svg',
+          to = str_glue('manuscript_figures/5_CASAbyadditionaldosesperennial_', age_scaling, '.svg'))
 
 
 
@@ -52,32 +52,32 @@ file.copy(from = 'plots/cohorts_CAperdose_age-basedperennial.csv',
 
 # SI Figures
 # S1
-file.copy(from = 'plots/plot_cumulCA_SVhybrid_none_seasonal.tiff',
-          to = str_glue('manuscript_figures/S2_plot_cumulCA_SVhybrid_none_seasonal_', age_scaling, '.tiff'))
+file.copy(from = 'plots/plot_cumulCA_SVhybrid_none_seasonal.svg',
+          to = str_glue('manuscript_figures/S2_plot_cumulCA_SVhybrid_none_seasonal_', age_scaling, '.svg'))
 
 # S2
-file.copy(from = 'plots/plot_cumulCASAperpop_CU_perennial.tiff',
-          to = str_glue('manuscript_figures/S3_plot_cumulCASAperpop_CU_perennial_', age_scaling, '.tiff'))
+file.copy(from = 'plots/plot_cumulCASAperpop_CU_perennial.svg',
+          to = str_glue('manuscript_figures/S3_plot_cumulCASAperpop_CU_perennial_', age_scaling, '.svg'))
 
 # S3
-file.copy(from = 'plots/plot_cumulCASA_CU_ADDDOSEseasonal.tiff',
-          to = str_glue('manuscript_figures/S4_plot_cumulCASA_CU_additionaldoseseasonal_', age_scaling, '.tiff'))
+file.copy(from = 'plots/plot_cumulCASA_CU_ADDDOSEseasonal.svg',
+          to = str_glue('manuscript_figures/S4_plot_cumulCASA_CU_additionaldoseseasonal_', age_scaling, '.svg'))
 
 # S4 
-file.copy(from = 'plots/plot_cumulCASA_AB_ADDDOSEseasonal.tiff',
-          to = str_glue('manuscript_figures/S5_plot_cumulCASA_AB_additionaldoseseasonal_', age_scaling, '.tiff'))
+file.copy(from = 'plots/plot_cumulCASA_AB_ADDDOSEseasonal.svg',
+          to = str_glue('manuscript_figures/S5_plot_cumulCASA_AB_additionaldoseseasonal_', age_scaling, '.svg'))
 
 # S5
-file.copy(from = 'plots/plot_cumulCASAperpop_AB_perennial.tiff',
-          to = str_glue('manuscript_figures/S6_plot_cumulCASAperpop_AB_perennial_', age_scaling, '.tiff'))
+file.copy(from = 'plots/plot_cumulCASAperpop_AB_perennial.svg',
+          to = str_glue('manuscript_figures/S6_plot_cumulCASAperpop_AB_perennial_', age_scaling, '.svg'))
 
 # S6
-file.copy(from = 'plots/cohorts_AB_SA_perpop_perennial.tiff',
-          to = str_glue('manuscript_figures/S7_cohorts_AB_SA_perpop_perennial_', age_scaling, '.tiff'))
+file.copy(from = 'plots/cohorts_AB_SA_perpop_perennial.svg',
+          to = str_glue('manuscript_figures/S7_cohorts_AB_SA_perpop_perennial_', age_scaling, '.svg'))
 
 # S7
-file.copy(from = 'plots/CASAbyadditionaldosesseasonal.tiff',
-          to = str_glue('manuscript_figures/S8_CASAbyadditionaldosesseasonal_', age_scaling, '.tiff'))
+file.copy(from = 'plots/CASAbyadditionaldosesseasonal.svg',
+          to = str_glue('manuscript_figures/S8_CASAbyadditionaldosesseasonal_', age_scaling, '.svg'))
 
 # Table S4
 file.copy(from = 'plots/percent_cases.csv',

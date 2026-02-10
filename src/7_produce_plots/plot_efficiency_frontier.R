@@ -335,7 +335,7 @@ plot_efficiency_frontier <- function(df,
          shape = 'Strategy type')
   CAlegadd <- plot_grid(CAadd, legend_img, rel_widths = c(4,1))
   
-  ggsave(paste0('plots/CAbyadditionaldoses', seas_type, '.tiff'), CAlegadd, width = 7.5, height = 4.5, dpi = 500,            
+  ggsave(paste0('plots/CAbyadditionaldoses', seas_type, '.svg'), CAlegadd, width = 7.5, height = 4.5, dpi = 500,            
          units = 'in')
   ggsave(paste0('plots/CAbyadditionaldoses', seas_type, '.pdf'), CAlegadd, width = 7.5, height = 4.5, dpi = 500,            
          units = 'in')
@@ -347,7 +347,7 @@ plot_efficiency_frontier <- function(df,
          color = 'Vaccination strategy',
          shape = 'Strategy type')
   SAlegadd <- plot_grid(SAadd, legend_img, rel_widths = c(4,1))
-  ggsave(paste0('plots/SAbyadditionaldoses', seas_type,'.tiff'), SAlegadd, width = 7.5, height = 4.5, dpi = 500,            
+  ggsave(paste0('plots/SAbyadditionaldoses', seas_type,'.svg'), SAlegadd, width = 7.5, height = 4.5, dpi = 500,            
          units = 'in')
   ggsave(paste0('plots/SAbyadditionaldoses', seas_type,'.pdf'), SAlegadd, width = 7.5, height = 4.5, dpi = 500,            
          units = 'in')
@@ -357,7 +357,7 @@ plot_efficiency_frontier <- function(df,
                                        ncol = 1, labels = 'AUTO')
   avertedwlegadd <- plot_grid(averted_pltadd, legend_img, 
                               ncol = 2, rel_widths = c(4,1))
-  ggsave(paste0('plots/CASAbyadditionaldoses', seas_type, '.tiff'), avertedwlegadd,
+  ggsave(paste0('plots/CASAbyadditionaldoses', seas_type, '.svg'), avertedwlegadd,
          width = 9, height = 5.75, dpi = 500,            
          units = 'in')
   ggsave(paste0('plots/CASAbyadditionaldoses', seas_type, '.pdf'), avertedwlegadd,

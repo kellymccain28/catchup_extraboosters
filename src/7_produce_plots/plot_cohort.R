@@ -63,7 +63,7 @@ plot_cohort <- function(df,
     ggsave(paste0('plots/cohorts_', strat, '_CA_perpop_', seas, '.pdf'), 
            height = 4.3, width = 7.5, dpi = 300,          
            units = 'in')
-    ggsave(paste0('plots/cohorts_', strat, '_CA_perpop_', seas, '.tiff'), 
+    ggsave(paste0('plots/cohorts_', strat, '_CA_perpop_', seas, '.svg'), 
            height = 4.3, width = 7.5, dpi = 300,          
            units = 'in')
     # ggsave(paste0('plots/cohorts_', strat, '_CA_perpop_', seas, '.png'), height = 4.3, width = 7.5, dpi = 300,
@@ -78,7 +78,7 @@ plot_cohort <- function(df,
     
     ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.pdf'), height = 4.3, width = 7.5, dpi = 300,          
            units = 'in')
-    ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.tiff'), height = 4.3, width = 7.5, dpi = 300,          
+    ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.svg'), height = 4.3, width = 7.5, dpi = 300,          
            units = 'in')
     # ggsave(paste0('plots/cohorts_', strat,'_SA_perpop_', seas, '.png'), height = 4.3, width = 7.5, dpi = 300,          
     #        units = 'in')
@@ -101,7 +101,7 @@ plot_cohort <- function(df,
     
     ggsave(paste0('plots/cohorts_',strat,'_CAandSA_perpop_', seas, '.pdf'), casesandsevcohort, 
            width = 10, height = 8, dpi = 300)
-    ggsave(paste0('plots/cohorts_',strat,'_CAandSA_perpop_', seas, '.tiff'), casesandsevcohort, 
+    ggsave(paste0('plots/cohorts_',strat,'_CAandSA_perpop_', seas, '.svg'), casesandsevcohort, 
            width = 10, height = 8, dpi = 300)
     
     # OVERALL COUNTS 
@@ -114,7 +114,7 @@ plot_cohort <- function(df,
     
     ggsave(paste0('plots/cohorts_',strat, '_CA_overall_', seas, '.pdf'), height = 4.3, width = 7.5, dpi = 300,          
            units = 'in')#, compression = 'lzw')
-    ggsave(paste0('plots/cohorts_',strat, '_CA_overall_', seas, '.tiff'), height = 4.3, width = 7.5, dpi = 300,          
+    ggsave(paste0('plots/cohorts_',strat, '_CA_overall_', seas, '.svg'), height = 4.3, width = 7.5, dpi = 300,          
            units = 'in')
     
     sev_cohort <- make_co_plot(var = 'severe_averted',
@@ -126,7 +126,7 @@ plot_cohort <- function(df,
     
     ggsave(paste0('plots/cohorts_',strat, '_SA_overall_', seas, '.pdf'), height = 4.3, width = 7.5, dpi = 300,          
            units = 'in')#, compression = 'lzw')
-    ggsave(paste0('plots/cohorts_',strat, '_SA_overall_', seas, '.tiff'), height = 4.3, width = 7.5, dpi = 300,          
+    ggsave(paste0('plots/cohorts_',strat, '_SA_overall_', seas, '.svg'), height = 4.3, width = 7.5, dpi = 300,          
            units = 'in')
     
     casesandsevcohort <- cowplot::plot_grid(cases_cohort + theme(legend.position="none"), 
@@ -147,7 +147,7 @@ plot_cohort <- function(df,
     
     ggsave(paste0('plots/cohorts_',strat, '_CAandSA_overall_', seas, '.pdf'), 
            casesandsevcohort, width = 10, height = 8, dpi = 300)
-    ggsave(paste0('plots/cohorts_',strat, '_CAandSA_overall_', seas, '.tiff'), 
+    ggsave(paste0('plots/cohorts_',strat, '_CAandSA_overall_', seas, '.svg'), 
            casesandsevcohort, width = 10, height = 8, dpi = 300)
     
     

@@ -3,7 +3,7 @@
 # Set up task  ------------------------------------------------------------
 library(dplyr)
 library(ggplot2)
-library(orderly2)
+library(orderly)
 library(data.table)
 library(janitor)
 library(purrr)
@@ -18,13 +18,13 @@ library(png)
 library(dampack)
 
 orderly_strict_mode()
-orderly2::orderly_description('Make figures for manuscript')
+orderly::orderly_description('Make figures for manuscript')
 
 # Set parameters for task 
 orderly_parameters(age_scaling = NULL)
 
 # Set dependencies 
-orderly2::orderly_dependency("5_process_combined",
+orderly::orderly_dependency("5_process_combined",
                              "latest(parameter:age_scaling == this:age_scaling)",
                              c(summarized_overall.rds = "summarized_overall.rds",
                                summarized_overall_draws.rds = "summarized_overall_draws.rds",
@@ -55,28 +55,28 @@ source('add_labels.R')
 orderly_shared_resource('get_icers.R')
 source('get_icers.R')
 
-df_summ <- readRDS("summarized_overall.rds") %>% 
+df_summ <- readRDS("summarized_overall.rds") %>% #readRDS('R:/Kelly/catchup_extraboosters/archive/5_process_combined/20260204-140719-6e37c9f5/summarized_overall.rds') %>% #
   add_labels()
-df_summ_draws <- readRDS("summarized_overall_draws.rds")%>% 
+df_summ_draws <- readRDS("summarized_overall_draws.rds")%>% #readRDS('R:/Kelly/catchup_extraboosters/archive/5_process_combined/20260204-140719-6e37c9f5/summarized_overall_draws.rds') %>% ##
   add_labels()
 # df_ageyr <- readRDS("summarized_ageyr.rds")
-df_last15 <- readRDS("summarized_last15.rds") %>% 
+df_last15 <- readRDS("summarized_last15.rds") %>% #readRDS('R:/Kelly/catchup_extraboosters/archive/5_process_combined/20260204-140719-6e37c9f5/summarized_last15.rds') %>% ##
   add_labels()
 
-orderly2::orderly_dependency("6_make_cohorts",
+orderly::orderly_dependency("6_make_cohorts",
                              "latest(parameter:age_scaling == this:age_scaling)",
                              c(cohorts_byage.rds = "cohorts_byage.rds",
                                cohorts_ageatvaxandage.rds = "cohorts_ageatvaxandage.rds",
                                cohorts_ageatvax.rds = "cohorts_ageatvax.rds",
                                cohorts.rds = "cohorts.rds"))
 
-cohorts_byage <- readRDS('cohorts_byage.rds')%>% 
+cohorts_byage <- readRDS('cohorts_byage.rds')%>% #readRDS('R:/Kelly/catchup_extraboosters/archive/6_make_cohorts/20260204-170349-3b845d01/cohorts_byage.rds')%>% #
   add_labels()
-cohorts <- readRDS('cohorts.rds')%>% 
+cohorts <- readRDS('cohorts.rds')%>% #readRDS('R:/Kelly/catchup_extraboosters/archive/6_make_cohorts/20260204-170349-3b845d01/cohorts.rds')%>% #
   add_labels()
-cohorts_ageatvaxandage <- readRDS('cohorts_ageatvaxandage.rds')%>% 
+cohorts_ageatvaxandage <- readRDS('cohorts_ageatvaxandage.rds')%>% #readRDS('R:/Kelly/catchup_extraboosters/archive/6_make_cohorts/20260204-170349-3b845d01/cohorts_ageatvaxandage.rds')%>% #
   add_labels()
-cohorts_ageatvax <- readRDS('cohorts_ageatvax.rds')%>% 
+cohorts_ageatvax <- readRDS('cohorts_ageatvax.rds')%>% #readRDS('R:/Kelly/catchup_extraboosters/archive/6_make_cohorts/20260204-170349-3b845d01/cohorts_ageatvax.rds')%>% #
   add_labels()
 
 

@@ -2,14 +2,14 @@
 
 # Set up task  ------------------------------------------------------------
 library(dplyr)
-library(orderly2)
+library(orderly)
 library(data.table)
 library(janitor)
 library(purrr)
 library(tidyr)
 
 orderly_strict_mode()
-orderly2::orderly_description('Combine processed malariasimulation runs by groups of 500')
+orderly::orderly_description('Combine processed malariasimulation runs by groups of 500')
 
 # Set parameters for task 
 orderly_parameters(analysis = NULL,
@@ -20,11 +20,11 @@ orderly_parameters(analysis = NULL,
 start <- paste0(Sys.time(), ' start')
 message(start)
 
-orderly2::orderly_resource('completed_reports.R')
+orderly::orderly_resource('completed_reports.R')
 source('completed_reports.R')
 
 # Set dependencies -- all of the processed runs, looped over the parameter list 
-# orderly2::orderly_dependency("1_create_parameter_list",
+# orderly::orderly_dependency("1_create_parameter_list",
 #                              "latest(parameter:analysis == this:analysis)",
 #                              c(parameters_torun_R21.rds = "parameters_torun_R21.rds"))
 # pars <- readRDS('parameters_torun_R21.rds') %>% select(-params) %>% mutate(par_index = scenarioID)
@@ -39,12 +39,12 @@ source('completed_reports.R')
 #                           by = c('par_index','age_scaling'))
 # saveRDS(pars_folders, 'pars_folders.rds')
 
-orderly2::orderly_resource('pars_folders.rds')
-pars_folders <- readRDS('pars_folders.rds')
+orderly::orderly_resource('pars_folders_4.rds')
+pars_folders <- readRDS('pars_folders_4.rds')
 
-folders <- pars_folders %>%
-  filter(age_scaling == age_scaling) %>%
-  arrange(par_index)
+# folders <- pars_folders %>%
+#   filter(age_scaling == age_scaling) %>%
+#   arrange(par_index)
 
 # Initialize the dataframes
 num_tostart = n500
@@ -74,7 +74,7 @@ for (i in num_tostart:num_toend){
   MDA = par$MDA
   par_index = i
   folder = par$directory_name
-  # orderly2::orderly_dependency("3_run_process",
+  # orderly::orderly_dependency("3_run_process",
   #                              "latest(parameter:analysis == this:analysis
   #                            && parameter:drawID == environment:drawID
   #                            && parameter:pfpr == environment:pfpr
@@ -105,9 +105,9 @@ for (i in num_tostart:num_toend){
   
   message(paste0(Sys.time(), ' got dependencies'))
   # 
-  if(PEVstrategy == 'none' | PEVstrategy == 'AB'){
+  # if(PEVstrategy == 'none' | PEVstrategy == 'AB'){
     # last15runs[[i]] <- readRDS(paste0("R:/Kelly/catchupR21/archive/4_process_runs/", p$directory_name, '/processed_run_last15.rds'))
-    # orderly2::orderly_dependency("3_run_process","latest(parameter:analysis == this:analysis
+    # orderly::orderly_dependency("3_run_process","latest(parameter:analysis == this:analysis
     #                          && parameter:drawID == environment:drawID
     #                          && parameter:pfpr == environment:pfpr
     #                          && parameter:seas_name == environment:seas_name
@@ -122,6 +122,7 @@ for (i in num_tostart:num_toend){
     #                          && parameter:par_index == environment:par_index
     #                          && parameter:age_scaling == this:age_scaling)",
     #                              c("data/last15/processed_run_last15${par_index}.rds" = 'processed_run_last15.rds'))
+  if(file.exists(paste0("R:/Kelly/catchup_extraboosters/archive/3_run_process/", folder, '/processed_run_last15.rds'))){
     last15runs[[i]] <- readRDS(paste0("R:/Kelly/catchup_extraboosters/archive/3_run_process/", folder, '/processed_run_last15.rds'))
     
     

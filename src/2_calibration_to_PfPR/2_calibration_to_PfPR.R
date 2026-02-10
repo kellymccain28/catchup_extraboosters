@@ -4,7 +4,7 @@ library(cali)
 library(malariasimulation)  
 library(malariaEquilibrium)
 library(dplyr)
-library(orderly2)
+library(orderly)
 # will output 50 runs per baseline scenario and then will combine them to produce EIRestimates.rds
 # this output is used in the next step where we run the model to set the equilibrium
 
