@@ -350,8 +350,15 @@ clinical_rankings <- bind_rows(
   group_by(pfpr, scenario) %>%
   mutate(rank = row_number()) %>%
   ungroup() %>%
-  select(scenario, pfpr, rank, label) %>%
-  pivot_wider(names_from = scenario, values_from = label, values_fill = NA)
+  select(scenario, pfpr, label) %>%
+  mutate(scenario = sub("^, ", "", pfpr)) %>%
+  pivot_wider(names_from = scenario, values_from = label, values_fill = NA) %>%
+  # make nicer for latex 
+  mutate(pfpr = scales::percent(pfpr)) %>%
+  rename(PfPR = pfpr, 
+         `No scaling` = imm1,
+         `Scaled to 0.64` = imm64,
+         `Scaled to 0.4` = imm04) 
 
 write.csv(clinical_rankings, 'clinical_rankings.csv', row.names = FALSE)
 
@@ -365,8 +372,15 @@ severe_rankings <- bind_rows(
   group_by(pfpr, scenario) %>%
   mutate(rank = row_number()) %>%
   ungroup() %>%
-  select(scenario, pfpr, rank, label) %>%
-  pivot_wider(names_from = scenario, values_from = label, values_fill = NA)
+  select(scenario, pfpr, label) %>%
+  mutate(scenario = sub("^, ", "", pfpr)) %>%
+  pivot_wider(names_from = scenario, values_from = label, values_fill = NA) %>%
+  # make nicer for latex 
+  mutate(pfpr = scales::percent(pfpr)) %>%
+  rename(PfPR = pfpr, 
+         `No scaling` = imm1,
+         `Scaled to 0.64` = imm64,
+         `Scaled to 0.4` = imm04) 
 
 write.csv(severe_rankings, 'severe_rankings.csv', row.names = FALSE)
 

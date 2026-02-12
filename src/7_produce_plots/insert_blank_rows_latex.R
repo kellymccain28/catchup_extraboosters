@@ -20,7 +20,8 @@ insert_blank_rows_latex <- function(dataframe, column) {
   inds                 <- which(!complete.cases(dataframe))
   dataframe[inds,1]    <- plain_labels
   # dataframe[[1]][inds] <- paste0("\\bfseries{", dataframe[[1]][inds], "}")
-  dataframe            <- dataframe %>% mutate_all(~ ifelse(is.na(.), "", .))
+  dataframe            <- dataframe %>% mutate_all(~ ifelse(is.na(.), "", 
+                                                            ifelse(. == 'NA (NA, NA)', 'Ref', .)))
   
   return(dataframe)
 }
