@@ -295,7 +295,6 @@ plot_cumul_CA <- function(df_summ, cohorts){#df_last15
     ggsave(paste0("plots/plot_cumulSA_catchupnobooster_routine_", seasonalities[s], ".pdf"), 
            plot = SAcatchup_noboost_none[[5]], width = 7.5, height = 2.83, dpi = 500,            
            units = 'in')
-    
     SAAB_none <- plot_cumul_CA2(df_summ, 
                                 strategy = 'age-based',
                                 compare = '',

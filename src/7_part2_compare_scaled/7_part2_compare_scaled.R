@@ -350,15 +350,16 @@ clinical_rankings <- bind_rows(
   group_by(pfpr, scenario) %>%
   mutate(rank = row_number()) %>%
   ungroup() %>%
-  select(scenario, pfpr, label) %>%
-  mutate(scenario = sub("^, ", "", pfpr)) %>%
+  select(scenario, pfpr, label, rank) %>%
+  mutate(label = gsub("^,\\s*", "", label)) %>%
   pivot_wider(names_from = scenario, values_from = label, values_fill = NA) %>%
   # make nicer for latex 
   mutate(pfpr = scales::percent(pfpr)) %>%
   rename(PfPR = pfpr, 
          `No scaling` = imm1,
          `Scaled to 0.64` = imm64,
-         `Scaled to 0.4` = imm04) 
+         `Scaled to 0.4` = imm04) %>%
+  select(-rank)
 
 write.csv(clinical_rankings, 'clinical_rankings.csv', row.names = FALSE)
 
@@ -372,15 +373,16 @@ severe_rankings <- bind_rows(
   group_by(pfpr, scenario) %>%
   mutate(rank = row_number()) %>%
   ungroup() %>%
-  select(scenario, pfpr, label) %>%
-  mutate(scenario = sub("^, ", "", pfpr)) %>%
+  select(scenario, pfpr, rank, label) %>%
+  mutate(label = gsub("^,\\s*", "", label)) %>%
   pivot_wider(names_from = scenario, values_from = label, values_fill = NA) %>%
   # make nicer for latex 
   mutate(pfpr = scales::percent(pfpr)) %>%
   rename(PfPR = pfpr, 
          `No scaling` = imm1,
          `Scaled to 0.64` = imm64,
-         `Scaled to 0.4` = imm04) 
+         `Scaled to 0.4` = imm04) %>%
+  select(-rank)
 
 write.csv(severe_rankings, 'severe_rankings.csv', row.names = FALSE)
 
@@ -467,18 +469,21 @@ dfsumm <- dfsumm %>%
   # rename those variables with _median to be just the variable name 
   rename_with(.fn = \(x)sub("_median","", x))
 
+
   
 p1 <- ggplot(dfsumm %>% filter(seasonality == 'perennial' & PEVstrategy == 'AB')) + 
   geom_col(aes(x = EPIextra, y = cases_averted_perpop_pct_diff_64,
                fill = as.factor(pfpr)), position = 'dodge', alpha = 0.7) + 
   geom_errorbar(aes(x = EPIextra, ymin = cases_averted_perpop_pct_diff_64_lower, ymax = cases_averted_perpop_pct_diff_64_upper,
                     color = as.factor(pfpr)), position = 'dodge', linewidth = 0.5) +
-  facet_wrap(~PEVstrategy,
-             scales = 'free') + 
+  # facet_wrap(~PEVstrategy,
+  #            scales = 'free') + 
   labs(color = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')), 
        x = 'Extra booster dose timing',
        y = 'Difference in cases averted per population (%)',
-       fill = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')))
+       fill = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+       title = 'Extra boosters only')+ 
+  theme_bw()
 
 ggsave('ab_pctdiff.pdf', p1,
        width = 9, height = 5.75, dpi = 300,            
@@ -492,12 +497,15 @@ p2 <- ggplot(dfsumm %>% filter(seasonality == 'perennial' & PEVstrategy == 'catc
                fill = as.factor(pfpr)), position = 'dodge', alpha = 0.7) + 
   geom_errorbar(aes(x = PEVage, ymin = cases_averted_perpop_pct_diff_64_lower, ymax = cases_averted_perpop_pct_diff_64_upper,
                     color = as.factor(pfpr)), position = 'dodge', linewidth = 0.5) +
-  facet_wrap(~PEVstrategy,
-             scales = 'free')+ 
+  # facet_wrap(~PEVstrategy,
+  #            scales = 'free')+ 
   labs(color = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')), 
        x = 'Catch-up campaign target age group',
        y = 'Difference in cases averted per population (%)',
-       fill = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')))
+       fill = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+       title = 'Catch-up vaccination only')+ 
+  theme_bw()
+
 ggsave('cu_pctdiff.pdf', p2,
        width = 9, height = 5.75, dpi = 300,            
        units = 'in')
@@ -515,7 +523,10 @@ p3 <- ggplot(dfsumm %>% filter(seasonality == 'perennial' & PEVstrategy == 'comb
   labs(color = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')), 
        x = 'Extra booster dose timing',
        y = 'Difference in cases averted per population (%)',
-       fill = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')))
+       fill = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
+       title = 'Combination of catch-up campaigns and extra boosters') + 
+  theme_bw()
+
 ggsave('combo_pctdiff.pdf', p3,
        width = 13, height = 5.75, dpi = 300,            
        units = 'in')
@@ -778,7 +789,7 @@ p1 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 
                    pattern_fill = 'black',
                    pattern_color = 'black',
                    pattern_density = 0.5,
-                   pattern_spacing = 0.025
+                   pattern_spacing = 0.015
                    ) +
   geom_errorbar(aes(ymin = lower, ymax = upper, color = as.factor(pfpr), group = interaction(scenario, pfpr)),
                 position = position_dodge(width = 0.9), 
@@ -793,7 +804,8 @@ p1 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 
        x = 'Extra booster dose timing',
        y = 'Difference in cases averted per population (%)',
        fill = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
-       pattern = 'Scenario') + 
+       pattern = 'Scenario',
+       title = 'Extra boosters') + 
   theme_bw(base_size = 14)
 
 ggsave('ab_pctdiff_6404.pdf', p1,
@@ -814,7 +826,7 @@ p2 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 
                    pattern_fill = 'black',
                    pattern_color = 'black',
                    pattern_density = 0.5,
-                   pattern_spacing = 0.025
+                   pattern_spacing = 0.015
   ) +
   geom_errorbar(aes(ymin = lower, ymax = upper, color = as.factor(pfpr), group = interaction(scenario, pfpr)),
                 position = position_dodge(width = 0.9), 
@@ -828,7 +840,8 @@ p2 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 
        x = 'Catch-up campaign target age group',
        y = 'Difference in cases averted per population (%)',
        fill = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
-       pattern = 'Scenario') + 
+       pattern = 'Scenario',
+       title = 'Catch-up campaigns') + 
   theme_bw(base_size = 14)
 
 ggsave('cu_pctdiff_6404.pdf', p2,
@@ -850,7 +863,7 @@ p3 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 
                    pattern_fill = 'black',
                    pattern_color = 'black',
                    pattern_density = 0.5,
-                   pattern_spacing = 0.025
+                   pattern_spacing = 0.015
   ) +
   geom_errorbar(aes(ymin = lower, ymax = upper, color = as.factor(pfpr), group = interaction(scenario, pfpr)),
                 position = position_dodge(width = 0.9), 
@@ -864,7 +877,8 @@ p3 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 
        x = 'Extra booster dose timing',
        y = 'Difference in cases averted per population (%)',
        fill = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
-       pattern = 'Scenario') + 
+       pattern = 'Scenario',
+       title = 'Combination scenarios') + 
   theme_bw(base_size = 14)
 
 ggsave('combo_pctdiff_6404.pdf', p3,

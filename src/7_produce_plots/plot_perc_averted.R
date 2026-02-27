@@ -109,8 +109,8 @@ plot_perc_averted <- function(df){
     group_by(pfpr, seasonality) %>%
     arrange(desc(p_CA), .by_group = TRUE) %>%
     mutate(across(c(p_CA_lower, p_CA, p_CA_upper, p_SA_lower, p_SA, p_SA_upper), ~ round(.x * 100, 0))) %>%
-    mutate(`Percent of cases averted in whole population` = paste0(p_CA, ' (', p_CA_lower, ', ', p_CA_upper, ')'),
-           `Percent of severe cases averted in whole population` = paste0(p_SA, ' (', p_SA_lower, ', ', p_SA_upper, ')')) %>%
+    mutate(`Percent of cases averted in whole population` = paste0(p_CA, ' (', p_CA_lower, '-', p_CA_upper, ')'),
+           `Percent of severe cases averted in whole population` = paste0(p_SA, ' (', p_SA_lower, '-', p_SA_upper, ')')) %>%
     select(-c(p_CA_lower:p_SA_upper), -age_grp)
 
   write.csv(dftbl, 'plots/table_perc_outcomes_averted_all.csv', row.names = FALSE)
@@ -126,8 +126,8 @@ plot_perc_averted <- function(df){
     ) %>%
     # mutate(PEVage = ifelse(PEVage == '5-9' | PEVage == '5-14', paste0(PEVage,'y'), PEVage)) %>%
     mutate(across(c(p_CA_lower, p_CA, p_CA_upper, p_SA_lower, p_SA, p_SA_upper), ~ round(.x * 100, 0))) %>%
-    mutate(`Percent of cases averted in U5s` = paste0(p_CA, ' (', p_CA_lower, ', ', p_CA_upper, ')'),
-           `Percent of severe cases averted in U5s` = paste0(p_SA, ' (', p_SA_lower, ', ', p_SA_upper, ')')) %>%
+    mutate(`Percent of cases averted in U5s` = paste0(p_CA, ' (', p_CA_lower, '-', p_CA_upper, ')'),
+           `Percent of severe cases averted in U5s` = paste0(p_SA, ' (', p_SA_lower, '-', p_SA_upper, ')')) %>%
     select(-c(p_CA_lower:p_SA_upper), -age_grp)
 
   write.csv(dftbl2, 'plots/table_perc_outcomes_averted_U5.csv', row.names = FALSE)
@@ -142,4 +142,36 @@ plot_perc_averted <- function(df){
     filter(pfpr %in% c(0.05, 0.25, 0.45)) %>%
     filter((grepl('booster', labels) | labels == 'Routine age-based') & (labels != '2y booster' & labels != '5y booster' & labels != '10y booster' & labels != '5y, 10y boosters'))
   write.csv(dfcombine, 'plots/table_perc_outcomes_averted.csv', row.names = FALSE)
-}
+  
+  df_forlatex <- dftbl %>%
+    left_join(dftbl2, by = c('labels', 'pfpr', 'seasonality')) %>%
+    filter(pfpr %in% c(0.05, 0.25, 0.45, 0.65)) %>%
+    filter(seasonality == 'perennial') %>%
+    filter((grepl('booster', labels) | 
+              labels == 'Routine age-based') & 
+             (labels != '2y booster' & labels != '5y booster' & labels != '10y booster' & labels != '5y, 10y boosters' &
+                labels !='2y, 10y boosters' & labels != '2y, 5y boosters' & labels != '2y, 5y, 10y boosters')) %>%
+    mutate(labels = str_replace_all(labels, '\n', ' '),
+           labels = str_replace_all(labels, ', ' ,'+')) %>%
+    mutate(setting = case_when(
+      pfpr == 0.01 & seasonality == 'perennial' ~ "Perennial very low transmission: \\textit{Pf}PR$_{2-10}$ = 1\\%",
+      pfpr == 0.05 & seasonality == 'perennial' ~ "Perennial low transmission: \\textit{Pf}PR$_{2-10}$ = 5\\%",
+      pfpr == 0.25 & seasonality == 'perennial' ~ "Perennial moderate transmission: \\textit{Pf}PR$_{2-10}$ = 25\\%",
+      pfpr == 0.45 & seasonality == 'perennial' ~ "Perennial moderately high transmission: \\textit{Pf}PR$_{2-10}$ = 45\\%",
+      pfpr == 0.65 & seasonality == 'perennial' ~ "Perennial high transmission: \\textit{Pf}PR$_{2-10}$ = 65\\%",
+      pfpr == 0.01 & seasonality == 'seasonal' ~ "Seasonal very low transmission: \\textit{Pf}PR$_{2-10}$ = 1\\%",
+      pfpr == 0.05 & seasonality == 'seasonal' ~ "Seasonal low transmission: \\textit{Pf}PR$_{2-10}$ = 5\\%",
+      pfpr == 0.25 & seasonality == 'seasonal' ~ "Seasonal moderate transmission: \\textit{Pf}PR$_{2-10}$ = 25\\%",
+      pfpr == 0.45 & seasonality == 'seasonal' ~ "Seasonal moderately high transmission: \\textit{Pf}PR$_{2-10}$ = 45\\%",
+      pfpr == 0.65 & seasonality == 'seasonal' ~ "Seasonal high transmission: \\textit{Pf}PR$_{2-10}$ = 65\\%"
+    ))%>% 
+    group_by(pfpr, seasonality, labels) %>% 
+    arrange(labels, .by_group = TRUE) %>%
+    ungroup() %>%
+    select(-pfpr, -seasonality, -age_grp) %>%
+    insert_blank_rows_latex('setting') %>%
+    mutate(across(everything(), as.character))
+  write.csv(df_forlatex, 'plots/table_perc_outcomes_averted_forlatex.csv', row.names = FALSE, quote = FALSE)
+  
+  }
+

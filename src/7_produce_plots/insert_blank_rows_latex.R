@@ -4,6 +4,7 @@ insert_blank_rows_latex <- function(dataframe, column) {
   tlabels      <- as.character(unique(dataframe[[column]]))
   
   df_split <- split(dataframe, dataframe[[column]])
+  df_split <- df_split[as.character(plain_labels)]
   dataframe <- do.call(rbind, lapply(df_split, function(group) {
     na_row <- as.data.frame(matrix(NA, nrow = 1, ncol = ncol(group)))
     colnames(na_row) <- colnames(group)

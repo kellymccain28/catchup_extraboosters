@@ -3,7 +3,6 @@
 library(dampack)
 library(purrr)
 library(tidyverse)
-library(orderly2)
 library(ggrepel)
 
 # orderly_dependency(name = '5_process_combined',
@@ -86,33 +85,35 @@ expected_loss_icer <- function(df, seas, pfprval){
                   .fns = ~ str_replace(.x, '\\.', '-'))) %>%
     mutate(across(c(EPIextra), ~ .x |>
                     str_replace("^\\.", "") |>        # remove leading .
-                    str_replace("^\\.$", "") |>       # replace "." alone with empty
+                    str_replace("^^$", "No extra boosters") |>       # replace epty string with no boosters
                     str_replace_all("\\.", ", ")       # convert remaining . to -
     )) %>%
+    mutate(label_val = ifelse(PEVage != '' & EPIextra!='', paste0(PEVage, ', ', EPIextra),
+                              ifelse(PEVage == '' & EPIextra !='', EPIextra,
+                                     ifelse(EPIextra == '' & PEVage != '', PEVage, NA)))) %>%
+    mutate(PEVage = ifelse(PEVage == '', 'No catch-up vaccination', PEVage)) %>%
     mutate(pfpr = pfprval, 
            seasonality = seas) %>%
     group_by(WTP) %>%
     arrange(Expected_Loss, .by_group = TRUE) %>%
-    mutate(rank = rank(Expected_Loss)) %>%
-    mutate(label_val = ifelse(PEVage != '' & EPIextra!='', paste0(PEVage, ', ', EPIextra),
-                              ifelse(PEVage == '' & EPIextra !='', EPIextra,
-                                     ifelse(EPIextra == '' & PEVage != '', PEVage, NA))))
+    mutate(rank = rank(Expected_Loss)) 
   
   saveRDS(exploss_obj, paste0('exploss',pfprval,'.rds'))
   
   ranking <- ggplot(exploss_obj %>%
-           filter(rank < 10)) + 
+           filter(rank < 11)) + 
     geom_line(aes(x = WTP, y = as.integer(rank), color = Strategy), linewidth = 0.8) + 
     geom_point(aes(x = WTP, y = as.integer(rank), color = Strategy)) + 
-    geom_label(data = exploss_obj %>% filter(rank < 10 & WTP == 135), 
+    geom_label(data = exploss_obj %>% filter(rank < 11 & WTP == 135), 
                aes(x = WTP, y = as.integer(rank), color = Strategy, label = label_val))  +
-    geom_label(data = exploss_obj %>% filter(rank < 10 & WTP == 5), 
+    geom_label(data = exploss_obj %>% filter(rank < 11 & WTP == 5), 
                aes(x = WTP - 35, y = as.integer(rank), color = Strategy, label = label_val))  +
     scale_x_continuous(breaks = seq(0,200,50),
                        limits = c(-55,200)) + #xlim(c(0,200))+
+    scale_y_continuous(breaks = seq(1,10,1)) +
     labs(y = 'Expected loss rank (1 best)',
          x = 'WTP',#\n(additional doses per additional cases averted (thousands))',
-         caption = str_glue("Seasonality: {seas}, PfPR: {pfprval}")) +
+         caption = bquote(italic(Pf)~PR[2-10]~": "~.(scales::percent(pfprval))))  +#Seasonality: {seas}, 
     theme_bw(base_size = 14) +
     theme(legend.position = 'none')
     
@@ -133,12 +134,14 @@ expected_loss_icer <- function(df, seas, pfprval){
     # scale_y_continuous(labels = scales::label_comma()) +
     labs(x = 'Willingness to Pay',#\n(additional doses per additional cases averted (thousands))',
          y = 'Expected loss',#\n(additional doses per 1000 people)',
+         color = 'Catch-up campaign\ntarget age group',
+         linetype = 'Timing of extra booster doses',
          caption = str_glue("Seasonality: {seas}, PfPR: {pfprval}"))
   
   ggsave(filename = paste0('psasum_', seas, '_', pfprval, '.png'), plot = psaplot, height = 6, width = 7)
   ggsave(filename = paste0('icers_', seas, "_", pfprval, '.png'), plot = icersplot, height = 6, width = 7)
-  ggsave(filename = paste0('exploss_', seas, '_', pfprval, '.png'), plot = explossplot, height = 6, width = 7)
-  ggsave(filename = paste0('explossranking_', seas, '_', pfprval, '.png'), plot = ranking, height = 6, width = 7)
+  ggsave(filename = paste0('exploss_', seas, '_', pfprval, '.png'), plot = explossplot, height = 6, width = 9)
+  ggsave(filename = paste0('explossranking_', seas, '_', pfprval, '.png'), plot = ranking, height = 6, width = 8)
   
   return(exploss_obj)
 }
