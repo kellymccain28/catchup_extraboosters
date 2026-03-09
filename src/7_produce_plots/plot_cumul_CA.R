@@ -86,7 +86,7 @@ plot_cumul_CA <- function(df_summ, cohorts){#df_last15
       varnew <- str_replace(variable,'_routine','')
     } else varnew <- variable
     
-    A <- ggplot(dfpl) +
+    A <- ggplot(dfpl %>% mutate(star_label = ifelse(labels == 'Routine age-based', '*',NA))) +
       geom_col(aes(x = as.factor(pfpr), 
                    y = .data[[paste0(compare, varnew, '_perpop')]], 
                    fill = labels, color = labels), 
@@ -99,9 +99,15 @@ plot_cumul_CA <- function(df_summ, cohorts){#df_last15
                     position = position_dodge(width = 0.9), 
                     width = 0.4, 
                     linewidth = 0.38) +
+      geom_text(aes(x = as.factor(pfpr),
+                    y = .data[[paste0(variable, "_perpop_upper")]]*1.03,
+                    label = star_label,
+                    group = labels),
+                position = position_dodge(width = 0.9),
+                size = 5) +
       theme_bw() +
       scale_fill_manual(values = CUcols1) +
-      scale_color_manual(values = CUcols_) +
+      scale_color_manual(values = CUcols1) +
       labs(y = if(variable == 'cases_averted'){'Cumulative clinical cases averted\nper 1000 population'} 
            else {'Cumulative severe cases averted\nper 1000 population'},
            x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),
@@ -110,7 +116,9 @@ plot_cumul_CA <- function(df_summ, cohorts){#df_last15
       guides(color = 'none') +
       plottheme
     
-    B <- ggplot(if(strategy == 'catch-up no booster' | strategy == 'catch-up all'){copl} else dfpl) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
+    B <- ggplot(if(strategy == 'catch-up no booster' | strategy == 'catch-up all'){copl %>%
+        mutate(star_label = ifelse(labels == 'Routine age-based', '*',NA))} else dfpl %>%
+                  mutate(star_label = ifelse(labels == 'Routine age-based', '*',NA))) + # Catch-up plots are made with cohorts and age-based booster plots with whole simulation 
       geom_col(aes(x = as.factor(pfpr), 
                    y = .data[[paste0(varnew, "_perdose")]], 
                    fill = labels, color = labels), 
@@ -123,9 +131,15 @@ plot_cumul_CA <- function(df_summ, cohorts){#df_last15
                     position = position_dodge(width = 0.9), 
                     width = 0.4, 
                     linewidth = 0.38) +
+      geom_text(aes(x = as.factor(pfpr),
+                    y = .data[[paste0(variable, "_perdose_upper")]]*1.03,
+                    label = star_label,
+                    group = labels),
+                position = position_dodge(width = 0.9),
+                size = 5) +
       theme_bw() +
       scale_fill_manual(values = CUcols1) +
-      scale_color_manual(values = CUcols_) +
+      scale_color_manual(values = CUcols1) +
       labs(y = if(variable == 'cases_averted'){'Cumulative clinical cases averted\nper 1000 doses'} 
            else {'Cumulative severe cases averted\nper 1000 doses'},
            x = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')),

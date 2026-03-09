@@ -113,7 +113,7 @@ expected_loss_icer <- function(df, seas, pfprval){
     scale_y_continuous(breaks = seq(1,10,1)) +
     labs(y = 'Expected loss rank (1 best)',
          x = 'WTP',#\n(additional doses per additional cases averted (thousands))',
-         caption = bquote(italic(Pf)~PR[2-10]~": "~.(scales::percent(pfprval))))  +#Seasonality: {seas}, 
+         title = bquote(italic(Pf)~PR[2-10]~": "~.(scales::percent(pfprval))))  +#Seasonality: {seas}, 
     theme_bw(base_size = 14) +
     theme(legend.position = 'none')
     
@@ -133,10 +133,10 @@ expected_loss_icer <- function(df, seas, pfprval){
     theme_bw(base_size = 14) + 
     # scale_y_continuous(labels = scales::label_comma()) +
     labs(x = 'Willingness to Pay',#\n(additional doses per additional cases averted (thousands))',
-         y = 'Expected loss',#\n(additional doses per 1000 people)',
+         y = 'Expected loss (additional doses per person)',#\n(additional doses per 1000 people)',
          color = 'Catch-up campaign\ntarget age group',
          linetype = 'Timing of extra booster doses',
-         caption = str_glue("Seasonality: {seas}, PfPR: {pfprval}"))
+         title = bquote(italic(Pf)~PR[2-10]~": "~.(scales::percent(pfprval)))) 
   
   ggsave(filename = paste0('psasum_', seas, '_', pfprval, '.png'), plot = psaplot, height = 6, width = 7)
   ggsave(filename = paste0('icers_', seas, "_", pfprval, '.png'), plot = icersplot, height = 6, width = 7)
