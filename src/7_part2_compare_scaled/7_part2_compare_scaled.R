@@ -513,7 +513,10 @@ ggsave('cu_pctdiff.tiff', p2,
        width = 9, height = 5.75, dpi = 500,            
        units = 'in')
 
-p3 <- ggplot(dfsumm %>% filter(seasonality == 'perennial' & PEVstrategy == 'combination')) + 
+p3 <- ggplot(dfsumm %>% 
+               filter(seasonality == 'perennial' & PEVstrategy == 'combination')# %>%
+               # filter(PEVage %in% c('6m-4y', '6m-14y', '5-9', '5-14'))
+             ) + 
   geom_col(aes(x = EPIextra, y = cases_averted_perpop_pct_diff_64,
                fill = as.factor(pfpr)), position = 'dodge', alpha = 0.7) + 
   geom_errorbar(aes(x = EPIextra, ymin = cases_averted_perpop_pct_diff_64_lower, ymax = cases_averted_perpop_pct_diff_64_upper,
@@ -553,13 +556,22 @@ dfsumm %>% ungroup() %>%
             median_pct_diff_SApop4 = median(severe_averted_perpop_pct_diff_04, na.rm = TRUE),
             median_pct_diff_CAadddose4 = median(cases_averted_routine_peradddose_pct_diff_04, na.rm = TRUE),
             median_pct_diff_SAadddose4 = median(severe_averted_routine_peradddose_pct_diff_04, na.rm = TRUE)) %>%
-  ungroup() %>% summarize(meanclin64 = mean(mean_pct_diff_CApop64), 
+  ungroup() %>% summarize(medianclin64 = median(median_pct_diff_CApop64), 
+                          medianclin4 = median(median_pct_diff_CApop4),
+                          mediansev64 = median(median_pct_diff_SApop64), 
+                          mediansev4 = median(median_pct_diff_SApop4),
+                          medianclindose64 = median(median_pct_diff_CAadddose64), 
+                          medianclindose4 = median(median_pct_diff_CAadddose4),
+                          mediansevdose64 = median(median_pct_diff_SAadddose64), 
+                          mediansevdose4 = median(median_pct_diff_SAadddose4),
+                          
+                          meanclin64 = mean(mean_pct_diff_CApop64), 
                           meanclin4 = mean(mean_pct_diff_CApop4),
-                          meansev64 = mean(mean_pct_diff_SApop64), 
+                          meansev64 = mean(mean_pct_diff_SApop64),
                           meansev4 = mean(mean_pct_diff_SApop4),
-                          meanclindose64 = mean(mean_pct_diff_CAadddose64), 
+                          meanclindose64 = mean(mean_pct_diff_CAadddose64),
                           meanclindose4 = mean(mean_pct_diff_CAadddose4),
-                          meansevdose64 = mean(mean_pct_diff_SAadddose64), 
+                          meansevdose64 = mean(mean_pct_diff_SAadddose64),
                           meansevdose4 = mean(mean_pct_diff_SAadddose4)) %>%
   t() %>%
   View()
@@ -779,7 +791,19 @@ dfsumm_long <- dfsumm %>%
       bound == "_upper" ~ "upper"
     )
   ) %>%
-  pivot_wider(names_from = bound, values_from = value)
+  pivot_wider(names_from = bound, values_from = value) %>%
+  mutate(errorbar_color = case_when(
+    scenario == '64' ~ 'black',
+    scenario == '04' ~ as.character(pfpr)
+  ))
+
+mycolors <- c('black' = 'black',
+              '0.01' = '#F8766D',
+              '0.03' = '#B79F00',
+              '0.05' = '#00BA38',
+              '0.25' = '#00BFC4',
+              '0.45' = '#619CFF',
+              '0.65' = '#F564E3')
 
 p1 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 'AB'), 
        aes(x = EPIextra, y = estimate, fill = as.factor(pfpr), group = interaction(scenario, pfpr))) + 
@@ -791,10 +815,12 @@ p1 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 
                    pattern_density = 0.5,
                    pattern_spacing = 0.015
                    ) +
-  geom_errorbar(aes(ymin = lower, ymax = upper, color = as.factor(pfpr), group = interaction(scenario, pfpr)),
+  geom_errorbar(aes(ymin = lower, ymax = upper, color = errorbar_color, group = interaction(scenario, pfpr)),
                 position = position_dodge(width = 0.9), 
                 linewidth = 0.5,
                 width = 0.5) +
+  scale_color_manual(values = mycolors, guide = 'none') + 
+  scale_fill_manual(values = mycolors) +
   scale_pattern_manual(values = c('04' = 'none', '64' = 'stripe'),
                        labels = c('04' = 'Scaler: 0.4',
                                   '64' = 'Scaler: 0.64')
@@ -809,13 +835,13 @@ p1 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 
   theme_bw(base_size = 14)
 
 ggsave('ab_pctdiff_6404.pdf', p1,
-       width = 10, height = 6, dpi = 300,            
+       width = 10, height = 6.5, dpi = 300,            
        units = 'in')
 ggsave('ab_pctdiff_6404.tiff', p1,
-       width = 10, height = 6, dpi = 500,            
+       width = 10, height = 6.5, dpi = 500,            
        units = 'in')
 ggsave('ab_pctdiff_6404.png', p1,
-       width = 10, height = 6, dpi = 500,            
+       width = 10, height = 6.5, dpi = 500,            
        units = 'in')
 
 p2 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 'catch-up'), 
@@ -828,10 +854,12 @@ p2 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 
                    pattern_density = 0.5,
                    pattern_spacing = 0.015
   ) +
-  geom_errorbar(aes(ymin = lower, ymax = upper, color = as.factor(pfpr), group = interaction(scenario, pfpr)),
+  geom_errorbar(aes(ymin = lower, ymax = upper, color = errorbar_color, group = interaction(scenario, pfpr)),
                 position = position_dodge(width = 0.9), 
                 linewidth = 0.5,
                 width = 0.5) +
+  scale_color_manual(values = mycolors, guide = 'none') + 
+  scale_fill_manual(values = mycolors) +
   scale_pattern_manual(values = c('04' = 'none', '64' = 'stripe'),
                        labels = c('04' = 'Scaler: 0.4',
                                   '64' = 'Scaler: 0.64')) +
@@ -854,8 +882,9 @@ ggsave('cu_pctdiff_6404.png', p2,
        width = 10, height = 6.5, dpi = 500,            
        units = 'in')
 
-
-p3 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 'combination'), 
+dd <- dfsumm_long %>% filter(PEVage %in% c('6m-14y','5-14')) %>%
+  filter(seasonality == 'perennial' & PEVstrategy == 'combination')
+p3 <- ggplot(dd, 
              aes(x = EPIextra, y = estimate, fill = as.factor(pfpr), group = interaction(scenario, pfpr))) + 
   geom_col_pattern(aes(pattern = scenario),
                    position = position_dodge(width = 0.9), 
@@ -865,14 +894,16 @@ p3 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 
                    pattern_density = 0.5,
                    pattern_spacing = 0.015
   ) +
-  geom_errorbar(aes(ymin = lower, ymax = upper, color = as.factor(pfpr), group = interaction(scenario, pfpr)),
+  geom_errorbar(aes(ymin = lower, ymax = upper, color = errorbar_color, group = interaction(scenario, pfpr)),
                 position = position_dodge(width = 0.9), 
                 linewidth = 0.5,
                 width = 0.5) +
   scale_pattern_manual(values = c('04' = 'none', '64' = 'stripe'),
                        labels = c('04' = 'Scaler: 0.4',
                                   '64' = 'Scaler: 0.64')) +
-  facet_wrap(~PEVage, scales = 'free') + 
+  scale_color_manual(values = mycolors, guide = "none") + 
+  scale_fill_manual(values = mycolors) +
+  facet_wrap(~PEVage, scales = 'free', nrow = 2) + 
   labs(color = str2expression(paste("Baseline ", expression(italic(Pf)~PR[2-10]), sep = '~')), 
        x = 'Extra booster dose timing',
        y = 'Difference in cases averted per population (%)',
@@ -881,8 +912,8 @@ p3 <- ggplot(dfsumm_long %>% filter(seasonality == 'perennial' & PEVstrategy == 
        title = 'Combination scenarios') + 
   theme_bw(base_size = 14)
 
-ggsave('combo_pctdiff_6404.pdf', p3,
-       width = 24, height = 14, dpi = 300,            
+ggsave('combo_pctdiff_6404_small.pdf', p3,
+       width = 11, height = 13, dpi = 300,            
        units = 'in')
 ggsave('combo_pctdiff_6404.tiff', p3,
        width = 24, height = 14, dpi = 500,            

@@ -86,7 +86,7 @@ task_log_show(task6fast)
 
 # # Task 7 - make plots 
 task7 <- task_create_expr(orderly::orderly_run(name = '7_produce_plots',
-                                                parameters = list(age_scaling = 0.4)))
+                                                parameters = list(age_scaling = 1)))
 # task_wait(task7)
 task_log_show(task7)
 task_status(task7)
